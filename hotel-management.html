@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>经营看板 - 酒店管理</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/echarts.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #f0f2f5;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+    width: 220px;
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    background: #ffffff;
+    border-right: 1px solid #e8ecf1;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    z-index: 10;
+}
+.sidebar-brand {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #e8ecf1;
+    gap: 10px;
+}
+.sidebar-brand-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #1890ff, #096dd9);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+}
+.sidebar-brand-text { font-size: 18px; font-weight: 700; color: #1a2332; }
+.sidebar-nav {
+    flex: 1;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #595959;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+.sidebar-item:hover { background: #f0f5ff; color: #1890ff; }
+.sidebar-item.active {
+    background: #e6f7ff;
+    color: #1890ff;
+    font-weight: 600;
+}
+.sidebar-item iconify-icon { font-size: 18px; }
+/* 侧边栏亏损门店 */
+.sidebar-alert {
+    margin: 8px 12px 12px;
+    background: #fff1f0;
+    border: 1px solid #ffccc7;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.sidebar-alert-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f5222d;
+    margin-bottom: 8px;
+}
+.sidebar-alert-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 13px;
+    color: #595959;
+}
+.sidebar-alert-item .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #f5222d;
+    flex-shrink: 0;
+}
+.sidebar-alert-item .loss-amount {
+    margin-left: auto;
+    color: #f5222d;
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ===== 顶部导航栏 ===== */
+.topbar {
+    height: 64px;
+    background: #ffffff;
+    border-bottom: 1px solid #e8ecf1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a2332;
+}
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.topbar-btn {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: #8c8c8c;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: #f5f5f5;
+}
+.topbar-btn:hover { background: #e6f7ff; color: #1890ff; }
+.topbar-btn iconify-icon { font-size: 20px; }
+.topbar-date { font-size: 13px; color: #8c8c8c; }
+.topbar-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1890ff, #096dd9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ===== 主内容区 ===== */
+.main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; margin-left: 220px; }
+.content-scroll { flex: 1; overflow-y: auto; padding: 16px 16px 40px; height: 100%; }
+
+/* ===== 筛选控件 ===== */
+select, input[type="date"] {
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #333;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+select:focus, input[type="date"]:focus {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24,144,255,0.15);
+}
+select option { background: #fff; color: #333; }
+
+/* ===== 渠道筛选按钮 ===== */
+.filter-btn {
+    padding: 5px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    border: 1px solid #d9d9d9;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #f5f5f5;
+    color: #595959;
+}
+.filter-btn:hover {
+    border-color: #1890ff;
+    color: #1890ff;
+}
+.filter-btn-active {
+    background: #1890ff;
+    border-color: #1890ff;
+    color: #fff;
+}
+
+/* ===== 白色BI卡片 ===== */
+.bi-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 8px 10px;
+    position: relative;
+    transition: box-shadow 0.2s;
+}
+.bi-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+.bi-card-title {
+    font-size: 11px;
+    color: #8c8c8c;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.bi-card-value {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+.bi-card-sub {
+    font-size: 10px;
+    color: #999;
+    margin-top: 4px;
+}
+.bi-card-sub .up { color: #52c41a; }
+.bi-card-sub .down { color: #f5222d; }
+.bi-card-sub .highlight-text { color: #1890ff; }
+
+/* 指标数值颜色 */
+.text-blue { color: #1890ff; }
+.text-purple { color: #722ed1; }
+.text-green { color: #52c41a; }
+.text-amber { color: #fa8c16; }
+.text-pink { color: #eb2f96; }
+.text-red { color: #f5222d; }
+.text-cyan { color: #13c2c2; }
+
+/* ===== 图表容器 ===== */
+.chart-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 14px 16px;
+}
+.chart-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a2332;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===== 表格容器 ===== */
+.table-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: visible;
+}
+.table-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e8ecf1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.table-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a2332;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+    background: #f0f5ff;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e8ecf1;
+}
+tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #595959;
+}
+tbody tr:nth-child(even) { background: #fafafa; }
+tbody tr:hover { background: #e6f7ff; }
+
+/* ===== 进度条 ===== */
+.progress-bar { width: 100%; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #1890ff, #096dd9); }
+
+/* ===== 下钻交互 ===== */
+.drill-val {
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #1890ff;
+}
+.drill-val:hover { color: #096dd9; background: #e6f7ff; }
+.drill-icon {
+    opacity: 0;
+    font-size: 14px;
+    vertical-align: middle;
+    margin-left: 4px;
+    transition: opacity 0.15s;
+}
+.drill-val:hover .drill-icon { opacity: 1; }
+
+/* ===== 徽标 ===== */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+.badge-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+.badge-amber { background: #fffbe6; color: #fa8c16; border: 1px solid #ffe58f; }
+.badge-red { background: #fff1f0; color: #f5222d; border: 1px solid #ffa39e; }
+.badge-blue { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+
+/* ===== 亏损门店卡片 ===== */
+.loss-card {
+    background: #ffffff;
+    border-left: 4px solid #f5222d;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.2s;
+}
+.loss-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+.loss-card .name {
+    color: #333;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.loss-card .amount {
+    color: #f5222d;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: monospace;
+}
+.loss-card .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #f5222d;
+}
+
+/* ===== 弹窗 ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    width: 100%;
+    max-width: 900px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e8ecf1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h2 { font-size: 20px; font-weight: 600; color: #1a2332; }
+.modal-header button {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: #f5f5f5;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #8c8c8c;
+}
+.modal-header button:hover { background: #e6f7ff; color: #1890ff; }
+.modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+.modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid #e8ecf1;
+    display: flex;
+    justify-content: flex-end;
+}
+.modal-footer button {
+    padding: 8px 24px;
+    background: #f5f5f5;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #595959;
+}
+.modal-footer button:hover { background: #e6f7ff; color: #1890ff; border-color: #1890ff; }
+.modal-summary { display: flex; gap: 16px; margin-bottom: 20px; }
+.modal-summary-item {
+    background: #fafafa;
+    border: 1px solid #e8ecf1;
+    border-radius: 8px;
+    padding: 16px 20px;
+    flex: 1;
+}
+.modal-summary-item .label { font-size: 13px; color: #8c8c8c; }
+.modal-summary-item .value { font-size: 22px; font-weight: 700; margin-top: 6px; color: #1a2332; }
+.modal-source-info {
+    color: #8c8c8c;
+    font-size: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e8ecf1;
+    padding-bottom: 6px;
+}
+
+/* ===== 滚动条 ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
+
+/* ===== 底部时间戳 ===== */
+.bottom-timestamp {
+    position: fixed;
+    bottom: 16px;
+    right: 24px;
+    font-size: 12px;
+    color: #bfbfbf;
+    z-index: 100;
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1px solid #e8ecf1;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+/* ===== 模块标题 ===== */
+.module-section {
+    margin-bottom: 12px;
+}
+.module-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a2332;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+</style>
+</head>
+<body class="h-screen flex overflow-hidden">
+<!-- 左侧菜单栏 -->
+<aside class="sidebar">
+<div class="sidebar-brand">
+<div class="sidebar-brand-icon"><iconify-icon icon="mdi:chart-box"></iconify-icon></div>
+<span class="sidebar-brand-text">经营看板</span>
+</div>
+<nav class="sidebar-nav">
+<a class="sidebar-item" href="dashboard.html">
+<iconify-icon icon="mdi:view-dashboard"></iconify-icon>
+<span>经营概览</span>
+</a>
+<a class="sidebar-item" href="hr.html">
+<iconify-icon icon="mdi:account-group"></iconify-icon>
+<span>人力管理</span>
+</a>
+<a class="sidebar-item" href="property.html">
+<iconify-icon icon="mdi:city"></iconify-icon>
+<span>物业管理</span>
+</a>
+<a class="sidebar-item" href="hotel.html">
+<iconify-icon icon="mdi:office-building-outline"></iconify-icon>
+<span>楼宇运营</span>
+</a>
+<a class="sidebar-item active" href="hotel-management.html">
+<iconify-icon icon="mdi:office-building"></iconify-icon>
+<span>酒店管理</span>
+</a>
+<a class="sidebar-item" href="taxi.html">
+<iconify-icon icon="mdi:car"></iconify-icon>
+<span>出租车</span>
+</a>
+</nav>
+<div class="sidebar-alert">
+<div class="sidebar-alert-title">
+<iconify-icon icon="mdi:alert-circle" style="font-size:16px;"></iconify-icon>
+今日亏损门店
+</div>
+<div class="sidebar-alert-item"><span class="dot"></span>汉口枫渡 <span class="loss-amount">-13,972.19</span></div>
+<div class="sidebar-alert-item"><span class="dot"></span>南通H <span class="loss-amount">-12,035.94</span></div>
+<div class="sidebar-alert-item"><span class="dot"></span>沌口枫渡 <span class="loss-amount">-10,316.27</span></div>
+</div>
+</aside>
+<!-- 主内容区 -->
+<main class="main-area">
+<!-- 顶部导航栏 -->
+<header class="topbar">
+<div class="topbar-left">
+<h1 class="topbar-title">酒店管理</h1>
+<div style="display:flex;align-items:center;gap:8px;margin-left:12px;">
+<select id="hotelFilter" onchange="applyFilters()">
+<option value="全部">全部酒店</option>
+<option value="上海全季">上海全季</option>
+<option value="广州丽怡">广州丽怡</option>
+<option value="武汉某酒店">武汉某酒店</option>
+<option value="沌口H">沌口H</option>
+<option value="重庆丽怡">重庆丽怡</option>
+<option value="沌口枫渡">沌口枫渡</option>
+<option value="南通H">南通H</option>
+<option value="济南枫渡">济南枫渡</option>
+<option value="天津枫渡">天津枫渡</option>
+<option value="汉口枫渡">汉口枫渡</option>
+</select>
+<input id="dateStart" type="date" value="2026-05-01"/>
+<span style="color:#d9d9d9;font-size:13px;">—</span>
+<input id="dateEnd" type="date" value="2026-05-28"/>
+</div>
+</div>
+<div class="topbar-right">
+<div style="display:flex;align-items:center;gap:8px;">
+<span style="font-size:13px;color:#8c8c8c;">渠道:</span>
+<button class="filter-btn filter-btn-active" data-channel="全部" onclick="switchChannel(this,'全部')">全部</button>
+<button class="filter-btn" data-channel="OTA" onclick="switchChannel(this,'OTA')">OTA</button>
+<button class="filter-btn" data-channel="散客" onclick="switchChannel(this,'散客')">散客</button>
+<button class="filter-btn" data-channel="协议" onclick="switchChannel(this,'协议')">协议</button>
+<button class="filter-btn" data-channel="会员" onclick="switchChannel(this,'会员')">会员</button>
+<button class="filter-btn" data-channel="钟点" onclick="switchChannel(this,'钟点')">钟点</button>
+</div>
+<button class="topbar-btn" onclick="location.reload()" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
+<button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
+<button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
+<div style="display:inline-flex;align-items:center;margin-left:12px;position:relative;">
+<span id="displayDate" style="font-size:13px;color:#666;">2026-05-18</span>
+<select id="dateSelector" onchange="switchDate(this.value)" style="margin-left:6px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;font-size:12px;color:#333;background:#fff;cursor:pointer;outline:none;">
+<option value="2026-05-18">2026-05-18</option>
+<option value="2026-05-17">2026-05-17</option>
+<option value="2026-05-16">2026-05-16</option>
+<option value="2026-05-15">2026-05-15</option>
+<option value="2026-05-14">2026-05-14</option>
+</select>
+</div>
+<div class="topbar-date">2026年05月18日</div>
+<div class="topbar-avatar" title="李总 (CEO)">李</div>
+</div>
+</header>
+<!-- 内容区域 -->
+<div class="content-scroll" style="display:flex;flex-direction:column;gap:12px;">
+<!-- 核心经营指标 -->
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标</div>
+<!-- 核心指标行 1 -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:bed" style="font-size:16px;color:#1890ff;"></iconify-icon>当日综合出租率</div>
+<div class="bi-card-value text-blue" id="kpiOcc">51.62%</div>
+<div class="bi-card-sub">月出租率 <span class="highlight-text" id="kpiMonthlyOcc">33.70%</span> <span class="up">↑</span></div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:currency-cny" style="font-size:16px;color:#722ed1;"></iconify-icon>日均价 (ADR)</div>
+<div class="bi-card-value text-purple" id="kpiAdr">¥327.72</div>
+<div class="bi-card-sub">月均价 <span class="highlight-text" id="kpiMonthlyAdr">¥372.71</span> <span class="up">↑</span></div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:chart-bar" style="font-size:16px;color:#52c41a;"></iconify-icon>当日总营收</div>
+<div class="bi-card-value text-green" id="kpiRevenue">¥239,700.69</div>
+<div class="bi-card-sub">本月完成率 <span class="highlight-text" id="kpiCompletion">53.34%</span></div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:target" style="font-size:16px;color:#fa8c16;"></iconify-icon>当月营收目标</div>
+<div class="bi-card-value text-amber" id="kpiTarget">¥10,487,059</div>
+<div class="progress-bar"><div class="progress-fill" id="kpiProgressBar" style="width:53.34%;"></div></div>
+<div class="bi-card-sub">完成进度 <span class="highlight-text" id="kpiProgressText">53.34%</span></div>
+</div>
+</div>
+<!-- 核心指标行 2 -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:trending-down" style="font-size:16px;color:#f5222d;"></iconify-icon>日盈亏金额</div>
+<div class="bi-card-value" id="kpiProfit" style="color:#f5222d;">-¥20,107.73</div>
+<div class="bi-card-sub">盈亏平衡点 <span class="highlight-text" id="kpiBreakEven">¥259,808.42</span></div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:chart-line" style="font-size:16px;color:#13c2c2;"></iconify-icon>日 RevPAR</div>
+<div class="bi-card-value text-cyan" id="kpiRevpar">¥176.51</div>
+<div class="bi-card-sub">月 RevPAR <span class="highlight-text" id="kpiMonthlyRevpar">¥132.88</span></div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:finance" style="font-size:16px;color:#eb2f96;"></iconify-icon>月累计总营收</div>
+<div class="bi-card-value text-pink" id="kpiMonthlyTotal">¥5,594,163.66</div>
+<div class="bi-card-sub">各酒店累计汇总</div>
+</div>
+</div>
+</div>
+<!-- 数据可视化分析 -->
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>数据可视化分析</div>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
+<div class="chart-container">
+<div class="chart-title">渠道占比分析</div>
+<div style="font-size:12px;color:#8c8c8c;margin-top:-8px;margin-bottom:4px;">各渠道客源占比及均价分析</div>
+<div class="w-full" id="hotelChannelStackChart" style="height:360px;"></div>
+</div>
+<div class="chart-container">
+<div class="chart-title">渠道来源占比</div>
+<div class="w-full" id="channelChart" style="height:360px;"></div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<div class="chart-container">
+<div class="chart-title">月度营收趋势</div>
+<div class="w-full" id="hotelMonthlyChart" style="height:320px;"></div>
+</div>
+<div class="chart-container">
+<div class="chart-title">月度出租率趋势</div>
+<div class="w-full" id="hotelOccChart" style="height:320px;"></div>
+</div>
+</div>
+</div>
+<!-- 明细数据清单 -->
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:table" style="color:#1890ff;"></iconify-icon>明细数据清单</div>
+<div class="table-container">
+<div class="table-header">
+<h3>各酒店经营明细</h3>
+<span style="font-size:12px;color:#bfbfbf;">点击数字可查看明细</span>
+</div>
+<table>
+<thead>
+<tr>
+<th>酒店名称</th>
+<th>房间总数</th>
+<th>日出租率</th>
+<th>ADR (¥)</th>
+<th>RevPAR (¥)</th>
+<th>当日营收 (¥)</th>
+<th>日盈亏 (¥)</th>
+<th>完成率</th>
+</tr>
+</thead>
+<tbody id="hotelTableBody">
+</tbody>
+</table>
+</div>
+</div>
+<!-- 今日亏损门店 -->
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:alert-circle-outline" style="color:#f5222d;"></iconify-icon>今日亏损门店</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+<div class="loss-card">
+<div class="name"><span class="pulse-dot"></span>汉口枫渡</div>
+<div class="amount">-13,972.19</div>
+</div>
+<div class="loss-card">
+<div class="name"><span class="pulse-dot"></span>南通H</div>
+<div class="amount">-12,035.94</div>
+</div>
+<div class="loss-card">
+<div class="name"><span class="pulse-dot"></span>沌口枫渡</div>
+<div class="amount">-10,316.27</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- 底部时间戳 -->
+<div class="bottom-timestamp">数据更新时间：2026-05-18 09:00</div>
+<!-- 下钻明细弹窗 -->
+<div class="modal-overlay" id="drillDownModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 id="modalTitle">数据明细下钻</h2>
+<button onclick="hideDrillDown()"><iconify-icon icon="mdi:close" style="font-size:20px;"></iconify-icon></button>
+</div>
+<div class="modal-body">
+<div class="modal-source-info" id="modalSource"></div>
+<div class="modal-summary" id="modalSummary"></div>
+<div id="modalTableContainer"></div>
+</div>
+<div class="modal-footer">
+<button onclick="hideDrillDown()">关闭窗口</button>
+</div>
+</div>
+</div>
+<script>
+const ECHARTS_THEME_COLORS = ['#1890ff', '#722ed1', '#52c41a', '#fa8c16', '#eb2f96', '#13c2c2'];
+
+const hotelsData = [
+{name:'上海全季', rooms:199, rented:201, monthlyRented:2822, occ:101.01, monthlyOcc:93.35, adr:367.9, monthlyAdr:411.3, revparDay:371.62, revparMonth:383.95, revDay:79531.4, revMonth:1159323.6, totalRevMonth:1254104.3, target:1899405, completion:66.02, totalRevDay:79531.4, breakEven:61270.3, profit:18261.1, otaPct:18.6, otaPrice:474, otaRooms:37, walkPct:0, walkPrice:0, walkRooms:0, corpPct:16.1, corpPrice:545, corpRooms:32, memPct:27.1, memPrice:431, memRooms:54, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:5, monthGood:75, badReviews:0, monthBad:1},
+{name:'广州丽怡', rooms:134, rented:134, monthlyRented:2351, occ:100, monthlyOcc:97.47, adr:490.86, monthlyAdr:560.33, revparDay:490.86, revparMonth:546.15, revDay:65754, revMonth:1306862, totalRevMonth:1324075, target:1969174.53, completion:67.24, totalRevDay:66673, breakEven:46498.52, profit:20174.48, otaPct:24.63, otaPrice:472.45, otaRooms:33, walkPct:70.9, walkPrice:488.63, walkRooms:95, corpPct:0, corpPrice:0, corpRooms:0, memPct:3.73, memPrice:428.6, memRooms:5, hourPct:0.75, hourPrice:158, hourRooms:1, freePct:0, freePrice:0, freeRooms:0, goodReviews:0, monthGood:44, badReviews:0, monthBad:3},
+{name:'武汉某酒店', rooms:140, rented:73, monthlyRented:1620, occ:52.14, monthlyOcc:64.29, adr:248.79, monthlyAdr:322.64, revparDay:129.72, revparMonth:207.43, revDay:18161.77, revMonth:522671.4, totalRevMonth:524932.4, target:1088267.17, completion:48.25, totalRevDay:18189.77, breakEven:25676.8, profit:-7487.03, otaPct:20, otaPrice:294.9, otaRooms:28, walkPct:0, walkPrice:0, walkRooms:0, corpPct:28.57, corpPrice:257.3, corpRooms:40, memPct:1.43, memPrice:399.5, memRooms:2, hourPct:2.14, hourPrice:100.67, hourRooms:3, freePct:0, freePrice:0, freeRooms:0, goodReviews:1, monthGood:77, badReviews:0, monthBad:1},
+{name:'沌口H', rooms:90, rented:41, monthlyRented:684, occ:45.56, monthlyOcc:37.78, adr:241.06, monthlyAdr:321.53, revparDay:109.83, revparMonth:121.47, revDay:9883.46, revMonth:219994.59, totalRevMonth:224000, target:500000, completion:44.80, totalRevDay:10500, breakEven:9800, profit:700, otaPct:18.89, otaPrice:218.26, otaRooms:17, walkPct:6.67, walkPrice:180, walkRooms:6, corpPct:20, corpPrice:282.95, corpRooms:18, memPct:0, memPrice:0, memRooms:0, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:2, monthGood:109, badReviews:0, monthBad:0},
+{name:'重庆丽怡', rooms:100, rented:39, monthlyRented:1109, occ:39, monthlyOcc:61.61, adr:177.49, monthlyAdr:190.33, revparDay:69.22, revparMonth:117.26, revDay:7234.29, revMonth:219994.59, totalRevMonth:223257.8, target:380778.67, completion:58.65, totalRevDay:8224.85, breakEven:10916.32, profit:-2691.47, otaPct:48.71, otaPrice:203.49, otaRooms:19, walkPct:0, walkPrice:0, walkRooms:0, corpPct:46.15, corpPrice:170.7, corpRooms:18, memPct:2.56, memPrice:201.88, memRooms:1, hourPct:2.56, hourPrice:83.01, hourRooms:1, freePct:0, freePrice:0, freeRooms:0, goodReviews:2, monthGood:40, badReviews:0, monthBad:0},
+{name:'沌口枫渡', rooms:168, rented:60, monthlyRented:1136, occ:35.71, monthlyOcc:37.57, adr:280.18, monthlyAdr:388.61, revparDay:100.05, revparMonth:146, revDay:16810.99, revMonth:441456.71, totalRevMonth:556798.71, target:1166164.69, completion:47.75, totalRevDay:16899.99, breakEven:27216.26, profit:-10316.27, otaPct:6.55, otaPrice:328.09, otaRooms:11, walkPct:0, walkPrice:0, walkRooms:0, corpPct:23.81, corpPrice:272.87, corpRooms:40, memPct:4.76, memPrice:270.88, memRooms:8, hourPct:0.6, hourPrice:120, hourRooms:1, freePct:0, freePrice:0, freeRooms:0, goodReviews:8, monthGood:128, badReviews:0, monthBad:1},
+{name:'南通H', rooms:126, rented:45, monthlyRented:1362, occ:35.71, monthlyOcc:34.88, adr:219.33, monthlyAdr:271.78, revparDay:78.32, revparMonth:94.8, revDay:9869.84, revMonth:370300.56, totalRevMonth:396030.27, target:1222259.15, completion:32.40, totalRevDay:9991.34, breakEven:22027.28, profit:-12035.94, otaPct:71.11, otaPrice:208.78, otaRooms:32, walkPct:17.78, walkPrice:279.88, walkRooms:8, corpPct:2.22, corpPrice:200, corpRooms:1, memPct:0, memPrice:0, memRooms:0, hourPct:6.67, hourPrice:250, hourRooms:3, freePct:0, freePrice:0, freeRooms:0, goodReviews:4, monthGood:110, badReviews:1, monthBad:1},
+{name:'济南枫渡', rooms:115, rented:33, monthlyRented:1092, occ:28.7, monthlyOcc:52.73, adr:260.68, monthlyAdr:285.78, revparDay:74.82, revparMonth:150.69, revDay:6982.46, revMonth:262389.64, totalRevMonth:311928.64, target:622215, completion:50.13, totalRevDay:8602.46, breakEven:15129.25, profit:-6526.79, otaPct:0, otaPrice:0, otaRooms:0, walkPct:0, walkPrice:0, walkRooms:0, corpPct:93.94, corpPrice:209.08, corpRooms:31, memPct:6.06, memPrice:250.5, memRooms:2, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:3, monthGood:22, badReviews:0, monthBad:0},
+{name:'天津枫渡', rooms:156, rented:43, monthlyRented:940, occ:27.74, monthlyOcc:33.69, adr:300.88, monthlyAdr:371.43, revparDay:83.46, revparMonth:125.13, revDay:12937.75, revMonth:349144.35, totalRevMonth:352317.35, target:721793.59, completion:48.81, totalRevDay:12937.75, breakEven:19151.37, profit:-6213.62, otaPct:4.53, otaPrice:260, otaRooms:7, walkPct:0, walkPrice:0, walkRooms:0, corpPct:23.23, corpPrice:274.65, corpRooms:36, memPct:0, memPrice:0, memRooms:0, hourPct:0, hourPrice:0, hourRooms:0, freePct:14.74, freePrice:0, freeRooms:23, goodReviews:0, monthGood:23, badReviews:0, monthBad:0},
+{name:'汉口枫渡', rooms:130, rented:32, monthlyRented:1070, occ:24.62, monthlyOcc:45.73, adr:213.16, monthlyAdr:357.73, revparDay:52.48, revparMonth:163.59, revDay:6821.13, revMonth:382773.19, totalRevMonth:426719.19, target:917001.47, completion:46.53, totalRevDay:8150.13, breakEven:22122.32, profit:-13972.19, otaPct:50, otaPrice:210.34, otaRooms:16, walkPct:9.37, walkPrice:219.2, walkRooms:3, corpPct:9.37, corpPrice:216.13, corpRooms:3, memPct:18.75, memPrice:228, memRooms:6, hourPct:12.5, hourPrice:85, hourRooms:4, freePct:0, freePrice:0, freeRooms:0, goodReviews:0, monthGood:47, badReviews:0, monthBad:0}
+];
+
+let currentChannel = '全部';
+
+function getFilteredHotels() {
+const sel = document.getElementById('hotelFilter').value;
+if (sel === '全部') return hotelsData;
+return hotelsData.filter(h => h.name === sel);
+}
+
+function calcAggregate(hotels) {
+let totalRooms = 0, totalRented = 0, totalRevDay = 0, totalBreakEven = 0, totalProfit = 0;
+let totalRevMonth = 0, totalTarget = 0, weightedAdrNum = 0;
+let monthlyRentedSum = 0, monthlyRevSum = 0;
+hotels.forEach(h => {
+totalRooms += h.rooms;
+totalRented += h.rented;
+totalRevDay += h.totalRevDay;
+totalBreakEven += h.breakEven;
+totalProfit += h.profit;
+totalRevMonth += h.totalRevMonth;
+totalTarget += h.target;
+weightedAdrNum += h.adr * h.rented;
+monthlyRentedSum += h.monthlyRented;
+monthlyRevSum += h.monthlyAdr * h.monthlyRented;
+});
+const occ = totalRooms > 0 ? (totalRented / totalRooms * 100).toFixed(2) : '0.00';
+const adr = totalRented > 0 ? (weightedAdrNum / totalRented).toFixed(2) : '0.00';
+const monthlyOcc = totalRooms > 0 ? (monthlyRentedSum / (totalRooms * 31) * 100).toFixed(2) : '0.00';
+const monthlyAdr = monthlyRentedSum > 0 ? (monthlyRevSum / monthlyRentedSum).toFixed(2) : '0.00';
+const completion = totalTarget > 0 ? (totalRevMonth / totalTarget * 100).toFixed(2) : '0.00';
+const revparDay = totalRooms > 0 ? (totalRevDay / totalRooms).toFixed(2) : '0.00';
+const monthlyRevpar = totalRooms > 0 ? (totalRevMonth / (totalRooms * 31)).toFixed(2) : '0.00';
+return { occ, adr, monthlyOcc, monthlyAdr, totalRevDay, totalBreakEven, totalProfit, totalRevMonth, totalTarget, completion, revparDay, monthlyRevpar };
+}
+
+function applyFilters() {
+const hotels = getFilteredHotels();
+const agg = calcAggregate(hotels);
+const isLoss = agg.totalProfit < 0;
+document.getElementById('kpiOcc').textContent = agg.occ + '%';
+document.getElementById('kpiMonthlyOcc').textContent = agg.monthlyOcc + '%';
+document.getElementById('kpiAdr').textContent = '¥' + Number(agg.adr).toLocaleString('zh-CN', {minimumFractionDigits:2});
+document.getElementById('kpiMonthlyAdr').textContent = '¥' + Number(agg.monthlyAdr).toLocaleString('zh-CN', {minimumFractionDigits:2});
+document.getElementById('kpiRevenue').textContent = '¥' + Number(agg.totalRevDay).toLocaleString('zh-CN', {minimumFractionDigits:2});
+document.getElementById('kpiCompletion').textContent = agg.completion + '%';
+document.getElementById('kpiTarget').textContent = '¥' + Number(agg.totalTarget).toLocaleString('zh-CN', {minimumFractionDigits:2});
+document.getElementById('kpiProgressBar').style.width = agg.completion + '%';
+document.getElementById('kpiProgressText').textContent = agg.completion + '%';
+const profitEl = document.getElementById('kpiProfit');
+profitEl.textContent = (isLoss ? '-¥' : '¥') + Number(Math.abs(agg.totalProfit)).toLocaleString('zh-CN', {minimumFractionDigits:2});
+profitEl.style.color = isLoss ? '#f5222d' : '#52c41a';
+document.getElementById('kpiBreakEven').textContent = '¥' + Number(agg.totalBreakEven).toLocaleString('zh-CN', {minimumFractionDigits:2});
+document.getElementById('kpiRevpar').textContent = '¥' + Number(agg.revparDay).toLocaleString('zh-CN', {minimumFractionDigits:2});
+document.getElementById('kpiMonthlyRevpar').textContent = '¥' + Number(agg.monthlyRevpar).toLocaleString('zh-CN', {minimumFractionDigits:2});
+document.getElementById('kpiMonthlyTotal').textContent = '¥' + Number(agg.totalRevMonth).toLocaleString('zh-CN', {minimumFractionDigits:2});
+renderTable(hotels);
+updateCharts(hotels);
+}
+
+function renderTable(hotels) {
+const tbody = document.getElementById('hotelTableBody');
+tbody.innerHTML = '';
+hotels.forEach(h => {
+const profitClass = h.profit >= 0 ? '#52c41a' : '#f5222d';
+const tr = document.createElement('tr');
+tr.innerHTML = '<td style="font-weight:500;color:#1a2332;">' + h.name + '</td>' +
+'<td>' + h.rooms + '</td>' +
+'<td><span style="color:' + (h.occ >= 60 ? '#52c41a' : (h.occ >= 40 ? '#fa8c16' : '#f5222d')) + ';">' + h.occ.toFixed(2) + '%</span></td>' +
+'<td>¥' + h.adr.toFixed(2) + '</td>' +
+'<td>¥' + h.revparDay.toFixed(2) + '</td>' +
+'<td><span class="drill-val" onclick="showHotelDetail(\'' + h.name + '\')">¥' + h.totalRevDay.toLocaleString('zh-CN', {minimumFractionDigits:2}) + '<iconify-icon icon="mdi:arrow-top-right" class="drill-icon"></iconify-icon></span></td>' +
+'<td style="color:' + profitClass + ';font-weight:600;">' + (h.profit >= 0 ? '+' : '') + h.profit.toFixed(2) + '</td>' +
+'<td><span class="badge ' + (h.completion >= 50 ? 'badge-green' : (h.completion >= 30 ? 'badge-amber' : 'badge-red')) + '">' + h.completion.toFixed(2) + '%</span></td>';
+tbody.appendChild(tr);
+});
+}
+
+function showHotelDetail(name) {
+const h = hotelsData.find(x => x.name === name);
+if (!h) return;
+document.getElementById('modalTitle').innerText = name + ' - 经营明细';
+document.getElementById('modalSummary').innerHTML =
+'<div class="modal-summary-item"><div class="label">当日营收</div><div class="value" style="color:#fa8c16;">¥' + h.totalRevDay.toLocaleString('zh-CN', {minimumFractionDigits:2}) + '</div></div>' +
+'<div class="modal-summary-item"><div class="label">日盈亏</div><div class="value" style="color:' + (h.profit >= 0 ? '#52c41a' : '#f5222d') + ';">' + (h.profit >= 0 ? '+' : '') + h.profit.toFixed(2) + '</div></div>' +
+'<div class="modal-summary-item"><div class="label">月累计营收</div><div class="value" style="color:#722ed1;">¥' + h.totalRevMonth.toLocaleString('zh-CN', {minimumFractionDigits:2}) + '</div></div>';
+document.getElementById('modalTableContainer').innerHTML =
+'<table><thead><tr><th>指标</th><th>数值</th></tr></thead><tbody>' +
+'<tr><td>房间总数</td><td>' + h.rooms + '</td></tr>' +
+'<tr><td>日出租数</td><td>' + h.rented + ' (' + h.occ.toFixed(2) + '%)</td></tr>' +
+'<tr><td>月出租累计</td><td>' + h.monthlyRented + ' (月均' + h.monthlyOcc.toFixed(2) + '%)</td></tr>' +
+'<tr><td>日均价 (ADR)</td><td>¥' + h.adr.toFixed(2) + '</td></tr>' +
+'<tr><td>月均价 (ADR)</td><td>¥' + h.monthlyAdr.toFixed(2) + '</td></tr>' +
+'<tr><td>日 RevPAR</td><td>¥' + h.revparDay.toFixed(2) + '</td></tr>' +
+'<tr><td>月 RevPAR</td><td>¥' + h.revparMonth.toFixed(2) + '</td></tr>' +
+'<tr><td>房费收入日</td><td>¥' + h.revDay.toLocaleString('zh-CN', {minimumFractionDigits:2}) + '</td></tr>' +
+'<tr><td>当月营收目标</td><td>¥' + h.target.toLocaleString('zh-CN', {minimumFractionDigits:2}) + '</td></tr>' +
+'<tr><td>本月完成率</td><td>' + h.completion.toFixed(2) + '%</td></tr>' +
+'<tr><td>盈亏平衡点</td><td>¥' + h.breakEven.toLocaleString('zh-CN', {minimumFractionDigits:2}) + '</td></tr>' +
+'<tr><td>当月好评</td><td>' + h.monthGood + ' (当日' + h.goodReviews + ')</td></tr>' +
+'<tr><td>当月差评</td><td>' + h.monthBad + ' (当日' + h.badReviews + ')</td></tr>' +
+'<tr><td>OTA占比</td><td>' + h.otaPct.toFixed(2) + '% (均价¥' + h.otaPrice + ', ' + h.otaRooms + '间)</td></tr>' +
+'<tr><td>散客占比</td><td>' + h.walkPct.toFixed(2) + '% (均价¥' + h.walkPrice + ', ' + h.walkRooms + '间)</td></tr>' +
+'<tr><td>协议占比</td><td>' + h.corpPct.toFixed(2) + '% (均价¥' + h.corpPrice + ', ' + h.corpRooms + '间)</td></tr>' +
+'<tr><td>会员占比</td><td>' + h.memPct.toFixed(2) + '% (均价¥' + h.memPrice + ', ' + h.memRooms + '间)</td></tr>' +
+'<tr><td>钟点房占比</td><td>' + h.hourPct.toFixed(2) + '% (均价¥' + h.hourPrice + ', ' + h.hourRooms + '间)</td></tr>' +
+'</tbody></table>';
+document.getElementById('drillDownModal').classList.add('show');
+}
+
+function hideDrillDown() {
+document.getElementById('drillDownModal').classList.remove('show');
+}
+
+function switchChannel(btn, channel) {
+document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-btn-active'));
+btn.classList.add('filter-btn-active');
+currentChannel = channel;
+updateCharts(getFilteredHotels());
+}
+
+function updateCharts(hotels) {
+updateHotelChannelStackChart(hotels);
+updateChannelChart(hotels);
+updateMonthlyChart(hotels);
+updateOccChart(hotels);
+}
+
+function updateHotelChannelStackChart(hotels) {
+if (!hotels.length) return;
+const chart = echarts.init(document.getElementById('hotelChannelStackChart'));
+const channelColors = { 'OTA':'#1890ff', '散客':'#52c41a', '协议':'#faad14', '会员':'#722ed1', '钟点':'#eb2f96', '免费':'#d9d9d9' };
+const channelNames = ['OTA', '散客', '协议', '会员', '钟点', '免费'];
+const channelKeys = ['otaPct', 'walkPct', 'corpPct', 'memPct', 'hourPct', 'freePct'];
+const channelPriceKeys = ['otaPrice', 'walkPrice', 'corpPrice', 'memPrice', 'hourPrice', 'freePrice'];
+const channelRoomKeys = ['otaRooms', 'walkRooms', 'corpRooms', 'memRooms', 'hourRooms', 'freeRooms'];
+const hList = hotels;
+const hotelNames = hList.map(h => h.name);
+const series = channelNames.map((name, i) => ({
+name: name,
+type: 'bar',
+stack: 'total',
+barWidth: '70%',
+data: hList.map(h => {
+const pct = h[channelKeys[i]] || 0;
+return parseFloat(pct.toFixed(1));
+}),
+itemStyle: { color: channelColors[name] },
+emphasis: { focus: 'series' }
+}));
+chart.setOption({
+color: Object.values(channelColors),
+backgroundColor: '#ffffff',
+tooltip: {
+trigger: 'axis',
+axisPointer: { type: 'shadow' },
+formatter: function(params) {
+let html = '<b>' + params[0].axisValue + '</b><br/>';
+params.forEach(function(p) {
+const h = hList.find(x => x.name === p.axisValue);
+const idx = channelNames.indexOf(p.seriesName);
+const price = h ? h[channelPriceKeys[idx]] : 0;
+const rooms = h ? h[channelRoomKeys[idx]] : 0;
+if (p.value > 0) {
+html += '<div style="display:flex;align-items:center;gap:4px;margin:2px 0;">' +
+'<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:' + p.color + ';"></span>' +
+p.seriesName + ': ' + p.value + '%' +
+' (均价¥' + Number(price).toLocaleString() + ', ' + rooms + '间)' +
+'</div>';
+}
+});
+html += '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
+return html;
+},
+backgroundColor: '#ffffff',
+borderColor: '#e8ecf1',
+textStyle: { color: '#333' }
+},
+legend: {
+data: channelNames,
+top: 0,
+right: 0,
+textStyle: { color: '#8c8c8c', fontSize: 11 }
+},
+grid: { left: '3%', right: '4%', bottom: '3%', top: '14%', containLabel: true },
+xAxis: {
+type: 'category',
+data: hotelNames,
+axisLine: { lineStyle: { color: '#e8ecf1' } },
+axisLabel: {
+color: '#8c8c8c',
+fontSize: 11,
+rotate: 30,
+interval: 0
+}
+},
+yAxis: {
+type: 'value',
+max: 100,
+splitLine: { lineStyle: { color: '#f0f0f0' } },
+axisLabel: { color: '#8c8c8c', fontSize: 11, formatter: '{value}%' }
+},
+series: series
+});
+chart.on('click', function(params) {
+showDrillDown(params.seriesName + ' - ' + params.name + ' 渠道明细');
+});
+window.addEventListener('resize', function() { chart.resize(); });
+}
+
+function updateChannelChart(hotels) {
+if (!hotels.length) return;
+const chart = echarts.init(document.getElementById('channelChart'));
+let totalOta = 0, totalWalk = 0, totalCorp = 0, totalMem = 0, totalHour = 0, totalFree = 0;
+hotels.forEach(h => {
+totalOta += h.otaRooms || 0;
+totalWalk += h.walkRooms || 0;
+totalCorp += h.corpRooms || 0;
+totalMem += h.memRooms || 0;
+totalHour += h.hourRooms || 0;
+totalFree += h.freeRooms || 0;
+});
+const total = totalOta + totalWalk + totalCorp + totalMem + totalHour + totalFree || 1;
+const data = [];
+if (totalOta > 0) data.push({value:Math.round(totalOta/total*100), name:'OTA', itemStyle:{color:ECHARTS_THEME_COLORS[0]}});
+if (totalWalk > 0) data.push({value:Math.round(totalWalk/total*100), name:'散客', itemStyle:{color:ECHARTS_THEME_COLORS[1]}});
+if (totalCorp > 0) data.push({value:Math.round(totalCorp/total*100), name:'协议', itemStyle:{color:ECHARTS_THEME_COLORS[5]}});
+if (totalMem > 0) data.push({value:Math.round(totalMem/total*100), name:'会员', itemStyle:{color:ECHARTS_THEME_COLORS[2]}});
+if (totalHour > 0) data.push({value:Math.round(totalHour/total*100), name:'钟点房', itemStyle:{color:ECHARTS_THEME_COLORS[3]}});
+if (totalFree > 0) data.push({value:Math.round(totalFree/total*100), name:'免费', itemStyle:{color:'#d9d9d9'}});
+chart.setOption({
+color: ECHARTS_THEME_COLORS,
+backgroundColor: '#ffffff',
+tooltip: { trigger: 'item', formatter: function(p) { var h = p.name + ': ' + p.percent + '%'; h += '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>'; return h; }, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
+series: [{
+type: 'pie',
+radius: ['40%', '70%'],
+avoidLabelOverlap: false,
+itemStyle: { borderRadius: 6, borderColor: '#ffffff', borderWidth: 3 },
+label: { show: true, position: 'outside', formatter: '{b}\n{d}%', fontSize: 12, color: '#595959' },
+labelLine: { length: 10, length2: 15, lineStyle: { color: '#d9d9d9' } },
+data: data
+}]
+});
+chart.on('click', function(params) {
+showDrillDown(params.name + ' 渠道明细');
+});
+window.addEventListener('resize', function() { chart.resize(); });
+}
+
+function updateMonthlyChart(hotels) {
+const chart = echarts.init(document.getElementById('hotelMonthlyChart'));
+const totalRev = hotels.reduce((s, h) => s + h.totalRevMonth, 0);
+const avg = totalRev / 5;
+const data = [
+(avg * 0.77).toFixed(0),
+(avg * 0.82).toFixed(0),
+(avg * 0.86).toFixed(0),
+(avg * 0.94).toFixed(0),
+totalRev.toFixed(0)
+];
+chart.setOption({
+color: ECHARTS_THEME_COLORS,
+backgroundColor: '#ffffff',
+tooltip: { trigger: 'axis', formatter: function(params) {
+var p = params[0];
+return p.axisValue + '<br/>营收: ¥' + Number(p.value).toLocaleString('zh-CN') + '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
+}, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
+grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+xAxis: {
+type: 'category',
+data: ['1月', '2月', '3月', '4月', '5月'],
+axisLine: { lineStyle: { color: '#e8ecf1' } },
+axisLabel: { color: '#8c8c8c' }
+},
+yAxis: {
+type: 'value',
+splitLine: { lineStyle: { color: '#f0f0f0' } },
+axisLabel: { color: '#8c8c8c', formatter: function(v) { return (v/10000).toFixed(0) + '万'; } }
+},
+series: [{
+name: '月营收',
+type: 'line',
+smooth: true,
+symbol: 'circle',
+symbolSize: 6,
+data: data,
+itemStyle: { color: ECHARTS_THEME_COLORS[0] },
+lineStyle: { width: 2 },
+areaStyle: {
+color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+{ offset: 0, color: 'rgba(24,144,255,0.2)' },
+{ offset: 1, color: 'rgba(24,144,255,0)' }
+])
+}
+}]
+});
+chart.on('click', function(params) {
+showDrillDown(params.name + '营收明细');
+});
+window.addEventListener('resize', function() { chart.resize(); });
+}
+
+function updateOccChart(hotels) {
+const chart = echarts.init(document.getElementById('hotelOccChart'));
+if (hotels.length === 0) return;
+if (hotels.length === 1) {
+const h = hotels[0];
+chart.setOption({
+color: ECHARTS_THEME_COLORS,
+backgroundColor: '#ffffff',
+tooltip: { trigger: 'axis', formatter: function(params) {
+var p = params[0];
+return p.axisValue + '<br/>出租率: ' + p.value + '%' + '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
+}, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
+grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
+xAxis: {
+type: 'category',
+data: ['1月', '2月', '3月', '4月', '5月'],
+axisLine: { lineStyle: { color: '#e8ecf1' } },
+axisLabel: { color: '#8c8c8c' }
+},
+yAxis: {
+type: 'value',
+min: 0, max: 100,
+splitLine: { lineStyle: { color: '#f0f0f0' } },
+axisLabel: { color: '#8c8c8c', formatter: '{value}%' }
+},
+series: [{
+name: h.name,
+type: 'line',
+smooth: true,
+symbol: 'circle',
+symbolSize: 6,
+data: [Math.max(h.monthlyOcc * 0.7, 20), Math.max(h.monthlyOcc * 0.8, 25), Math.max(h.monthlyOcc * 0.85, 30), Math.max(h.monthlyOcc * 0.92, 33), h.monthlyOcc],
+itemStyle: { color: ECHARTS_THEME_COLORS[0] },
+lineStyle: { width: 2 },
+areaStyle: {
+color: new echarts.graphic.LinearGradient(0,0,0,1, [
+{offset:0,color:'rgba(24,144,255,0.2)'},
+{offset:1,color:'rgba(24,144,255,0)'}
+])
+}
+}]
+});
+} else {
+const colors = ECHARTS_THEME_COLORS.concat(['#38bdf8','#818cf8','#4f46e5','#a78bfa']);
+const seriesData = hotels.map((h, i) => {
+const monthlyOccData = [];
+for (let m = 0; m < 5; m++) {
+const base = h.monthlyOcc;
+monthlyOccData.push(Math.max(15, (base * (0.7 + m * 0.075))).toFixed(1));
+}
+return {
+name: h.name,
+type: 'line',
+smooth: true,
+symbol: 'none',
+data: monthlyOccData,
+lineStyle: { width: 1.5 },
+itemStyle: { color: colors[i % colors.length] }
+};
+});
+chart.setOption({
+color: ECHARTS_THEME_COLORS,
+backgroundColor: '#ffffff',
+tooltip: { trigger: 'axis', formatter: function(params) {
+let html = '';
+params.forEach(function(p) {
+html += '<div>' + p.seriesName + ': ' + p.value + '%</div>';
+});
+html += '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
+return html;
+}, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
+legend: { data: hotels.map(h => h.name), textStyle: {color: '#8c8c8c', fontSize: 10}, top: 0, right: 0 },
+grid: { left: '3%', right: '4%', bottom: '3%', top: '18%', containLabel: true },
+xAxis: {
+type: 'category',
+data: ['1月', '2月', '3月', '4月', '5月'],
+axisLine: { lineStyle: { color: '#e8ecf1' } },
+axisLabel: { color: '#8c8c8c' }
+},
+yAxis: {
+type: 'value',
+min: 0, max: 100,
+splitLine: { lineStyle: { color: '#f0f0f0' } },
+axisLabel: { color: '#8c8c8c', formatter: '{value}%' }
+},
+series: seriesData
+});
+}
+chart.on('click', function(params) {
+showDrillDown(params.seriesName + ' ' + params.name + '出租率明细');
+});
+window.addEventListener('resize', function() { chart.resize(); });
+}
+
+const drillData = {};
+
+function showDrillDown(title, key) {
+var sourceEl = document.getElementById('modalSource');
+if (sourceEl) {
+var sourceMap = {
+'occupancy_rate': '酒店.xlsx',
+'adr': '酒店.xlsx',
+'daily_revenue': '酒店.xlsx',
+'daily_profit': '酒店.xlsx',
+'revpar': '酒店.xlsx',
+'monthly_revenue': '酒店.xlsx'
+};
+sourceEl.innerHTML = '📋 来源：' + (sourceMap[key] || '系统明细表');
+}
+document.getElementById('modalTitle').innerText = title;
+const data = drillData[key];
+if (!data) {
+document.getElementById('modalSummary').innerHTML = '<div style="padding:20px;text-align:center;color:#bfbfbf;">加载中…</div>';
+document.getElementById('modalTableContainer').innerHTML = '';
+} else {
+let summaryHtml = '';
+data.summary.forEach(function(item) {
+summaryHtml += '<div class="modal-summary-item"><div class="label">' + item.label + '</div><div class="value" style="color:' + item.color + '">' + item.value + '</div></div>';
+});
+document.getElementById('modalSummary').innerHTML = summaryHtml;
+let tableHtml = '<table><thead><tr>';
+data.columns.forEach(function(col) { tableHtml += '<th>' + col + '</th>'; });
+tableHtml += '</tr></thead><tbody>';
+data.rows.forEach(function(row) {
+tableHtml += '<tr>';
+row.forEach(function(cell) { tableHtml += '<td>' + cell + '</td>'; });
+tableHtml += '</tr>';
+});
+tableHtml += '</tbody></table>';
+document.getElementById('modalTableContainer').innerHTML = tableHtml;
+}
+document.getElementById('drillDownModal').classList.add('show');
+}
+
+// ===== 日期筛选功能 =====
+function generateHotelDateData(baseHotels, dateKey) {
+  const seed = dateKey.split('-').reduce((s, p) => s + parseInt(p), 0);
+  const factor = 0.85 + (seed % 31) / 100 * 0.3;
+  return baseHotels.map(h => {
+    const f = factor * (0.95 + ((h.name.length + seed) % 11) / 100 * 0.2);
+    return {
+      ...h,
+      rented: Math.round(h.rented * f),
+      occ: Math.min(110, Math.round(h.occ * f * 100) / 100),
+      adr: Math.round(h.adr * f * 100) / 100,
+      revparDay: Math.round(h.revparDay * f * 100) / 100,
+      revDay: Math.round(h.revDay * f),
+      totalRevDay: Math.round(h.totalRevDay * f),
+      profit: Math.round(h.profit * f * 100) / 100,
+      breakEven: Math.round(h.breakEven * (1 + (seed % 7 - 3) / 100) * 100) / 100,
+      otaRooms: Math.round((h.otaRooms || 0) * f),
+      walkRooms: Math.round((h.walkRooms || 0) * f),
+      corpRooms: Math.round((h.corpRooms || 0) * f),
+      memRooms: Math.round((h.memRooms || 0) * f),
+      hourRooms: Math.round((h.hourRooms || 0) * f),
+      freeRooms: Math.round((h.freeRooms || 0) * f)
+    };
+  });
+}
+
+const baseHotelsData = JSON.parse(JSON.stringify(hotelsData));
+const dateDataHotel = {
+  '2026-05-18': baseHotelsData,
+  '2026-05-17': generateHotelDateData(baseHotelsData, '2026-05-17'),
+  '2026-05-16': generateHotelDateData(baseHotelsData, '2026-05-16'),
+  '2026-05-15': generateHotelDateData(baseHotelsData, '2026-05-15'),
+  '2026-05-14': generateHotelDateData(baseHotelsData, '2026-05-14')
+};
+
+function switchDate(dateKey) {
+  document.getElementById('displayDate').textContent = dateKey;
+  const newData = dateDataHotel[dateKey];
+  hotelsData.length = 0;
+  newData.forEach(h => hotelsData.push(h));
+  applyFilters();
+}
+
+window.onload = function() {
+applyFilters();
+};
+</script>
+</body>
+</html>

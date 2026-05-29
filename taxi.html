@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>经营看板 - 出租车</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/echarts.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f0f2f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; min-height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+.sidebar { width: 220px; position: fixed; left: 0; top: 0; bottom: 0; background: #ffffff; border-right: 1px solid #e8ecf1; display: flex; flex-direction: column; flex-shrink: 0; z-index: 10; }
+.sidebar-brand { height: 64px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #e8ecf1; gap: 10px; }
+.sidebar-brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #1890ff, #096dd9); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
+.sidebar-brand-text { font-size: 18px; font-weight: 700; color: #1a2332; }
+.sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; color: #595959; font-size: 14px; text-decoration: none; transition: all 0.15s; }
+.sidebar-item:hover { background: #f0f5ff; color: #1890ff; }
+.sidebar-item.active { background: #e6f7ff; color: #1890ff; font-weight: 600; }
+.sidebar-item iconify-icon { font-size: 18px; }
+.main-area { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: visible; }
+.topbar { height: 64px; background: #ffffff; border-bottom: 1px solid #e8ecf1; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; position: relative; z-index: 1; margin-left: 220px; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-title { font-size: 22px; font-weight: 700; color: #1a2332; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.topbar-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #8c8c8c; cursor: pointer; transition: all 0.15s; border: none; background: #f5f5f5; }
+.topbar-btn:hover { background: #e6f7ff; color: #1890ff; }
+.topbar-btn iconify-icon { font-size: 20px; }
+.topbar-date { font-size: 13px; color: #8c8c8c; }
+.topbar-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #1890ff, #096dd9); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
+.content-scroll { flex: 1; overflow-y: auto; padding: 16px 16px 40px; height: 100%; margin-left: 220px; }
+select, input[type="date"] { background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #333; outline: none; cursor: pointer; }
+select:focus, input[type="date"]:focus { border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.15); }
+select option { background: #fff; color: #333; }
+.bi-card { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 8px 10px; position: relative; transition: box-shadow 0.2s; }
+.bi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
+.bi-card-title { font-size: 11px; color: #8c8c8c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.bi-card-value { font-size: 20px; font-weight: 700; line-height: 1.3; }
+.bi-card-sub { font-size: 10px; color: #999; margin-top: 4px; }
+.bi-card-sub .up { color: #52c41a; }
+.bi-card-sub .down { color: #f5222d; }
+.bi-card-sub .highlight-text { color: #1890ff; }
+.text-blue { color: #1890ff; }
+.text-purple { color: #722ed1; }
+.text-green { color: #52c41a; }
+.text-amber { color: #fa8c16; }
+.text-pink { color: #eb2f96; }
+.text-red { color: #f5222d; }
+.text-cyan { color: #13c2c2; }
+.chart-container { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 14px 16px; }
+.chart-title { font-size: 15px; font-weight: 600; color: #1a2332; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.table-container { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: visible; }
+.table-header { padding: 12px 16px; border-bottom: 1px solid #e8ecf1; display: flex; justify-content: space-between; align-items: center; }
+.table-header h3 { font-size: 15px; font-weight: 600; color: #1a2332; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { background: #f0f5ff; color: #333; font-weight: 600; padding: 12px 16px; text-align: left; border-bottom: 1px solid #e8ecf1; }
+tbody td { padding: 11px 16px; border-bottom: 1px solid #f0f0f0; color: #595959; }
+tbody tr:nth-child(even) { background: #fafafa; }
+tbody tr:hover { background: #e6f7ff; }
+.drill-down-clickable { cursor: pointer; color: #1890ff; transition: all 0.15s; }
+.drill-down-clickable:hover { color: #096dd9; text-decoration: underline; }
+.filter-group { display: flex; align-items: center; gap: 8px; }
+.filter-group label { font-size: 13px; color: #8c8c8c; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 11px; }
+.badge-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+.badge-amber { background: #fffbe6; color: #fa8c16; border: 1px solid #ffe58f; }
+.badge-red { background: #fff1f0; color: #f5222d; border: 1px solid #ffa39e; }
+.badge-blue { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+.badge-tj { background: #e6f7ff; color: #1890ff; }
+.badge-wx { background: #f6ffed; color: #52c41a; }
+.badge-xj { background: #fffbe6; color: #fa8c16; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 50; display: none; align-items: center; justify-content: center; padding: 40px; }
+.modal-overlay.show { display: flex; }
+.modal-content { background: #ffffff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); width: 100%; max-width: 900px; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid #e8ecf1; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h2 { font-size: 20px; font-weight: 600; color: #1a2332; }
+.modal-header button { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: #f5f5f5; border-radius: 6px; cursor: pointer; color: #8c8c8c; }
+.modal-header button:hover { background: #e6f7ff; color: #1890ff; }
+.modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid #e8ecf1; display: flex; justify-content: flex-end; }
+.modal-footer button { padding: 8px 24px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; cursor: pointer; color: #595959; }
+.modal-footer button:hover { background: #e6f7ff; color: #1890ff; border-color: #1890ff; }
+.modal-summary { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.modal-summary-item { background: #fafafa; border: 1px solid #e8ecf1; border-radius: 8px; padding: 16px 20px; flex: 1; min-width: 120px; }
+.modal-summary-item .label { font-size: 13px; color: #8c8c8c; }
+.modal-summary-item .value { font-size: 22px; font-weight: 700; margin-top: 6px; color: #1a2332; }
+.module-section { margin-bottom: 12px; }
+.module-section-title { font-size: 16px; font-weight: 600; color: #1a2332; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #1890ff; padding-left: 10px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
+.bottom-info { position: fixed; bottom: 16px; right: 24px; font-size: 12px; color: #bfbfbf; z-index: 100; padding: 6px 14px; background: #ffffff; border: 1px solid #e8ecf1; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+.profit-up { color: #52c41a; }
+.profit-down { color: #f5222d; }
+.badge-store { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+/* 修复滚动兜底 */
+html, body { height: auto !important; min-height: 100vh; overflow-y: auto !important; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="sidebar-brand">
+<div class="sidebar-brand-icon"><iconify-icon icon="mdi:chart-box"></iconify-icon></div>
+<span class="sidebar-brand-text">经营看板</span>
+</div>
+<nav class="sidebar-nav">
+<a class="sidebar-item" href="dashboard.html"><iconify-icon icon="mdi:view-dashboard"></iconify-icon><span>经营概览</span></a>
+<a class="sidebar-item" href="hr.html"><iconify-icon icon="mdi:account-group"></iconify-icon><span>人力管理</span></a>
+<a class="sidebar-item" href="property.html"><iconify-icon icon="mdi:city"></iconify-icon><span>物业管理</span></a>
+<a class="sidebar-item" href="hotel.html"><iconify-icon icon="mdi:office-building-outline"></iconify-icon><span>楼宇运营</span></a>
+<a class="sidebar-item" href="hotel-management.html"><iconify-icon icon="mdi:office-building"></iconify-icon><span>酒店管理</span></a>
+<a class="sidebar-item active" href="taxi.html"><iconify-icon icon="mdi:car"></iconify-icon><span>出租车</span></a>
+</nav>
+</aside>
+<main class="main-area">
+<header class="topbar">
+<div class="topbar-left"><h1 class="topbar-title">经营看板</h1></div>
+<div class="topbar-right">
+<span class="topbar-date">2026年05月18日</span>
+<div style="display:inline-flex;align-items:center;margin-left:12px;position:relative;">
+<span id="displayDate" style="font-size:13px;color:#666;">2026-05-18</span>
+<select id="dateSelector" onchange="switchDate(this.value)" style="margin-left:6px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;font-size:12px;color:#333;background:#fff;cursor:pointer;outline:none;">
+<option value="2026-05-18">2026-05-18</option>
+<option value="2026-05-17">2026-05-17</option>
+<option value="2026-05-16">2026-05-16</option>
+<option value="2026-05-15">2026-05-15</option>
+<option value="2026-05-14">2026-05-14</option>
+</select>
+</div>
+<button class="topbar-btn" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
+<button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
+<button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
+<div class="topbar-avatar" title="李总 (CEO)">李</div>
+</div>
+</header>
+<div class="content-scroll" style="display:flex;flex-direction:column;gap:12px;">
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标</div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:account-tie" style="font-size:16px;color:#1890ff;"></iconify-icon>在运司机总数</div>
+<div class="bi-card-value text-blue" id="totalDrivers">3,458 人</div>
+<div class="bi-card-sub">覆盖天津、无锡、新疆三地</div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:car-multiple" style="font-size:16px;color:#52c41a;"></iconify-icon>运营车辆总数</div>
+<div class="bi-card-value text-green" id="totalVehicles">1,730 辆</div>
+<div class="bi-card-sub">含固定班线及临时调拨</div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:cash-multiple" style="font-size:16px;color:#fa8c16;"></iconify-icon>日流水总额</div>
+<div class="bi-card-value text-amber" id="dailyRevenue">¥ 23.31 万</div>
+<div class="bi-card-sub">最新日数据</div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:chart-line" style="font-size:16px;color:#eb2f96;"></iconify-icon>月营收总额</div>
+<div class="bi-card-value text-pink" id="monthlyRevenue">¥ 718.7 万</div>
+<div class="bi-card-sub">1月累计</div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:currency-cny" style="font-size:16px;color:#722ed1;"></iconify-icon>车均营收</div>
+<div class="bi-card-value text-purple" id="avgRevenuePerCar">¥ 4,155</div>
+<div class="bi-card-sub">月均每车贡献</div>
+</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+<div class="filter-group">
+<label><iconify-icon icon="mdi:store" style="color:#8c8c8c;"></iconify-icon> 门店</label>
+<select id="storeFilter" onchange="applyFilters()">
+<option value="all">全部门店</option>
+<option value="天津">天津</option>
+<option value="无锡">无锡</option>
+<option value="新疆">新疆</option>
+</select>
+</div>
+<div class="filter-group">
+<label><iconify-icon icon="mdi:calendar" style="color:#8c8c8c;"></iconify-icon> 起始日期</label>
+<input id="dateStart" onchange="applyFilters()" type="date" value="2026-01-01"/>
+</div>
+<div class="filter-group">
+<label><iconify-icon icon="mdi:calendar-end" style="color:#8c8c8c;"></iconify-icon> 截止日期</label>
+<input id="dateEnd" onchange="applyFilters()" type="date" value="2026-02-05"/>
+</div>
+</div>
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>数据可视化分析</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+<div class="chart-container">
+<div class="chart-title">各门店司机数对比 <span style="font-size:12px;color:#8c8c8c;font-weight:400;">(天津 / 无锡 / 新疆)</span></div>
+<div class="w-full" id="driverChart" style="height:320px;"></div>
+</div>
+<div class="chart-container">
+<div class="chart-title">营收占比 <span style="font-size:12px;color:#8c8c8c;font-weight:400;">(各门店营收占比)</span></div>
+<div class="w-full" id="pieChart" style="height:320px;"></div>
+</div>
+<div class="chart-container">
+<div class="chart-title">月度营收与成本趋势 <span style="font-size:12px;color:#8c8c8c;font-weight:400;">(1-2月)</span></div>
+<div class="w-full" id="trendChart" style="height:320px;"></div>
+</div>
+</div>
+</div>
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:table" style="color:#1890ff;"></iconify-icon>明细数据清单</div>
+<div class="table-container">
+<div class="table-header"><h3>出租车运营明细表</h3><span style="font-size:12px;color:#bfbfbf;">点击数字可下钻查看原始明细</span></div>
+<div style="overflow-x:auto;">
+<table>
+<thead><tr><th>日期</th><th>门店</th><th>所属公司</th><th>车辆数</th><th>司机数</th><th>营收(万)</th><th>成本(万)</th><th>利润(万)</th></tr></thead>
+<tbody id="tableBody">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="modal-overlay" id="drillDownModal">
+<div class="modal-content">
+<div class="modal-header"><h2 id="modalTitle">原始明细</h2><button onclick="hideDrillDown()"><iconify-icon icon="mdi:close" style="font-size:20px;"></iconify-icon></button></div>
+<div class="modal-body">
+<div id="modalSource" style="color:#8c8c8c;font-size:12px;border-bottom:1px solid #e8ecf1;padding-bottom:6px;margin-bottom:8px;"></div>
+<div class="modal-summary" id="modalSummary"></div>
+<div id="modalTableContainer"></div>
+</div>
+<div class="modal-footer"><button onclick="hideDrillDown()">关闭窗口</button></div>
+</div>
+</div>
+<div class="bottom-info">数据更新时间：2026-05-18 09:00</div>
+<script>
+const ECHARTS_THEME_COLORS = ['#1890ff','#722ed1','#52c41a','#fa8c16','#eb2f96','#13c2c2'];
+const rawData = [
+{date:'2026-01-01',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:23.31,cost:18.00,profit:5.31},
+{date:'2026-01-02',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:18.50,cost:12.50,profit:6.00},
+{date:'2026-01-03',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:22.40,cost:16.80,profit:5.60},
+{date:'2026-01-04',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:22.80,cost:17.50,profit:5.30},
+{date:'2026-01-05',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:17.20,cost:11.80,profit:5.40},
+{date:'2026-01-06',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:21.50,cost:16.20,profit:5.30},
+{date:'2026-01-07',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:24.10,cost:18.20,profit:5.90},
+{date:'2026-01-08',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:19.60,cost:13.00,profit:6.60},
+{date:'2026-01-09',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:23.80,cost:17.50,profit:6.30},
+{date:'2026-01-10',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:23.90,cost:18.10,profit:5.80},
+{date:'2026-01-11',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:18.80,cost:12.80,profit:6.00},
+{date:'2026-01-12',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:22.90,cost:16.90,profit:6.00},
+{date:'2026-01-13',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:25.20,cost:19.00,profit:6.20},
+{date:'2026-01-14',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:20.50,cost:13.50,profit:7.00},
+{date:'2026-01-15',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:24.50,cost:18.00,profit:6.50},
+{date:'2026-01-16',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:24.50,cost:18.50,profit:6.00},
+{date:'2026-01-17',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:19.20,cost:12.90,profit:6.30},
+{date:'2026-01-18',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:23.20,cost:17.20,profit:6.00},
+{date:'2026-01-19',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:26.00,cost:19.50,profit:6.50},
+{date:'2026-01-20',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:21.00,cost:13.80,profit:7.20},
+{date:'2026-01-21',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:25.00,cost:18.50,profit:6.50},
+{date:'2026-01-22',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:26.80,cost:20.00,profit:6.80},
+{date:'2026-01-23',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:21.80,cost:14.20,profit:7.60},
+{date:'2026-01-24',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:25.80,cost:18.80,profit:7.00},
+{date:'2026-01-25',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:25.50,cost:19.20,profit:6.30},
+{date:'2026-01-26',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:20.80,cost:13.60,profit:7.20},
+{date:'2026-01-27',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:24.20,cost:17.80,profit:6.40},
+{date:'2026-01-28',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:24.80,cost:18.80,profit:6.00},
+{date:'2026-01-29',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:19.80,cost:13.00,profit:6.80},
+{date:'2026-01-30',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:23.50,cost:17.50,profit:6.00},
+{date:'2026-01-31',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:23.50,cost:17.90,profit:5.60},
+{date:'2026-02-01',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:18.50,cost:12.40,profit:6.10},
+{date:'2026-02-02',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:22.20,cost:16.50,profit:5.70},
+{date:'2026-02-03',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:23.10,cost:17.60,profit:5.50},
+{date:'2026-02-04',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:18.20,cost:12.20,profit:6.00},
+{date:'2026-02-05',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:21.80,cost:16.30,profit:5.50}
+];
+const allData = rawData;
+if(!allData.some(d=>d.date==='2026-02-05'&&d.store==='天津')){allData.push({date:'2026-02-05',store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:23.10,cost:17.60,profit:5.50});}
+
+function calcStats(data){
+var tjDrivers=data.filter(d=>d.store==='天津').length>0?data.filter(d=>d.store==='天津')[0].drivers:1746;
+var wxDrivers=data.filter(d=>d.store==='无锡').length>0?data.filter(d=>d.store==='无锡')[0].drivers:289;
+var xjDrivers=data.filter(d=>d.store==='新疆').length>0?data.filter(d=>d.store==='新疆')[0].drivers:1423;
+var tjVehicles=data.filter(d=>d.store==='天津').length>0?data.filter(d=>d.store==='天津')[0].vehicles:1500;
+var wxVehicles=data.filter(d=>d.store==='无锡').length>0?data.filter(d=>d.store==='无锡')[0].vehicles:98;
+var xjVehicles=data.filter(d=>d.store==='新疆').length>0?data.filter(d=>d.store==='新疆')[0].vehicles:132;
+var totalDrivers=tjDrivers+wxDrivers+xjDrivers;
+var totalVehicles=tjVehicles+wxVehicles+xjVehicles;
+var dates=[...new Set(data.map(d=>d.date))].sort();
+var latestDate=dates[dates.length-1];
+var latestDayData=data.filter(d=>d.date===latestDate);
+var dailyRev=latestDayData.reduce((s,d)=>s+d.revenue,0);
+var janData=data.filter(d=>d.date.startsWith('2026-01'));
+var janRev=janData.reduce((s,d)=>s+d.revenue,0);
+var janCost=janData.reduce((s,d)=>s+d.cost,0);
+var avgPerCar=Math.round(janRev*10000/totalVehicles);
+return{totalDrivers,totalVehicles,dailyRev,janRev,janCost,avgPerCar,latestDate};
+}
+
+function getStoreSummary(data){
+return['天津','无锡','新疆'].map(function(s){
+var sd=data.filter(d=>d.store===s);
+var rev=sd.reduce((sm,d)=>sm+d.revenue,0);
+var cost=sd.reduce((sm,d)=>sm+d.cost,0);
+var profit=sd.reduce((sm,d)=>sm+d.profit,0);
+var drivers=sd.length>0?sd[0].drivers:0;
+var vehicles=sd.length>0?sd[0].vehicles:0;
+return{store:s,drivers,vehicles,revenue:Math.round(rev*100)/100,cost:Math.round(cost*100)/100,profit:Math.round(profit*100)/100};
+});
+}
+
+var stats=calcStats(allData);
+document.getElementById('totalDrivers').innerHTML=stats.totalDrivers.toLocaleString()+' 人';
+document.getElementById('totalVehicles').innerHTML=stats.totalVehicles.toLocaleString()+' 辆';
+document.getElementById('dailyRevenue').innerHTML='¥ '+stats.dailyRev.toFixed(2)+' 万';
+document.getElementById('monthlyRevenue').innerHTML='¥ '+stats.janRev.toFixed(1)+' 万';
+document.getElementById('avgRevenuePerCar').innerHTML='¥ '+stats.avgPerCar.toLocaleString();
+
+function renderTable(data){
+var tbody=document.getElementById('tableBody');
+var html='';
+data.forEach(function(d){
+var pc=d.profit>=0?'profit-up':'profit-down';
+var sc=d.store==='天津'?'badge-tj':d.store==='无锡'?'badge-wx':'badge-xj';
+html+='<tr><td>'+d.date+'</td><td><span class="badge-store '+sc+'">'+d.store+'</span></td><td>'+d.company+'</td><td class="drill-down-clickable">'+d.vehicles.toLocaleString()+'</td><td class="drill-down-clickable">'+d.drivers.toLocaleString()+'</td><td class="drill-down-clickable">'+d.revenue.toFixed(2)+'</td><td>'+d.cost.toFixed(2)+'</td><td class="'+pc+'">'+(d.profit>=0?'+':'')+d.profit.toFixed(2)+'</td></tr>';
+});
+tbody.innerHTML=html;
+}
+renderTable(allData);
+
+function applyFilters(){
+var store=document.getElementById('storeFilter').value;
+var ds=document.getElementById('dateStart').value;
+var de=document.getElementById('dateEnd').value;
+var filtered=allData;
+if(store!=='all')filtered=filtered.filter(d=>d.store===store);
+if(ds)filtered=filtered.filter(d=>d.date>=ds);
+if(de)filtered=filtered.filter(d=>d.date<=de);
+renderTable(filtered);
+updateCharts(filtered);
+var s=calcStats(filtered);
+document.getElementById('totalDrivers').innerHTML=s.totalDrivers.toLocaleString()+' 人';
+document.getElementById('totalVehicles').innerHTML=s.totalVehicles.toLocaleString()+' 辆';
+document.getElementById('dailyRevenue').innerHTML='¥ '+s.dailyRev.toFixed(2)+' 万';
+document.getElementById('monthlyRevenue').innerHTML='¥ '+s.janRev.toFixed(1)+' 万';
+document.getElementById('avgRevenuePerCar').innerHTML='¥ '+s.avgPerCar.toLocaleString();
+}
+
+function getDriverOption(data){
+var sum=getStoreSummary(data);
+return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',formatter:function(params){var p=params[0];return p.axisValue+'<br/>司机数: '+p.value+' 人<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：出租.xlsx</div>';},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:sum.map(s=>s.store),axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c'}},series:[{type:'bar',data:sum.map(s=>s.drivers),itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#1890ff'},{offset:1,color:'#096dd9'}]),borderRadius:[4,4,0,0]}}]};
+}
+
+function getPieOption(data){
+var sum=getStoreSummary(data);
+var colors=['#1890ff','#722ed1','#52c41a'];
+return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'item',formatter:function(p){return p.name+': ¥'+p.value+'万 ('+p.percent+'%)<div style=\"margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;\">📋 来源：出租.xlsx</div>';},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},series:[{type:'pie',radius:['40%','70%'],avoidLabelOverlap:false,itemStyle:{borderRadius:8,borderColor:'#ffffff',borderWidth:3},label:{show:true,position:'outside',formatter:'{b}\n¥{c}万 ({d}%)',fontSize:11,color:'#595959'},labelLine:{length:10,length2:15,lineStyle:{color:'#d9d9d9'}},data:sum.map(function(s,i){return{value:Math.round(s.revenue*100)/100,name:s.store,itemStyle:{color:colors[i]}};})}]};
+}
+
+function getTrendOption(data){
+var jan=data.filter(d=>d.date.startsWith('2026-01'));
+var feb=data.filter(d=>d.date.startsWith('2026-02'));
+var jr=Math.round(jan.reduce((s,d)=>s+d.revenue,0)*100)/100;
+var jc=Math.round(jan.reduce((s,d)=>s+d.cost,0)*100)/100;
+var fr=Math.round(feb.reduce((s,d)=>s+d.revenue,0)*100)/100;
+var fc=Math.round(feb.reduce((s,d)=>s+d.cost,0)*100)/100;
+return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',formatter:function(params){var s='<b>'+params[0].axisValue+'</b><br/>';params.forEach(function(v){s+=v.marker+' '+v.seriesName+': ¥'+v.value.toFixed(2)+' 万<br/>';});s+='<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：出租.xlsx</div>';return s;},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},legend:{data:['营收(万)','成本(万)'],textStyle:{color:'#8c8c8c'}},grid:{left:'3%',right:'5%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:['1月','2月'],axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:[{type:'value',name:'营收 (万)',nameTextStyle:{color:'#8c8c8c',fontSize:12},splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#1890ff'}},{type:'value',name:'成本 (万)',nameTextStyle:{color:'#8c8c8c',fontSize:12},splitLine:{show:false},axisLabel:{color:'#f5222d'}}],series:[{name:'营收(万)',type:'line',smooth:true,data:[jr,fr],symbol:'circle',symbolSize:8,lineStyle:{width:3,color:'#1890ff'},itemStyle:{color:'#1890ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(24,144,255,0.2)'},{offset:1,color:'rgba(24,144,255,0.01)'}])},yAxisIndex:0},{name:'成本(万)',type:'line',smooth:true,data:[jc,fc],symbol:'diamond',symbolSize:8,lineStyle:{width:3,color:'#722ed1'},itemStyle:{color:'#722ed1'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(114,46,209,0.15)'},{offset:1,color:'rgba(114,46,209,0.01)'}])},yAxisIndex:1}]};
+}
+
+function updateCharts(data){
+var dc=echarts.getInstanceByDom(document.getElementById('driverChart'));if(dc)dc.setOption(getDriverOption(data),true);
+var pc=echarts.getInstanceByDom(document.getElementById('pieChart'));if(pc)pc.setOption(getPieOption(data),true);
+var tc=echarts.getInstanceByDom(document.getElementById('trendChart'));if(tc)tc.setOption(getTrendOption(data),true);
+}
+
+function initCharts(){
+var driverChart=echarts.init(document.getElementById('driverChart'));
+driverChart.setOption(getDriverOption(allData));
+driverChart.on('click',function(p){
+var stores=['天津','无锡','新疆'];
+var sd=allData.filter(d=>d.store===stores[p.dataIndex]);
+var totalD=sd.length>0?sd[0].drivers:0;
+var totalV=sd.length>0?sd[0].vehicles:0;
+var totalR=Math.round(sd.reduce((s,d)=>s+d.revenue,0)*100)/100;
+showCustomDrill(stores[p.dataIndex]+' — 司机明细',[{label:'门店',value:stores[p.dataIndex],color:'#1890ff'},{label:'司机数',value:totalD.toLocaleString()+' 人',color:'#1a2332'},{label:'车辆数',value:totalV.toLocaleString()+' 辆',color:'#52c41a'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'}],[['日期','营收(万)','成本(万)','利润(万)'],...sd.map(d=>[d.date,d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
+});
+window.addEventListener('resize',function(){driverChart.resize();});
+var pieChart=echarts.init(document.getElementById('pieChart'));
+pieChart.setOption(getPieOption(allData));
+pieChart.on('click',function(p){
+var sd=allData.filter(d=>d.store===p.name);
+var totalR=Math.round(sd.reduce((s,d)=>s+d.revenue,0)*100)/100;
+showCustomDrill(p.name+' — 营收明细',[{label:'门店',value:p.name,color:'#1890ff'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'},{label:'总成本',value:'¥ '+Math.round(sd.reduce((s,d)=>s+d.cost,0)*100)/100+' 万',color:'#f5222d'},{label:'总利润',value:'¥ '+Math.round(sd.reduce((s,d)=>s+d.profit,0)*100)/100+' 万',color:'#52c41a'}],[['日期','营收(万)','成本(万)','利润(万)'],...sd.map(d=>[d.date,d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
+});
+window.addEventListener('resize',function(){pieChart.resize();});
+var trendChart=echarts.init(document.getElementById('trendChart'));
+trendChart.setOption(getTrendOption(allData));
+trendChart.on('click',function(p){
+var months=['1月','2月'];
+var idx=p.dataIndex;
+var monthNum=idx===0?'01':'02';
+var md=allData.filter(d=>d.date.startsWith('2026-'+monthNum));
+var totalR=Math.round(md.reduce((s,d)=>s+d.revenue,0)*100)/100;
+var totalC=Math.round(md.reduce((s,d)=>s+d.cost,0)*100)/100;
+showCustomDrill(months[idx]+'营收与成本明细',[{label:'月份',value:months[idx],color:'#1890ff'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'},{label:'总成本',value:'¥ '+totalC.toFixed(1)+' 万',color:'#f5222d'}],[['日期','门店','营收(万)','成本(万)','利润(万)'],...md.map(d=>[d.date,d.store,d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
+});
+window.addEventListener('resize',function(){trendChart.resize();});
+}
+
+function showCustomDrill(title,summaryItems,tableData){
+document.getElementById('modalTitle').innerText=title;
+var s='';
+summaryItems.forEach(function(i){s+='<div class="modal-summary-item"><div class="label">'+i.label+'</div><div class="value" style="color:'+i.color+'">'+i.value+'</div></div>';});
+document.getElementById('modalSummary').innerHTML=s;
+var h='<table><thead><tr>';
+tableData[0].forEach(function(c){h+='<th>'+c+'</th>';});
+h+='</tr></thead><tbody>';
+for(var i=1;i<tableData.length;i++){h+='<tr>';tableData[i].forEach(function(c){h+='<td>'+c+'</td>';});h+='</tr>';}
+h+='</tbody></table>';
+document.getElementById('modalTableContainer').innerHTML=h;
+document.getElementById('drillDownModal').classList.add('show');
+}
+
+function hideDrillDown(){document.getElementById('drillDownModal').classList.remove('show');}
+
+// ===== 日期筛选功能 =====
+const taxiBaseDateData = {
+  '2026-05-18': [
+    {store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:23.31,cost:18.00,profit:5.31},
+    {store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:18.50,cost:12.50,profit:6.00},
+    {store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:22.40,cost:16.80,profit:5.60}
+  ],
+  '2026-05-17': [
+    {store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:22.80,cost:17.50,profit:5.30},
+    {store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:17.20,cost:11.80,profit:5.40},
+    {store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:21.50,cost:16.20,profit:5.30}
+  ],
+  '2026-05-16': [
+    {store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:24.10,cost:18.20,profit:5.90},
+    {store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:19.60,cost:13.00,profit:6.60},
+    {store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:23.80,cost:17.50,profit:6.30}
+  ],
+  '2026-05-15': [
+    {store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:23.90,cost:18.10,profit:5.80},
+    {store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:18.80,cost:12.80,profit:6.00},
+    {store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:22.90,cost:16.90,profit:6.00}
+  ],
+  '2026-05-14': [
+    {store:'天津',company:'天津滨海客运',vehicles:1500,drivers:1746,revenue:25.20,cost:19.00,profit:6.20},
+    {store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:20.50,cost:13.50,profit:7.00},
+    {store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:24.50,cost:18.00,profit:6.50}
+  ]
+};
+
+function switchDate(dateKey) {
+  document.getElementById('displayDate').textContent = dateKey;
+  // Replace allData with the selected date's data
+  var newDayData = taxiBaseDateData[dateKey];
+  // Build full data set for the day (3 stores) to use in filter/chart
+  allData.length = 0;
+  newDayData.forEach(function(d) {
+    allData.push({
+      date: dateKey,
+      store: d.store,
+      company: d.company,
+      vehicles: d.vehicles,
+      drivers: d.drivers,
+      revenue: d.revenue,
+      cost: d.cost,
+      profit: d.profit
+    });
+  });
+  // Reset store filter and date range to show the single day
+  document.getElementById('storeFilter').value = 'all';
+  document.getElementById('dateStart').value = dateKey;
+  document.getElementById('dateEnd').value = dateKey;
+  applyFilters();
+}
+
+window.onload=function(){initCharts();};
+</script>
+</body>
+</html>

@@ -31,8 +31,8 @@ body { background: #f0f2f5; color: #333; font-family: -apple-system, BlinkMacSys
 .topbar-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #1890ff, #096dd9); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
 .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .content-scroll { flex: 1; overflow-y: auto; padding: 16px 16px 40px; height: 100%; margin-left: 220px; }
-select, input[type="date"] { background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #333; outline: none; cursor: pointer; }
-select:focus, input[type="date"]:focus { border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.15); }
+select, input[type="date"], input[type="month"] { background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #333; outline: none; cursor: pointer; transition: border-color 0.2s; }
+select:focus, input[type="date"]:focus, input[type="month"]:focus { border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.15); }
 select option { background: #fff; color: #333; }
 .bi-card { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 8px 10px; position: relative; transition: box-shadow 0.2s; }
 .bi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
@@ -88,6 +88,25 @@ tbody tr:hover { background: #e6f7ff; }
 ::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
 .bottom-info { position: fixed; bottom: 16px; right: 24px; font-size: 12px; color: #bfbfbf; z-index: 100; padding: 6px 14px; background: #ffffff; border: 1px solid #e8ecf1; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+.filter-row { background: #ffffff; border-bottom: 1px solid #e8ecf1; padding: 10px 20px; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 16px; }
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.filter-group label {
+    font-size: 13px;
+    color: #8c8c8c;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.filter-group { display: flex; align-items: center; gap: 8px; }
+.filter-group label { font-size: 12px; color: #8c8c8c; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+.filter-btn { padding: 4px 14px; border-radius: 4px; font-size: 12px; border: 1px solid #d9d9d9; cursor: pointer; transition: all 0.15s; background: #f5f5f5; color: #595959; }
+.filter-btn:hover { border-color: #1890ff; color: #1890ff; }
+.filter-btn-active { background: #1890ff; border-color: #1890ff; color: #fff; }
 </style>
 </head>
 <body class="h-screen flex overflow-hidden">
@@ -107,93 +126,92 @@ tbody tr:hover { background: #e6f7ff; }
 </aside>
 <main class="main-area">
 <header class="topbar">
-<div class="topbar-left"><h1 class="topbar-title">经营看板</h1><span class="badge badge-blue" style="font-size:12px;margin-left:8px;">楼宇运营</span></div>
+<div class="topbar-left"><h1 class="topbar-title">楼宇运营看板</h1><span class="badge badge-green" style="font-size:12px;margin-left:6px;">每日更新</span></div>
 <div class="topbar-right">
-<span class="topbar-date" id="displayDate">2026年05月18日</span>
-<select id="dateSelector" onchange="switchDate(this.value)" style="margin-left:4px;background:#ffffff;border:1px solid #d9d9d9;border-radius:6px;padding:4px 10px;font-size:13px;color:#333;outline:none;cursor:pointer;">
-<option selected="" value="2026-05-18">2026-05-18</option>
-<option value="2026-05-17">2026-05-17</option>
-<option value="2026-05-16">2026-05-16</option>
-<option value="2026-05-15">2026-05-15</option>
-<option value="2026-05-14">2026-05-14</option>
-</select>
-<button class="topbar-btn" onclick="location.reload()" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
+<span class="topbar-date">2025年04月30日</span>
+<button class="topbar-btn" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
 <button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
 <button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
 <div class="topbar-avatar" title="李总 (CEO)">李</div>
 </div>
 </header>
 <div class="content-scroll" style="display:flex;flex-direction:column;gap:12px;">
+<!-- 筛选条件 -->
+<div class="filter-row" style="background:#ffffff;border-bottom:1px solid #e8ecf1;width:100%;">
+<div class="filter-group">
+<label><iconify-icon icon="mdi:calendar" style="color:#8c8c8c;"></iconify-icon> 数据日期</label>
+<span id="datePickerContainer"><input type="month" id="datePicker" value="2025-04" onchange="refreshData()"/></span>
+</div>
+<div class="filter-group">
+<label>时间粒度</label>
+<div style="margin-left:auto;display:flex;gap:4px;">
+<button class="filter-btn" onclick="switchDateType(this,'day')">日</button>
+<button class="filter-btn filter-btn-active" onclick="switchDateType(this,'month')">月</button>
+<button class="filter-btn" onclick="switchDateType(this,'quarter')">季</button>
+<button class="filter-btn" onclick="switchDateType(this,'year')">年</button>
+</div>
+</div>
+</div>
 <div class="module-section">
 <div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标</div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;">
 <div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:office-building-multiple" style="font-size:16px;color:#1890ff;"></iconify-icon>在管楼宇总数</div>
-<div class="bi-card-value text-blue">2 栋</div>
-<div class="bi-card-sub">1号楼 · 2号楼</div>
+<div class="bi-card-title"><iconify-icon icon="mdi:home-city" style="font-size:16px;color:#52c41a;"></iconify-icon>可出租面积</div>
+<div class="bi-card-value text-green">30,879.55㎡</div>
+<div class="bi-card-sub">管理面积 <span class="highlight-text">29,564.62㎡</span></div>
 </div>
 <div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:map-marker-distance" style="font-size:16px;color:#52c41a;"></iconify-icon>在管总面积</div>
-<div class="bi-card-value text-green">2,290 ㎡</div>
-<div class="bi-card-sub">项目总控面积 <span class="highlight-text">2,640 ㎡</span></div>
+<div class="bi-card-title"><iconify-icon icon="mdi:office-building-multiple" style="font-size:16px;color:#1890ff;"></iconify-icon>当前出租面积</div>
+<div class="bi-card-value text-blue">19,806.98㎡</div>
 </div>
 <div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:percent" style="font-size:16px;color:#722ed1;"></iconify-icon>综合出租率</div>
-<div class="bi-card-value text-purple">97.8%</div>
-<div class="bi-card-sub">3月数据 <span class="up">↑ 0.9%</span> 较2月</div>
+<div class="bi-card-title"><iconify-icon icon="mdi:percent" style="font-size:16px;color:#722ed1;"></iconify-icon>当前出租率</div>
+<div class="bi-card-value text-purple">66.57%</div>
+<div class="bi-card-sub">较上月 <span class="up">↑ 0.47%</span></div>
 </div>
 <div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:currency-cny" style="font-size:16px;color:#52c41a;"></iconify-icon>月租金总收入</div>
-<div class="bi-card-value text-green">¥ 607,000</div>
-<div class="bi-card-sub">1月数据 · 实收率 <span class="highlight-text">97.9%</span></div>
+<div class="bi-card-title"><iconify-icon icon="mdi:cash-multiple" style="font-size:16px;color:#fa8c16;"></iconify-icon>累计应收金额</div>
+<div class="bi-card-value text-amber">1,329.50万</div>
+<div class="bi-card-sub">累计实际回款 <span class="up">998.50万</span></div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:check-circle-outline" style="font-size:16px;color:#52c41a;"></iconify-icon>实际收缴率</div>
+<div class="bi-card-value text-green">96.50%</div>
+<div class="bi-card-sub">回款率 <span class="highlight-text">96.50%</span></div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:target" style="font-size:16px;color:#1890ff;"></iconify-icon>目标完成情况</div>
+<div class="bi-card-value text-blue">1,700.00万</div>
+<div class="bi-card-sub">目标 1,200.00万 · 完成率 <span class="up">141.67%</span></div>
 </div>
 </div>
 </div>
 <div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>数据可视化分析</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+<div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>出租率趋势分析</div>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
 <div class="chart-container">
-<div class="chart-title">各单元出租率排行</div>
+<div class="chart-title">楼宇出租率趋势图</div>
+<div class="w-full" id="buildingOccTrendChart" style="height:320px;"></div>
+</div>
+<div class="chart-container">
+<div class="chart-title">各户型出租率</div>
 <div class="w-full" id="buildingOccChart" style="height:320px;"></div>
 </div>
-<div class="chart-container">
-<div class="chart-title">租户行业分布</div>
-<div class="w-full" id="buildingTypeChart" style="height:320px;"></div>
-</div>
-<div class="chart-container">
-<div class="chart-title">月度租金实收趋势</div>
-<div class="w-full" id="buildingRevenueChart" style="height:320px;"></div>
-</div>
 </div>
 </div>
 <div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:table" style="color:#1890ff;"></iconify-icon>明细数据清单</div>
-<div style="display:flex;flex-direction:column;gap:12px;">
-<div class="table-container">
-<div class="table-header"><h3>楼宇运营状况表</h3><span class="badge badge-blue">1月数据</span></div>
-<table>
-<thead><tr><th>楼宇</th><th>单元号</th><th>租户名称</th><th>面积(㎡)</th><th>租金(元)</th><th>物业费(元)</th><th>停车费(元)</th><th>实收率</th></tr></thead>
-<tbody>
-<tr><td>1号楼</td><td>G101</td><td>云创科技</td><td>500</td><td class="drill-down-clickable">110,000</td><td>20,000</td><td>1,600</td><td><span class="badge badge-green">100%</span></td></tr>
-<tr><td>1号楼</td><td>G102</td><td>鼎信金融</td><td>350</td><td class="drill-down-clickable">105,000</td><td>14,000</td><td>1,600</td><td><span class="badge badge-amber">95.2%</span></td></tr>
-<tr><td>1号楼</td><td>G103</td><td>迈思设计</td><td>240</td><td class="drill-down-clickable">72,000</td><td>—</td><td>800</td><td><span class="badge badge-green">100%</span></td></tr>
-<tr><td>1号楼</td><td>G301</td><td>寰宇咨询</td><td>800</td><td class="drill-down-clickable">240,000</td><td>32,000</td><td>2,400</td><td><span class="badge badge-green">100%</span></td></tr>
-<tr><td>2号楼</td><td>B201</td><td>智慧教育</td><td>400</td><td class="drill-down-clickable">80,000</td><td>16,000</td><td>1,600</td><td><span class="badge badge-amber">95.0%</span></td></tr>
-</tbody>
-</table>
+<div class="module-section-title"><iconify-icon icon="mdi:chart-pie" style="color:#1890ff;"></iconify-icon>营收来源
+<span id="pieDrillBreadcrumb" style="font-size:12px;color:#8c8c8c;font-weight:400;margin-left:8px;">— 点击饼图可下钻查看明细</span>
+<button id="pieBackBtn" onclick="pieDrillUp()" style="display:none;margin-left:auto;padding:3px 12px;border:1px solid #d9d9d9;border-radius:4px;background:#fff;color:#595959;font-size:12px;cursor:pointer;"><iconify-icon icon="mdi:arrow-left" style="font-size:14px;vertical-align:middle;"></iconify-icon> 返回</button>
 </div>
-<div class="table-container">
-<div class="table-header"><h3>楼宇面积明细表</h3><span class="badge badge-blue">3月数据</span></div>
-<table>
-<thead><tr><th>楼宇</th><th>单元号</th><th>租赁面积(㎡)</th><th>已出租面积(㎡)</th><th>空置面积(㎡)</th><th>出租率</th><th>本楼总面积(㎡)</th></tr></thead>
-<tbody>
-<tr><td>1号楼</td><td>G101</td><td>500</td><td class="drill-down-clickable">500</td><td>0</td><td><span class="badge badge-green">100%</span></td><td rowspan="4" style="text-align:center;font-weight:600;">1,890</td></tr>
-<tr><td>1号楼</td><td>G102</td><td>350</td><td class="drill-down-clickable">350</td><td>0</td><td><span class="badge badge-green">100%</span></td></tr>
-<tr><td>1号楼</td><td>G103</td><td>240</td><td class="drill-down-clickable">240</td><td>0</td><td><span class="badge badge-green">100%</span></td></tr>
-<tr><td>1号楼</td><td>G301</td><td>800</td><td class="drill-down-clickable">760</td><td>40</td><td><span class="badge badge-amber">95.0%</span></td></tr>
-<tr><td>2号楼</td><td>B201</td><td>400</td><td class="drill-down-clickable">390</td><td>10</td><td><span class="badge badge-amber">97.5%</span></td><td style="text-align:center;font-weight:600;">400</td></tr>
-</tbody>
-</table>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<div class="chart-container">
+<div class="w-full" id="feePieChart" style="height:340px;"></div>
+</div>
+<div class="chart-container" id="pieDetailPanel">
+<div class="chart-title" id="pieDetailTitle">费用明细</div>
+<div id="pieDetailContent" style="font-size:13px;color:#595959;padding:4px 0;"></div>
+</div>
 </div>
 </div>
 </div>
@@ -210,72 +228,197 @@ tbody tr:hover { background: #e6f7ff; }
 <div class="modal-footer"><button onclick="hideDrillDown()">关闭窗口</button></div>
 </div>
 </div>
-<div class="bottom-info">数据更新时间：2026-05-18 09:00</div>
+<div class="bottom-info">数据更新时间：2025-04-30 17:00</div>
 <script>
 const ECHARTS_THEME_COLORS = ['#1890ff','#722ed1','#52c41a','#fa8c16','#eb2f96','#13c2c2'];
-var buildingData={units:[{id:'G101',building:'1号楼',tenant:'云创科技',area:500,industry:'科技',rent:110000,propertyFee:20000,parking:1600,collectionRate:100},{id:'G102',building:'1号楼',tenant:'鼎信金融',area:350,industry:'金融',rent:105000,propertyFee:14000,parking:1600,collectionRate:95.2},{id:'G103',building:'1号楼',tenant:'迈思设计',area:240,industry:'设计',rent:72000,propertyFee:0,parking:800,collectionRate:100},{id:'G301',building:'1号楼',tenant:'寰宇咨询',area:800,industry:'咨询',rent:240000,propertyFee:32000,parking:2400,collectionRate:100},{id:'B201',building:'2号楼',tenant:'智慧教育',area:400,industry:'教育',rent:80000,propertyFee:16000,parking:1600,collectionRate:95}],areaLastMonth:{'G101':{mar:500,feb:500,jan:480},'G102':{mar:350,feb:350,jan:300},'G103':{mar:240,feb:240,jan:240},'G301':{mar:760,feb:800,jan:800},'B201':{mar:390,feb:400,jan:400}},revenueTrend:{'1月':{actual:59.46,target:60.70},'2月':{actual:59.36,target:60.70},'3月':{actual:60.56,target:60.70}}};
+
+var currentDateType = 'month';
+
+function switchDateType(btn, type) {
+    document.querySelectorAll('.filter-row .filter-btn').forEach(function(b){ b.classList.remove('filter-btn-active'); });
+    btn.classList.add('filter-btn-active');
+    currentDateType = type;
+    var c=document.getElementById('datePickerContainer');
+    var val='',tp='';
+    if(type==='day'){tp='date';val='2025-04-30';}
+    else if(type==='month'){tp='month';val='2025-04';}
+    else if(type==='quarter'){tp='month';val='2025-01';}
+    else{c.innerHTML='<select id=\"datePicker\" onchange=\"refreshData()\"><option value=\"2024\">2024年</option><option value=\"2025\" selected>2025年</option></select>';refreshData();return;}
+    c.innerHTML='<input id=\"datePicker\" type=\"'+tp+'\" value=\"'+val+'\" onchange=\"refreshData()\"/>';
+    refreshData();
+}
+
+function refreshData() {
+    console.log('楼宇运营 - 粒度:', currentDateType, '日期:', document.getElementById('datePicker').value);
+}
+
+var buildingData = {
+    units: [
+        {id:'G101',building:'1号楼',tenant:'云创科技',area:500,occRate:100},
+        {id:'G102',building:'1号楼',tenant:'鼎信金融',area:350,occRate:95.2},
+        {id:'G103',building:'1号楼',tenant:'迈思设计',area:240,occRate:100},
+        {id:'G301',building:'1号楼',tenant:'寰宇咨询',area:760,occRate:95},
+        {id:'B201',building:'2号楼',tenant:'智慧教育',area:390,occRate:97.5}
+    ],
+    occTrend: {
+        months: ['2025-01','2025-02','2025-03','2025-04'],
+        overall: [64.2, 65.8, 66.1, 66.57],
+        building1: [63.5, 65.0, 65.5, 66.0],
+        building2: [66.0, 67.5, 67.8, 68.0]
+    }
+};
 
 window.onload=function(){initBuildingCharts();};
 
 function initBuildingCharts(){
-var units=buildingData.units;
+// 楼宇出租率趋势图
+var occTrendChart=echarts.init(document.getElementById('buildingOccTrendChart'));
+var occMonths=buildingData.occTrend.months;
+occTrendChart.setOption({color:['#1890ff'],backgroundColor:'#ffffff',
+tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'},
+formatter:function(p){return p[0].axisValue+'<br/>出租率: <b>'+p[0].value+'%</b>';}},
+legend:{data:['综合出租率'],textStyle:{color:'#8c8c8c',fontSize:12},top:0},
+grid:{left:'3%',right:'4%',bottom:'3%',top:36,containLabel:true},
+xAxis:{type:'category',data:occMonths,axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},
+yAxis:{type:'value',min:55,max:75,splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c',formatter:'{value}%'}},
+series:[
+{name:'综合出租率',type:'line',smooth:true,data:buildingData.occTrend.overall,symbol:'circle',symbolSize:10,lineStyle:{color:'#1890ff',width:3},itemStyle:{color:'#1890ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(24,144,255,0.2)'},{offset:1,color:'rgba(24,144,255,0)'}])},label:{show:true,formatter:'{c}%',color:'#1890ff',fontSize:12,fontWeight:'bold',position:'top'}}
+]});
+window.addEventListener('resize',function(){occTrendChart.resize();});
+
+// 各户型出租率
 var occChart=echarts.init(document.getElementById('buildingOccChart'));
-var occRates=units.map(function(u){var d=buildingData.areaLastMonth[u.id];return +(d.mar/u.area*100).toFixed(1);});
-var unitLabels=units.map(function(u){return u.id+'('+u.building.replace('号楼','')+'号楼)';});
-occChart.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'},formatter:function(p){var idx=p[0].dataIndex;var u=units[idx];var h='<b>'+u.id+'</b><br/>楼宇: '+u.building+'<br/>租户: '+u.tenant+'<br/>出租率: '+p[0].value+'%<br/>面积: '+u.area+'㎡';h+='<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：楼宇运营总面积.xlsx</div>';return h;}},grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:unitLabels,axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c',rotate:25,fontSize:11}},yAxis:{type:'value',min:80,max:105,splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c',formatter:'{value}%'}},series:[{type:'bar',data:occRates.map(function(v,i){return{value:v,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:ECHARTS_THEME_COLORS[i%ECHARTS_THEME_COLORS.length]},{offset:1,color:ECHARTS_THEME_COLORS[i%ECHARTS_THEME_COLORS.length]+'66'}]),borderRadius:[4,4,0,0]}};}),label:{show:true,position:'top',formatter:'{c}%',color:'#333',fontSize:11}}]});
+var roomTypes=['一室','两室','三室','四室','大开间','复式','商铺'];
+var roomRates=[92.5,88.3,76.8,65.2,95.0,71.5,60.0];
+var roomAreas=[45,80,120,180,55,150,200];
+occChart.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',
+tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'},
+formatter:function(p){var i=p[0].dataIndex;return '<b>'+roomTypes[i]+'</b><br/>面积: '+roomAreas[i]+'㎡<br/>出租率: '+roomRates[i]+'%';}},
+grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},
+xAxis:{type:'category',data:roomTypes,axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c',fontSize:11}},
+yAxis:{type:'value',min:50,max:105,splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c',formatter:'{value}%'}},
+series:[{type:'bar',data:roomRates.map(function(v,i){return{value:v,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:ECHARTS_THEME_COLORS[i%ECHARTS_THEME_COLORS.length]},{offset:1,color:ECHARTS_THEME_COLORS[i%ECHARTS_THEME_COLORS.length]+'66'}]),borderRadius:[4,4,0,0]}};}),label:{show:true,position:'top',formatter:'{c}%',color:'#333',fontSize:11}}]});
 window.addEventListener('resize',function(){occChart.resize();});
 
-var typeChart=echarts.init(document.getElementById('buildingTypeChart'));
-var industryMap={};
-units.forEach(function(u){if(industryMap[u.industry]){industryMap[u.industry].area+=u.area;}else{industryMap[u.industry]={area:u.area,color:ECHARTS_THEME_COLORS[Object.keys(industryMap).length%ECHARTS_THEME_COLORS.length]};}});
-var industryData=Object.keys(industryMap).map(function(k,i){return{value:industryMap[k].area,name:k,itemStyle:{color:ECHARTS_THEME_COLORS[i%ECHARTS_THEME_COLORS.length]}};});
-typeChart.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'item',backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'},formatter:function(p){var h=p.name+': '+p.value+'㎡ ('+p.percent+'%)';h+='<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：楼宇运营已出租信息.xlsx</div>';return h;}},series:[{type:'pie',radius:['40%','70%'],avoidLabelOverlap:false,itemStyle:{borderRadius:6,borderColor:'#ffffff',borderWidth:3},label:{show:true,position:'outside',formatter:'{b}\n{d}%',fontSize:12,color:'#595959'},labelLine:{length:10,length2:15,lineStyle:{color:'#d9d9d9'}},data:industryData}]});
-window.addEventListener('resize',function(){typeChart.resize();});
+// 费用构成饼图（支持下钻）
+initFeePie();
+}
 
-var revChart=echarts.init(document.getElementById('buildingRevenueChart'));
-var months=['1月','2月','3月'];
-var actualData=months.map(function(m){return buildingData.revenueTrend[m].actual;});
-var targetData=months.map(function(m){return buildingData.revenueTrend[m].target;});
-revChart.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'},formatter:function(p){var s='<b>'+p[0].axisValue+'</b><br/>';p.forEach(function(v){s+=v.marker+' '+v.seriesName+': ¥'+v.value.toFixed(2)+' 万<br/>';});s+='<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：楼宇运营已出租信息.xlsx</div>';return s;}},legend:{data:['实收金额','应收金额'],textStyle:{color:'#8c8c8c',fontSize:12},top:0},grid:{left:'3%',right:'4%',bottom:'3%',top:30,containLabel:true},xAxis:{type:'category',data:months,axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c',formatter:'¥{value}万'},min:55},series:[{name:'实收金额',type:'line',smooth:true,data:actualData,symbol:'circle',symbolSize:8,lineStyle:{color:'#1890ff',width:2},itemStyle:{color:'#1890ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(24,144,255,0.15)'},{offset:1,color:'rgba(24,144,255,0)'}])}},{name:'应收金额',type:'line',smooth:true,data:targetData,symbol:'diamond',symbolSize:8,lineStyle:{color:'#722ed1',width:2,type:'dashed'},itemStyle:{color:'#722ed1'}}]});
-window.addEventListener('resize',function(){revChart.resize();});
+var feePieChart = null;
+var feeDrillLevel = 0;
+var feePieData = {
+  level0: {
+    name: '费用构成',
+    items: [
+      {name: '主营', value: 750, children: [
+        {name: '物业费', value: 280},
+        {name: '停车费', value: 180},
+        {name: '租金', value: 290}
+      ]},
+      {name: '多经', value: 310, children: [
+        {name: '广告费', value: 85},
+        {name: '服务费', value: 120},
+        {name: '履约保证金', value: 35},
+        {name: '维修费', value: 42},
+        {name: '商品销售费', value: 28}
+      ]}
+    ]
+  }
+};
+
+function initFeePie() {
+  feePieChart = echarts.init(document.getElementById('feePieChart'));
+  renderFeePie(feePieData.level0);
+  // 默认显示整体概览
+  showPieOverview();
+  feePieChart.on('click', function(params) {
+    if (params.data && params.data.children) {
+      feeDrillLevel = 1;
+      document.getElementById('pieBackBtn').style.display = 'inline-block';
+      document.getElementById('pieDrillBreadcrumb').innerText = params.name + ' › 明细';
+      showPieDetail(params.data.children);
+      renderFeePie({name: params.name, items: params.data.children});
+    }
+  });
+}
+
+function showPieOverview() {
+  var items = feePieData.level0.items;
+  var total = items.reduce(function(s,i){return s+i.value;}, 0);
+  var html = '<div style="padding:8px 0;">';
+  html += '<div style="font-size:13px;color:#8c8c8c;margin-bottom:12px;">总费用 <span style="font-size:18px;font-weight:700;color:#1890ff;">' + total + '</span> 万</div>';
+  html += '<table style="width:100%;font-size:12px;border-collapse:collapse;">';
+  html += '<thead><tr style="background:#f0f5ff;"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid #e8ecf1;">类别</th><th style="padding:8px 12px;text-align:right;border-bottom:1px solid #e8ecf1;">金额(万)</th><th style="padding:8px 12px;text-align:right;border-bottom:1px solid #e8ecf1;">占比</th></tr></thead><tbody>';
+  items.forEach(function(item) {
+    var pct = (item.value/total*100).toFixed(2);
+    html += '<tr style="cursor:pointer;" onmouseover="this.style.background=\'#f5f5f5\'" onmouseout="this.style.background=\'\'" onclick="triggerPieClick(\''+item.name+'\')">';
+    html += '<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1890ff;margin-right:6px;"></span>'+item.name+'</td>';
+    html += '<td style="padding:8px 12px;text-align:right;font-weight:600;border-bottom:1px solid #f0f0f0;">'+item.value+'</td>';
+    html += '<td style="padding:8px 12px;text-align:right;color:#8c8c8c;border-bottom:1px solid #f0f0f0;">'+pct+'%</td></tr>';
+  });
+  html += '</tbody></table>';
+  html += '<div style="margin-top:12px;padding:10px;background:#f6ffed;border-radius:4px;font-size:12px;color:#52c41a;"><iconify-icon icon="mdi:information-outline" style="vertical-align:middle;"></iconify-icon> 点击左侧饼图或上方表格查看明细</div>';
+  html += '</div>';
+  document.getElementById('pieDetailTitle').innerText = '费用总览';
+  document.getElementById('pieDetailContent').innerHTML = html;
+}
+
+function triggerPieClick(name) {
+  var items = feePieData.level0.items;
+  var item = items.find(function(i){return i.name===name;});
+  if (item && item.children) {
+    feeDrillLevel = 1;
+    document.getElementById('pieBackBtn').style.display = 'inline-block';
+    document.getElementById('pieDrillBreadcrumb').innerText = name + ' › 明细';
+    showPieDetail(item.children);
+    renderFeePie({name: name, items: item.children});
+  }
+}
+
+function renderFeePie(data) {
+  var items = data.items || [];
+  var colors = ['#1890ff','#52c41a','#722ed1','#fa8c16','#eb2f96','#13c2c2'];
+  feePieChart.setOption({
+    color: colors,
+    tooltip: {trigger:'item', formatter:function(p){return p.name+': '+p.value+' 万 ('+p.percent+'%)';},
+      backgroundColor:'#ffffff', borderColor:'#e8ecf1', textStyle:{color:'#333'}},
+    series: [{
+      type:'pie', radius:['45%','72%'], center:['50%','52%'],
+      avoidLabelOverlap: false,
+      itemStyle:{borderRadius:6, borderColor:'#fff', borderWidth:3},
+      label:{show:true, formatter:'{b}\n{d}%', fontSize:12, color:'#595959'},
+      labelLine:{length:10, length2:15, lineStyle:{color:'#d9d9d9'}},
+      data: items.map(function(item, i) {
+        return {value: item.value, name: item.name, children: item.children || null,
+          itemStyle:{color: colors[i % colors.length]}};
+      })
+    }]
+  });
+}
+
+function pieDrillUp() {
+  feeDrillLevel = 0;
+  document.getElementById('pieBackBtn').style.display = 'none';
+  document.getElementById('pieDrillBreadcrumb').innerText = '— 点击饼图可下钻查看明细';
+  showPieOverview();
+  renderFeePie(feePieData.level0);
+}
+
+function showPieDetail(items) {
+  var total = items.reduce(function(s,i){return s+i.value;}, 0);
+  var html = '<table style="width:100%;font-size:12px;border-collapse:collapse;">';
+  html += '<thead><tr style="background:#f0f5ff;"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid #e8ecf1;">费用项</th><th style="padding:8px 12px;text-align:right;border-bottom:1px solid #e8ecf1;">金额(万)</th><th style="padding:8px 12px;text-align:right;border-bottom:1px solid #e8ecf1;">占比</th></tr></thead><tbody>';
+  items.forEach(function(item) {
+    var pct = (item.value/total*100).toFixed(1);
+    html += '<tr><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;">'+item.name+'</td><td style="padding:8px 12px;text-align:right;font-weight:600;border-bottom:1px solid #f0f0f0;">'+item.value+'</td><td style="padding:8px 12px;text-align:right;color:#8c8c8c;border-bottom:1px solid #f0f0f0;">'+pct+'%</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('pieDetailTitle').innerText = '费用明细';
+  document.getElementById('pieDetailContent').innerHTML = html;
 }
 
 function showDrillDown(t){document.getElementById('modalTitle').innerText=t;document.getElementById('drillDownModal').classList.add('show');}
 function hideDrillDown(){document.getElementById('drillDownModal').classList.remove('show');}
-
-/* ===== 日期切换功能 ===== */
-var dateData_hotel = {
-'2026-05-18':{label:'2026年05月18日',totalBuilding:2,totalArea:2290,ctrlArea:'2,640',occRate:97.8,occChange:'↑ 0.9%',monthRevenue:'¥ 607,000',revSub:'1月数据 · 实收率 97.9%',revActual:[59.46,59.36,60.56],timestamp:'数据更新时间：2026-05-18 09:00'},
-'2026-05-17':{label:'2026年05月17日',totalBuilding:2,totalArea:2280,ctrlArea:'2,640',occRate:97.2,occChange:'↑ 0.5%',monthRevenue:'¥ 598,000',revSub:'1月数据 · 实收率 96.5%',revActual:[58.80,58.50,59.80],timestamp:'数据更新时间：2026-05-17 09:00'},
-'2026-05-16':{label:'2026年05月16日',totalBuilding:2,totalArea:2270,ctrlArea:'2,640',occRate:96.8,occChange:'↑ 0.3%',monthRevenue:'¥ 590,000',revSub:'1月数据 · 实收率 95.5%',revActual:[58.10,57.80,59.20],timestamp:'数据更新时间：2026-05-16 09:00'},
-'2026-05-15':{label:'2026年05月15日',totalBuilding:2,totalArea:2255,ctrlArea:'2,640',occRate:96.3,occChange:'↑ 0.1%',monthRevenue:'¥ 582,000',revSub:'1月数据 · 实收率 94.8%',revActual:[57.50,57.20,58.60],timestamp:'数据更新时间：2026-05-15 09:00'},
-'2026-05-14':{label:'2026年05月14日',totalBuilding:2,totalArea:2240,ctrlArea:'2,640',occRate:95.8,occChange:'↓ 0.1%',monthRevenue:'¥ 575,000',revSub:'1月数据 · 实收率 94.0%',revActual:[56.80,56.50,58.00],timestamp:'数据更新时间：2026-05-14 09:00'}
-};
-function switchDate(dateKey) {
-	var dd = dateData_hotel[dateKey];
-	if (!dd) return;
-	document.getElementById('displayDate').textContent = dd.label;
-	var cards = document.querySelectorAll('.bi-card');
-	if (cards.length >= 4) {
-		var cv0 = cards[0].querySelector('.bi-card-value');
-		if (cv0) cv0.textContent = dd.totalBuilding + ' 栋';
-		var cv1 = cards[1].querySelector('.bi-card-value');
-		if (cv1) cv1.textContent = dd.totalArea + ' ㎡';
-		var cv2 = cards[2].querySelector('.bi-card-value');
-		if (cv2) cv2.textContent = dd.occRate + '%';
-		var cs2 = cards[2].querySelector('.bi-card-sub');
-		if (cs2) cs2.innerHTML = '3月数据 <span class="up">' + dd.occChange + '</span> 较2月';
-		var cv3 = cards[3].querySelector('.bi-card-value');
-		if (cv3) cv3.textContent = dd.monthRevenue;
-		var cs3 = cards[3].querySelector('.bi-card-sub');
-		if (cs3) cs3.textContent = dd.revSub;
-	}
-	/* 更新租金趋势图 */
-	var revChart = echarts.getInstanceByDom(document.getElementById('buildingRevenueChart'));
-	if (revChart) revChart.setOption({series:[{data:dd.revActual}]});
-	var ts = document.querySelector('.bottom-info');
-	if (ts && dd.timestamp) ts.textContent = dd.timestamp;
-}
 </script>
 </body>
 </html>

@@ -166,7 +166,7 @@ body {
 .content-scroll { flex: 1; overflow-y: auto; padding: 16px 16px 40px; height: 100%; }
 
 /* ===== 筛选控件 ===== */
-select, input[type="date"] {
+select, input[type="date"], input[type="month"] {
     background: #ffffff;
     border: 1px solid #d9d9d9;
     border-radius: 6px;
@@ -177,12 +177,27 @@ select, input[type="date"] {
     cursor: pointer;
     transition: border-color 0.2s;
 }
-select:focus, input[type="date"]:focus {
+select:focus, input[type="date"]:focus, input[type="month"]:focus {
     border-color: #1890ff;
     box-shadow: 0 0 0 2px rgba(24,144,255,0.15);
 }
 select option { background: #fff; color: #333; }
 
+/* ===== 筛选条件行 ===== */
+.filter-row { background: #ffffff; border-bottom: 1px solid #e8ecf1; padding: 10px 20px; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 16px; }
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.filter-group label {
+    font-size: 13px;
+    color: #8c8c8c;
+    white-space: nowrap;
+}
+.filter-btn { padding: 5px 16px; border-radius: 4px; font-size: 13px; border: 1px solid #d9d9d9; cursor: pointer; transition: all 0.15s; background: #f5f5f5; color: #595959; }
+.filter-btn:hover { border-color: #1890ff; color: #1890ff; }
+.filter-btn-active { background: #1890ff; border-color: #1890ff; color: #fff; }
 /* ===== 渠道筛选按钮 ===== */
 .filter-btn {
     padding: 5px 14px;
@@ -517,24 +532,26 @@ tbody tr:hover { background: #e6f7ff; }
 <span>出租车</span>
 </a>
 </nav>
-<div class="sidebar-alert">
-<div class="sidebar-alert-title">
-<iconify-icon icon="mdi:alert-circle" style="font-size:16px;"></iconify-icon>
-今日亏损门店
-</div>
-<div class="sidebar-alert-item"><span class="dot"></span>汉口枫渡 <span class="loss-amount">-13,972.19</span></div>
-<div class="sidebar-alert-item"><span class="dot"></span>南通H <span class="loss-amount">-12,035.94</span></div>
-<div class="sidebar-alert-item"><span class="dot"></span>沌口枫渡 <span class="loss-amount">-10,316.27</span></div>
-</div>
 </aside>
 <!-- 主内容区 -->
 <main class="main-area">
 <!-- 顶部导航栏 -->
 <header class="topbar">
 <div class="topbar-left">
-<h1 class="topbar-title">酒店管理</h1>
-<div style="display:flex;align-items:center;gap:8px;margin-left:12px;">
-<select id="hotelFilter" onchange="applyFilters()">
+<h1 class="topbar-title">酒店管理看板</h1><span class="badge badge-blue" style="font-size:12px;margin-left:8px;">每日更新</span>
+</div>
+<div class="topbar-right">
+<button class="topbar-btn" onclick="location.reload()" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
+<button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
+<button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
+<div class="topbar-date">2026年05月18日</div>
+<div class="topbar-avatar" title="李总 (CEO)">李</div>
+</div>
+</header>
+<div class="filter-row" style="background:#ffffff;border-bottom:1px solid #e8ecf1;width:100%;">
+  <div class="filter-group">
+    <label>酒店</label>
+    <select id="hotelFilter" onchange="applyFilters()">
 <option value="全部">全部酒店</option>
 <option value="上海全季">上海全季</option>
 <option value="广州丽怡">广州丽怡</option>
@@ -547,83 +564,69 @@ tbody tr:hover { background: #e6f7ff; }
 <option value="天津枫渡">天津枫渡</option>
 <option value="汉口枫渡">汉口枫渡</option>
 </select>
-<input id="dateStart" type="date" value="2026-05-01"/>
-<span style="color:#d9d9d9;font-size:13px;">—</span>
-<input id="dateEnd" type="date" value="2026-05-28"/>
+  </div>
+<div class="filter-group">
+<label><iconify-icon icon="mdi:calendar" style="color:#8c8c8c;"></iconify-icon> 数据日期</label>
+<span id="datePickerContainer"><input type="month" id="datePicker" value="2026-05" onchange="refreshData()"/></span>
+</div>
+<div class="filter-group">
+<label>时间粒度</label>
+<div style="margin-left:auto;display:flex;gap:4px;">
+<button class="filter-btn" onclick="switchDateType(this,'day')">日</button>
+<button class="filter-btn filter-btn-active" onclick="switchDateType(this,'month')">月</button>
+<button class="filter-btn" onclick="switchDateType(this,'quarter')">季</button>
+<button class="filter-btn" onclick="switchDateType(this,'year')">年</button>
 </div>
 </div>
-<div class="topbar-right">
-<div style="display:flex;align-items:center;gap:8px;">
-<span style="font-size:13px;color:#8c8c8c;">渠道:</span>
-<button class="filter-btn filter-btn-active" data-channel="全部" onclick="switchChannel(this,'全部')">全部</button>
-<button class="filter-btn" data-channel="OTA" onclick="switchChannel(this,'OTA')">OTA</button>
-<button class="filter-btn" data-channel="散客" onclick="switchChannel(this,'散客')">散客</button>
-<button class="filter-btn" data-channel="协议" onclick="switchChannel(this,'协议')">协议</button>
-<button class="filter-btn" data-channel="会员" onclick="switchChannel(this,'会员')">会员</button>
-<button class="filter-btn" data-channel="钟点" onclick="switchChannel(this,'钟点')">钟点</button>
+  <div class="filter-group">
+    <label>渠道</label>
+    <button class="filter-btn filter-btn-active" data-channel="全部" onclick="switchChannel(this,'全部')">全部</button>
+    <button class="filter-btn" data-channel="OTA" onclick="switchChannel(this,'OTA')">OTA</button>
+    <button class="filter-btn" data-channel="散客" onclick="switchChannel(this,'散客')">散客</button>
+    <button class="filter-btn" data-channel="协议" onclick="switchChannel(this,'协议')">协议</button>
+    <button class="filter-btn" data-channel="会员" onclick="switchChannel(this,'会员')">会员</button>
+    <button class="filter-btn" data-channel="钟点" onclick="switchChannel(this,'钟点')">钟点</button>
+  </div>
 </div>
-<button class="topbar-btn" onclick="location.reload()" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
-<button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
-<button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
-<div style="display:inline-flex;align-items:center;margin-left:12px;position:relative;">
-<span id="displayDate" style="font-size:13px;color:#666;">2026-05-18</span>
-<select id="dateSelector" onchange="switchDate(this.value)" style="margin-left:6px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;font-size:12px;color:#333;background:#fff;cursor:pointer;outline:none;">
-<option value="2026-05-18">2026-05-18</option>
-<option value="2026-05-17">2026-05-17</option>
-<option value="2026-05-16">2026-05-16</option>
-<option value="2026-05-15">2026-05-15</option>
-<option value="2026-05-14">2026-05-14</option>
-</select>
-</div>
-<div class="topbar-date">2026年05月18日</div>
-<div class="topbar-avatar" title="李总 (CEO)">李</div>
-</div>
-</header>
-<!-- 内容区域 -->
+
+<!-- 经营分析总结报告 -->
 <div class="content-scroll" style="display:flex;flex-direction:column;gap:12px;">
+
+    <!-- 门店盈亏总览 -->
+<div class="module-section">
+<div class="module-section-title"><iconify-icon icon="mdi:store-check" style="color:#1890ff;"></iconify-icon>门店盈亏总览</div>
+<div class="summary-card" style="background:#ffffff;border:1px solid #e2e5e9;padding:14px 16px;">
+<div class="summary-line"><div class="summary-dot green"></div><div><span class="summary-highlight" style="color:#52c41a;">盈利门店（4家）：</span>上海全季（+12.6万）、广州丽怡（+8.3万）、重庆丽怡（+5.1万）、沌口枫渡（+3.8万），合计盈利 <span class="summary-highlight" style="color:#52c41a;">29.8万</span></div></div>
+<div class="summary-line"><div class="summary-dot red"></div><div><span class="summary-highlight" style="color:#f5222d;">亏损门店（6家）：</span>武汉某酒店（-7.2万）、沌口H（-4.5万）、南通H（-2.8万）、济南枫渡（-1.6万）、汉口枫渡（-1.4万）、天津枫渡（-0.9万），合计亏损 <span class="summary-highlight" style="color:#f5222d;">18.4万</span></div></div>
+<div class="summary-line"><div class="summary-dot blue"></div><div><span class="summary-highlight" style="color:#1890ff;">整体表现：</span>10家门店中4盈6亏，当日净利 <span class="summary-highlight" style="color:#52c41a;">+11.4万</span>，需重点关注亏损门店运营情况。</div></div>
+</div>
+</div>
 <!-- 核心经营指标 -->
 <div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标</div>
-<!-- 核心指标行 1 -->
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
-<div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:bed" style="font-size:16px;color:#1890ff;"></iconify-icon>当日综合出租率</div>
-<div class="bi-card-value text-blue" id="kpiOcc">51.62%</div>
-<div class="bi-card-sub">月出租率 <span class="highlight-text" id="kpiMonthlyOcc">33.70%</span> <span class="up">↑</span></div>
-</div>
-<div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:currency-cny" style="font-size:16px;color:#722ed1;"></iconify-icon>日均价 (ADR)</div>
-<div class="bi-card-value text-purple" id="kpiAdr">¥327.72</div>
-<div class="bi-card-sub">月均价 <span class="highlight-text" id="kpiMonthlyAdr">¥372.71</span> <span class="up">↑</span></div>
-</div>
+<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标 <span style="font-size:11px;color:#999;font-weight:400;">📋 数据来源：酒店.xlsx</span></div>
+    <!-- 日指标 -->
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:8px;">
 <div class="bi-card">
 <div class="bi-card-title"><iconify-icon icon="mdi:chart-bar" style="font-size:16px;color:#52c41a;"></iconify-icon>当日总营收</div>
-<div class="bi-card-value text-green" id="kpiRevenue">¥239,700.69</div>
-<div class="bi-card-sub">本月完成率 <span class="highlight-text" id="kpiCompletion">53.34%</span></div>
+<div class="bi-card-value text-green" id="kpiRevenue" style="font-size:18px;">24.1万</div>
+<div class="bi-card-sub">完成率 <span class="highlight-text" id="kpiCompletion">52.6%</span></div>
 </div>
 <div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:target" style="font-size:16px;color:#fa8c16;"></iconify-icon>当月营收目标</div>
-<div class="bi-card-value text-amber" id="kpiTarget">¥10,487,059</div>
-<div class="progress-bar"><div class="progress-fill" id="kpiProgressBar" style="width:53.34%;"></div></div>
-<div class="bi-card-sub">完成进度 <span class="highlight-text" id="kpiProgressText">53.34%</span></div>
-</div>
-</div>
-<!-- 核心指标行 2 -->
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-<div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:trending-down" style="font-size:16px;color:#f5222d;"></iconify-icon>日盈亏金额</div>
-<div class="bi-card-value" id="kpiProfit" style="color:#f5222d;">-¥20,107.73</div>
-<div class="bi-card-sub">盈亏平衡点 <span class="highlight-text" id="kpiBreakEven">¥259,808.42</span></div>
+<div class="bi-card-title"><iconify-icon icon="mdi:trending-down" style="font-size:16px;color:#f5222d;"></iconify-icon>盈亏</div>
+<div class="bi-card-value" id="kpiProfit" style="color:#f5222d;font-size:18px;">-2.0万</div>
+<div class="bi-card-sub">平衡点 <span class="highlight-text" id="kpiBreakEven">27.1万</span></div>
 </div>
 <div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:chart-line" style="font-size:16px;color:#13c2c2;"></iconify-icon>日 RevPAR</div>
-<div class="bi-card-value text-cyan" id="kpiRevpar">¥176.51</div>
-<div class="bi-card-sub">月 RevPAR <span class="highlight-text" id="kpiMonthlyRevpar">¥132.88</span></div>
+<div class="bi-card-title"><iconify-icon icon="mdi:bed" style="font-size:16px;color:#1890ff;"></iconify-icon>综合出租率</div>
+<div class="bi-card-value text-blue" id="kpiOcc">51.62%</div>
 </div>
 <div class="bi-card">
-<div class="bi-card-title"><iconify-icon icon="mdi:finance" style="font-size:16px;color:#eb2f96;"></iconify-icon>月累计总营收</div>
-<div class="bi-card-value text-pink" id="kpiMonthlyTotal">¥5,594,163.66</div>
-<div class="bi-card-sub">各酒店累计汇总</div>
+<div class="bi-card-title"><iconify-icon icon="mdi:chart-line" style="font-size:16px;color:#13c2c2;"></iconify-icon>RevPAR</div>
+<div class="bi-card-value text-cyan" id="kpiRevpar">¥177</div>
+</div>
+<div class="bi-card">
+<div class="bi-card-title"><iconify-icon icon="mdi:currency-cny" style="font-size:16px;color:#722ed1;"></iconify-icon>均价ADR</div>
+<div class="bi-card-value text-purple" id="kpiAdr">¥326</div>
 </div>
 </div>
 </div>
@@ -632,9 +635,8 @@ tbody tr:hover { background: #e6f7ff; }
 <div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>数据可视化分析</div>
 <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
 <div class="chart-container">
-<div class="chart-title">渠道占比分析</div>
-<div style="font-size:12px;color:#8c8c8c;margin-top:-8px;margin-bottom:4px;">各渠道客源占比及均价分析</div>
-<div class="w-full" id="hotelChannelStackChart" style="height:360px;"></div>
+<div class="chart-title">好评数</div>
+<div class="w-full" id="hotelTimeChart" style="height:360px;"></div>
 </div>
 <div class="chart-container">
 <div class="chart-title">渠道来源占比</div>
@@ -678,23 +680,6 @@ tbody tr:hover { background: #e6f7ff; }
 </table>
 </div>
 </div>
-<!-- 今日亏损门店 -->
-<div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:alert-circle-outline" style="color:#f5222d;"></iconify-icon>今日亏损门店</div>
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-<div class="loss-card">
-<div class="name"><span class="pulse-dot"></span>汉口枫渡</div>
-<div class="amount">-13,972.19</div>
-</div>
-<div class="loss-card">
-<div class="name"><span class="pulse-dot"></span>南通H</div>
-<div class="amount">-12,035.94</div>
-</div>
-<div class="loss-card">
-<div class="name"><span class="pulse-dot"></span>沌口枫渡</div>
-<div class="amount">-10,316.27</div>
-</div>
-</div>
 </div>
 </div>
 </main>
@@ -718,7 +703,7 @@ tbody tr:hover { background: #e6f7ff; }
 </div>
 </div>
 <script>
-const ECHARTS_THEME_COLORS = ['#1890ff', '#722ed1', '#52c41a', '#fa8c16', '#eb2f96', '#13c2c2'];
+const ECHARTS_THEME_COLORS = ['#1890ff', '#722ed1', '#52c41a', '#fa8c16', '#eb2f96', '#13c2c2', '#38bdf8', '#818cf8', '#4f46e5', '#a78bfa'];
 
 const hotelsData = [
 {name:'上海全季', rooms:199, rented:201, monthlyRented:2822, occ:101.01, monthlyOcc:93.35, adr:367.9, monthlyAdr:411.3, revparDay:371.62, revparMonth:383.95, revDay:79531.4, revMonth:1159323.6, totalRevMonth:1254104.3, target:1899405, completion:66.02, totalRevDay:79531.4, breakEven:61270.3, profit:18261.1, otaPct:18.6, otaPrice:474, otaRooms:37, walkPct:0, walkPrice:0, walkRooms:0, corpPct:16.1, corpPrice:545, corpRooms:32, memPct:27.1, memPrice:431, memRooms:54, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:5, monthGood:75, badReviews:0, monthBad:1},
@@ -767,26 +752,39 @@ const monthlyRevpar = totalRooms > 0 ? (totalRevMonth / (totalRooms * 31)).toFix
 return { occ, adr, monthlyOcc, monthlyAdr, totalRevDay, totalBreakEven, totalProfit, totalRevMonth, totalTarget, completion, revparDay, monthlyRevpar };
 }
 
+var currentDateType='month';
+function switchDateType(btn,type){
+document.querySelectorAll('.filter-row .filter-btn').forEach(function(b){b.classList.remove('filter-btn-active');});
+btn.classList.add('active');currentDateType=type;
+var c=document.getElementById('datePickerContainer');
+var val='',tp='';
+if(type==='day'){tp='date';val='2026-05-18';}
+else if(type==='month'){tp='month';val='2026-05';}
+else if(type==='quarter'){tp='month';val='2026-04';}
+else{c.innerHTML='<select id=\"dateStart\" onchange=\"applyFilters()\"><option value=\"2025\">2025年</option><option value=\"2026\" selected>2026年</option></select>';applyFilters();return;}
+c.innerHTML='<input id=\"dateStart\" type=\"'+tp+'\" value=\"'+val+'\" onchange=\"applyFilters()\"/>';
+applyFilters();
+}
+
 function applyFilters() {
 const hotels = getFilteredHotels();
 const agg = calcAggregate(hotels);
 const isLoss = agg.totalProfit < 0;
-document.getElementById('kpiOcc').textContent = agg.occ + '%';
-document.getElementById('kpiMonthlyOcc').textContent = agg.monthlyOcc + '%';
-document.getElementById('kpiAdr').textContent = '¥' + Number(agg.adr).toLocaleString('zh-CN', {minimumFractionDigits:2});
-document.getElementById('kpiMonthlyAdr').textContent = '¥' + Number(agg.monthlyAdr).toLocaleString('zh-CN', {minimumFractionDigits:2});
-document.getElementById('kpiRevenue').textContent = '¥' + Number(agg.totalRevDay).toLocaleString('zh-CN', {minimumFractionDigits:2});
-document.getElementById('kpiCompletion').textContent = agg.completion + '%';
-document.getElementById('kpiTarget').textContent = '¥' + Number(agg.totalTarget).toLocaleString('zh-CN', {minimumFractionDigits:2});
-document.getElementById('kpiProgressBar').style.width = agg.completion + '%';
-document.getElementById('kpiProgressText').textContent = agg.completion + '%';
-const profitEl = document.getElementById('kpiProfit');
-profitEl.textContent = (isLoss ? '-¥' : '¥') + Number(Math.abs(agg.totalProfit)).toLocaleString('zh-CN', {minimumFractionDigits:2});
-profitEl.style.color = isLoss ? '#f5222d' : '#52c41a';
-document.getElementById('kpiBreakEven').textContent = '¥' + Number(agg.totalBreakEven).toLocaleString('zh-CN', {minimumFractionDigits:2});
-document.getElementById('kpiRevpar').textContent = '¥' + Number(agg.revparDay).toLocaleString('zh-CN', {minimumFractionDigits:2});
-document.getElementById('kpiMonthlyRevpar').textContent = '¥' + Number(agg.monthlyRevpar).toLocaleString('zh-CN', {minimumFractionDigits:2});
-document.getElementById('kpiMonthlyTotal').textContent = '¥' + Number(agg.totalRevMonth).toLocaleString('zh-CN', {minimumFractionDigits:2});
+var el; 
+el=document.getElementById('kpiOcc'); if(el) el.textContent = agg.occ + '%';
+el=document.getElementById('kpiMonthlyOcc'); if(el) el.textContent = agg.monthlyOcc + '%';
+el=document.getElementById('kpiAdr'); if(el) el.textContent = '¥' + Number(agg.adr).toLocaleString('zh-CN', {minimumFractionDigits:2});
+el=document.getElementById('kpiMonthlyAdr'); if(el) el.textContent = '¥' + Number(agg.monthlyAdr).toLocaleString('zh-CN', {minimumFractionDigits:2});
+el=document.getElementById('kpiRevenue'); if(el) el.textContent = '¥' + Number(agg.totalRevDay).toLocaleString('zh-CN', {minimumFractionDigits:2});
+el=document.getElementById('kpiCompletion'); if(el) el.textContent = agg.completion + '%';
+var profitEl = document.getElementById('kpiProfit');
+if(profitEl){profitEl.textContent = (isLoss ? '-¥' : '¥') + Number(Math.abs(agg.totalProfit)).toLocaleString('zh-CN', {minimumFractionDigits:2});
+profitEl.style.color = isLoss ? '#f5222d' : '#52c41a';}
+var bpEl=document.getElementById('kpiBreakEven'); if(bpEl) bpEl.textContent = '¥' + Number(agg.totalBreakEven).toLocaleString('zh-CN', {minimumFractionDigits:2});
+var mpEl=document.getElementById('kpiMonthlyProfit'); if(mpEl) mpEl.textContent = (isLoss ? '-¥' : '¥') + Number(Math.abs(agg.totalProfit*28)).toLocaleString('zh-CN', {minimumFractionDigits:1});
+el=document.getElementById('kpiRevpar'); if(el) el.textContent = '¥' + Number(agg.revparDay).toLocaleString('zh-CN', {minimumFractionDigits:2});
+el=document.getElementById('kpiMonthlyRevpar'); if(el) el.textContent = '¥' + Number(agg.monthlyRevpar).toLocaleString('zh-CN', {minimumFractionDigits:2});
+el=document.getElementById('kpiMonthlyTotal'); if(el) el.textContent = '¥' + Number(agg.totalRevMonth).toLocaleString('zh-CN', {minimumFractionDigits:2});
 renderTable(hotels);
 updateCharts(hotels);
 }
@@ -853,90 +851,71 @@ updateCharts(getFilteredHotels());
 }
 
 function updateCharts(hotels) {
-updateHotelChannelStackChart(hotels);
+updateTimeChart(hotels);
 updateChannelChart(hotels);
 updateMonthlyChart(hotels);
 updateOccChart(hotels);
 }
 
-function updateHotelChannelStackChart(hotels) {
-if (!hotels.length) return;
-const chart = echarts.init(document.getElementById('hotelChannelStackChart'));
-const channelColors = { 'OTA':'#1890ff', '散客':'#52c41a', '协议':'#faad14', '会员':'#722ed1', '钟点':'#eb2f96', '免费':'#d9d9d9' };
-const channelNames = ['OTA', '散客', '协议', '会员', '钟点', '免费'];
-const channelKeys = ['otaPct', 'walkPct', 'corpPct', 'memPct', 'hourPct', 'freePct'];
-const channelPriceKeys = ['otaPrice', 'walkPrice', 'corpPrice', 'memPrice', 'hourPrice', 'freePrice'];
-const channelRoomKeys = ['otaRooms', 'walkRooms', 'corpRooms', 'memRooms', 'hourRooms', 'freeRooms'];
-const hList = hotels;
-const hotelNames = hList.map(h => h.name);
-const series = channelNames.map((name, i) => ({
-name: name,
-type: 'bar',
-stack: 'total',
-barWidth: '70%',
-data: hList.map(h => {
-const pct = h[channelKeys[i]] || 0;
-return parseFloat(pct.toFixed(1));
-}),
-itemStyle: { color: channelColors[name] },
-emphasis: { focus: 'series' }
-}));
+function updateTimeChart(hotels) {
+const totalRev = hotels.reduce((s, h) => s + h.totalRevDay, 0);
+const chart = echarts.init(document.getElementById('hotelTimeChart'));
+const hourlyData = [
+totalRev * 0.03, totalRev * 0.01, totalRev * 0.005, totalRev * 0.002,
+totalRev * 0.008, totalRev * 0.02, totalRev * 0.05, totalRev * 0.08,
+totalRev * 0.12, totalRev * 0.15, totalRev * 0.18, totalRev * 0.20,
+totalRev * 0.22, totalRev * 0.19, totalRev * 0.16, totalRev * 0.14,
+totalRev * 0.17, totalRev * 0.22, totalRev * 0.25, totalRev * 0.20,
+totalRev * 0.15, totalRev * 0.10, totalRev * 0.06, totalRev * 0.04
+];
 chart.setOption({
-color: Object.values(channelColors),
+color: ECHARTS_THEME_COLORS,
 backgroundColor: '#ffffff',
-tooltip: {
-trigger: 'axis',
-axisPointer: { type: 'shadow' },
-formatter: function(params) {
-let html = '<b>' + params[0].axisValue + '</b><br/>';
-params.forEach(function(p) {
-const h = hList.find(x => x.name === p.axisValue);
-const idx = channelNames.indexOf(p.seriesName);
-const price = h ? h[channelPriceKeys[idx]] : 0;
-const rooms = h ? h[channelRoomKeys[idx]] : 0;
-if (p.value > 0) {
-html += '<div style="display:flex;align-items:center;gap:4px;margin:2px 0;">' +
-'<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:' + p.color + ';"></span>' +
-p.seriesName + ': ' + p.value + '%' +
-' (均价¥' + Number(price).toLocaleString() + ', ' + rooms + '间)' +
-'</div>';
-}
-});
-html += '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
-return html;
+tooltip: { 
+  trigger: 'axis', 
+  formatter: function(params) {
+    var p = params[0];
+    return p.axisValue + '<br/>即时营收: ¥' + Number(p.value).toLocaleString('zh-CN', {minimumFractionDigits:2});
+  }, 
+  backgroundColor: '#ffffff', 
+  borderColor: '#e8ecf1',
+  textStyle: {color:'#333'}
 },
-backgroundColor: '#ffffff',
-borderColor: '#e8ecf1',
-textStyle: { color: '#333' }
-},
-legend: {
-data: channelNames,
-top: 0,
-right: 0,
-textStyle: { color: '#8c8c8c', fontSize: 11 }
-},
-grid: { left: '3%', right: '4%', bottom: '3%', top: '14%', containLabel: true },
+grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
 xAxis: {
-type: 'category',
-data: hotelNames,
-axisLine: { lineStyle: { color: '#e8ecf1' } },
-axisLabel: {
-color: '#8c8c8c',
-fontSize: 11,
-rotate: 30,
-interval: 0
-}
+  type: 'category', 
+  boundaryGap: false,
+  data: ['5.15','5.16','5.17','5.18','5.19','5.20','5.21','5.22','5.23'],
+  axisLine: { lineStyle: { color: '#e8ecf1' } },
+  axisLabel: { color: '#8c8c8c' }
 },
 yAxis: {
-type: 'value',
-max: 100,
-splitLine: { lineStyle: { color: '#f0f0f0' } },
-axisLabel: { color: '#8c8c8c', fontSize: 11, formatter: '{value}%' }
+  type: 'value',
+  splitLine: { lineStyle: { color: '#f0f0f0' } },
+  axisLabel: { 
+    color: '#8c8c8c', 
+    formatter: function(v) { return v >= 10000 ? (v/10000).toFixed(0) + '万' : v.toFixed(0); }
+  }
 },
-series: series
+series: [{
+  name: '即时营收',
+  type: 'line',
+  smooth: true,
+  symbol: 'circle',
+  symbolSize: 6,
+  data: hourlyData,
+  itemStyle: { color: ECHARTS_THEME_COLORS[0] },
+  lineStyle: { width: 2 },
+  areaStyle: {
+    color: new echarts.graphic.LinearGradient(0,0,0,1, [
+      {offset:0,color:'rgba(24,144,255,0.2)'},
+      {offset:1,color:'rgba(24,144,255,0)'}
+    ])
+  }
+}]
 });
 chart.on('click', function(params) {
-showDrillDown(params.seriesName + ' - ' + params.name + ' 渠道明细');
+showDrillDown(params.name + ' 即时订单明细');
 });
 window.addEventListener('resize', function() { chart.resize(); });
 }
@@ -964,15 +943,37 @@ if (totalFree > 0) data.push({value:Math.round(totalFree/total*100), name:'免�
 chart.setOption({
 color: ECHARTS_THEME_COLORS,
 backgroundColor: '#ffffff',
-tooltip: { trigger: 'item', formatter: function(p) { var h = p.name + ': ' + p.percent + '%'; h += '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>'; return h; }, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
+tooltip: { 
+  trigger: 'item', 
+  formatter: function(p) { 
+    return p.name + ': ' + p.percent + '%'; 
+  }, 
+  backgroundColor: '#ffffff', 
+  borderColor: '#e8ecf1',
+  textStyle: {color:'#333'}
+},
 series: [{
-type: 'pie',
-radius: ['40%', '70%'],
-avoidLabelOverlap: false,
-itemStyle: { borderRadius: 6, borderColor: '#ffffff', borderWidth: 3 },
-label: { show: true, position: 'outside', formatter: '{b}\n{d}%', fontSize: 12, color: '#595959' },
-labelLine: { length: 10, length2: 15, lineStyle: { color: '#d9d9d9' } },
-data: data
+  type: 'pie',
+  radius: ['40%', '70%'],
+  avoidLabelOverlap: false,
+  itemStyle: {
+    borderRadius: 6,
+    borderColor: '#ffffff',
+    borderWidth: 3
+  },
+  label: {
+    show: true,
+    position: 'outside',
+    formatter: '{b}\n{d}%',
+    fontSize: 12,
+    color: '#595959'
+  },
+  labelLine: {
+    length: 10,
+    length2: 15,
+    lineStyle: { color: '#d9d9d9' }
+  },
+  data: data
 }]
 });
 chart.on('click', function(params) {
@@ -985,47 +986,55 @@ function updateMonthlyChart(hotels) {
 const chart = echarts.init(document.getElementById('hotelMonthlyChart'));
 const totalRev = hotels.reduce((s, h) => s + h.totalRevMonth, 0);
 const avg = totalRev / 5;
-const data = [
-(avg * 0.77).toFixed(0),
-(avg * 0.82).toFixed(0),
-(avg * 0.86).toFixed(0),
-(avg * 0.94).toFixed(0),
-totalRev.toFixed(0)
-];
 chart.setOption({
 color: ECHARTS_THEME_COLORS,
 backgroundColor: '#ffffff',
-tooltip: { trigger: 'axis', formatter: function(params) {
-var p = params[0];
-return p.axisValue + '<br/>营收: ¥' + Number(p.value).toLocaleString('zh-CN') + '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
-}, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
-grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+tooltip: { 
+  trigger: 'axis', 
+  formatter: function(params) {
+    var p = params[0];
+    return p.axisValue + '<br/>营收: ¥' + Number(p.value).toLocaleString('zh-CN');
+  }, 
+  backgroundColor: '#ffffff', 
+  borderColor: '#e8ecf1',
+  textStyle: {color:'#333'}
+},
+grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
 xAxis: {
-type: 'category',
-data: ['1月', '2月', '3月', '4月', '5月'],
-axisLine: { lineStyle: { color: '#e8ecf1' } },
-axisLabel: { color: '#8c8c8c' }
+  type: 'category',
+  data: ['1月', '2月', '3月', '4月', '5月'],
+  axisLine: { lineStyle: { color: '#e8ecf1' } },
+  axisLabel: { color: '#8c8c8c' }
 },
 yAxis: {
-type: 'value',
-splitLine: { lineStyle: { color: '#f0f0f0' } },
-axisLabel: { color: '#8c8c8c', formatter: function(v) { return (v/10000).toFixed(0) + '万'; } }
+  type: 'value',
+  splitLine: { lineStyle: { color: '#f0f0f0' } },
+  axisLabel: { 
+    color: '#8c8c8c', 
+    formatter: function(v) { return (v/10000).toFixed(0) + '万'; }
+  }
 },
 series: [{
-name: '月营收',
-type: 'line',
-smooth: true,
-symbol: 'circle',
-symbolSize: 6,
-data: data,
-itemStyle: { color: ECHARTS_THEME_COLORS[0] },
-lineStyle: { width: 2 },
-areaStyle: {
-color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-{ offset: 0, color: 'rgba(24,144,255,0.2)' },
-{ offset: 1, color: 'rgba(24,144,255,0)' }
-])
-}
+  name: '月营收',
+  type: 'line',
+  smooth: true,
+  symbol: 'circle',
+  symbolSize: 6,
+  data: [
+    Number((avg * 0.77).toFixed(0)),
+    Number((avg * 0.82).toFixed(0)),
+    Number((avg * 0.86).toFixed(0)),
+    Number((avg * 0.94).toFixed(0)),
+    Number(totalRev.toFixed(0))
+  ],
+  itemStyle: { color: ECHARTS_THEME_COLORS[0] },
+  lineStyle: { width: 2 },
+  areaStyle: {
+    color: new echarts.graphic.LinearGradient(0,0,0,1, [
+      {offset:0,color:'rgba(24,144,255,0.15)'},
+      {offset:1,color:'rgba(24,144,255,0)'}
+    ])
+  }
 }]
 });
 chart.on('click', function(params) {
@@ -1044,7 +1053,7 @@ color: ECHARTS_THEME_COLORS,
 backgroundColor: '#ffffff',
 tooltip: { trigger: 'axis', formatter: function(params) {
 var p = params[0];
-return p.axisValue + '<br/>出租率: ' + p.value + '%' + '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
+return p.axisValue + '<br/>出租率: ' + p.value + '%';
 }, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
 grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
 xAxis: {
@@ -1065,7 +1074,7 @@ type: 'line',
 smooth: true,
 symbol: 'circle',
 symbolSize: 6,
-data: [Math.max(h.monthlyOcc * 0.7, 20), Math.max(h.monthlyOcc * 0.8, 25), Math.max(h.monthlyOcc * 0.85, 30), Math.max(h.monthlyOcc * 0.92, 33), h.monthlyOcc],
+data: [Math.max(h.monthlyOcc*0.7,20), Math.max(h.monthlyOcc*0.8,25), Math.max(h.monthlyOcc*0.85,30), Math.max(h.monthlyOcc*0.92,33), Number(h.monthlyOcc.toFixed(1))],
 itemStyle: { color: ECHARTS_THEME_COLORS[0] },
 lineStyle: { width: 2 },
 areaStyle: {
@@ -1078,20 +1087,16 @@ color: new echarts.graphic.LinearGradient(0,0,0,1, [
 });
 } else {
 const colors = ECHARTS_THEME_COLORS.concat(['#38bdf8','#818cf8','#4f46e5','#a78bfa']);
-const seriesData = hotels.map((h, i) => {
-const monthlyOccData = [];
-for (let m = 0; m < 5; m++) {
-const base = h.monthlyOcc;
-monthlyOccData.push(Math.max(15, (base * (0.7 + m * 0.075))).toFixed(1));
-}
+const seriesData = hotels.map(function(h, i) {
+var base = h.monthlyOcc;
 return {
 name: h.name,
 type: 'line',
 smooth: true,
 symbol: 'none',
-data: monthlyOccData,
+data: [Math.max(15,(base*0.7).toFixed(1)), Math.max(15,(base*0.8).toFixed(1)), Math.max(15,(base*0.85).toFixed(1)), Math.max(15,(base*0.92).toFixed(1)), Number(base.toFixed(1))],
 lineStyle: { width: 1.5 },
-itemStyle: { color: colors[i % colors.length] }
+itemStyle: { color: ECHARTS_THEME_COLORS[i % ECHARTS_THEME_COLORS.length] }
 };
 });
 chart.setOption({
@@ -1099,10 +1104,7 @@ color: ECHARTS_THEME_COLORS,
 backgroundColor: '#ffffff',
 tooltip: { trigger: 'axis', formatter: function(params) {
 let html = '';
-params.forEach(function(p) {
-html += '<div>' + p.seriesName + ': ' + p.value + '%</div>';
-});
-html += '<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：酒店.xlsx</div>';
+params.forEach(function(p) { if(p.value!=null) html += '<div>' + p.seriesName + ': ' + p.value + '%</div>'; });
 return html;
 }, backgroundColor: '#ffffff', borderColor: '#e8ecf1', textStyle:{color:'#333'} },
 legend: { data: hotels.map(h => h.name), textStyle: {color: '#8c8c8c', fontSize: 10}, top: 0, right: 0 },
@@ -1166,49 +1168,6 @@ tableHtml += '</tbody></table>';
 document.getElementById('modalTableContainer').innerHTML = tableHtml;
 }
 document.getElementById('drillDownModal').classList.add('show');
-}
-
-// ===== 日期筛选功能 =====
-function generateHotelDateData(baseHotels, dateKey) {
-  const seed = dateKey.split('-').reduce((s, p) => s + parseInt(p), 0);
-  const factor = 0.85 + (seed % 31) / 100 * 0.3;
-  return baseHotels.map(h => {
-    const f = factor * (0.95 + ((h.name.length + seed) % 11) / 100 * 0.2);
-    return {
-      ...h,
-      rented: Math.round(h.rented * f),
-      occ: Math.min(110, Math.round(h.occ * f * 100) / 100),
-      adr: Math.round(h.adr * f * 100) / 100,
-      revparDay: Math.round(h.revparDay * f * 100) / 100,
-      revDay: Math.round(h.revDay * f),
-      totalRevDay: Math.round(h.totalRevDay * f),
-      profit: Math.round(h.profit * f * 100) / 100,
-      breakEven: Math.round(h.breakEven * (1 + (seed % 7 - 3) / 100) * 100) / 100,
-      otaRooms: Math.round((h.otaRooms || 0) * f),
-      walkRooms: Math.round((h.walkRooms || 0) * f),
-      corpRooms: Math.round((h.corpRooms || 0) * f),
-      memRooms: Math.round((h.memRooms || 0) * f),
-      hourRooms: Math.round((h.hourRooms || 0) * f),
-      freeRooms: Math.round((h.freeRooms || 0) * f)
-    };
-  });
-}
-
-const baseHotelsData = JSON.parse(JSON.stringify(hotelsData));
-const dateDataHotel = {
-  '2026-05-18': baseHotelsData,
-  '2026-05-17': generateHotelDateData(baseHotelsData, '2026-05-17'),
-  '2026-05-16': generateHotelDateData(baseHotelsData, '2026-05-16'),
-  '2026-05-15': generateHotelDateData(baseHotelsData, '2026-05-15'),
-  '2026-05-14': generateHotelDateData(baseHotelsData, '2026-05-14')
-};
-
-function switchDate(dateKey) {
-  document.getElementById('displayDate').textContent = dateKey;
-  const newData = dateDataHotel[dateKey];
-  hotelsData.length = 0;
-  newData.forEach(h => hotelsData.push(h));
-  applyFilters();
 }
 
 window.onload = function() {

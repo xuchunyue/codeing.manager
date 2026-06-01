@@ -31,12 +31,15 @@
         .topbar-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #1890ff, #096dd9); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
         .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
         .content-scroll { flex: 1; overflow-y: auto; padding: 16px 16px 40px; height: 100%; margin-left: 220px; }
-        select, input[type="date"] { background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #333; outline: none; cursor: pointer; transition: border-color 0.2s; }
-        select:focus, input[type="date"]:focus { border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.15); }
+        select, input[type="date"], input[type="month"] { background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #333; outline: none; cursor: pointer; transition: border-color 0.2s; }
+        select:focus, input[type="date"]:focus, input[type="month"]:focus { border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.15); }
         select option { background: #fff; color: #333; }
         .filter-btn { padding: 5px 14px; border-radius: 4px; font-size: 12px; border: 1px solid #d9d9d9; cursor: pointer; transition: all 0.15s; background: #f5f5f5; color: #595959; }
         .filter-btn:hover { border-color: #1890ff; color: #1890ff; }
         .filter-btn-active { background: #1890ff; border-color: #1890ff; color: #fff; }
+.filter-btn { padding: 5px 16px; border-radius: 4px; font-size: 13px; border: 1px solid #d9d9d9; cursor: pointer; transition: all 0.15s; background: #f5f5f5; color: #595959; }
+.filter-btn:hover { border-color: #1890ff; color: #1890ff; }
+.filter-btn-active { background: #1890ff; border-color: #1890ff; color: #fff; }
         .bi-card { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 8px 10px; position: relative; transition: box-shadow 0.2s; }
         .bi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
         .bi-card-title { font-size: 11px; color: #8c8c8c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
@@ -54,8 +57,8 @@
         .text-cyan { color: #13c2c2; }
         .chart-container { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 14px 16px; }
         .chart-title { font-size: 15px; font-weight: 600; color: #1a2332; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; justify-content: space-between; }
-        .table-container { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: visible; }
-        .table-header { padding: 12px 16px; border-bottom: 1px solid #e8ecf1; display: flex; justify-content: space-between; align-items: center; }
+        .table-container { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: visible; padding: 14px 16px; }
+        .table-header { padding: 0 0 12px 0; border-bottom: 1px solid #e8ecf1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .table-header h3 { font-size: 15px; font-weight: 600; color: #1a2332; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         thead th { background: #f0f5ff; color: #333; font-weight: 600; padding: 12px 16px; text-align: left; border-bottom: 1px solid #e8ecf1; }
@@ -97,6 +100,68 @@
         .bottom-timestamp { position: fixed; bottom: 16px; right: 24px; font-size: 12px; color: #bfbfbf; z-index: 100; padding: 6px 14px; background: #ffffff; border: 1px solid #e8ecf1; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
         .drill-down-clickable { cursor: pointer; color: #1890ff; transition: all 0.15s; }
         .drill-down-clickable:hover { color: #096dd9; text-decoration: underline; }
+        /* ===== 总结报告 ===== */
+        .summary-card { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 14px 16px; }
+        .summary-line { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px dashed #f0f0f0; font-size: 12px; line-height: 1.6; }
+        .summary-line:last-child { border-bottom: none; }
+        .summary-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+        .summary-dot.green { background: #52c41a; }
+        .summary-dot.red { background: #f5222d; }
+        .summary-dot.blue { background: #1890ff; }
+        .summary-dot.orange { background: #fa8c16; }
+        .summary-highlight { font-weight: 600; }
+        /* ===== 筛选条件行 ===== */
+        .filter-row { background: #ffffff; border-bottom: 1px solid #e8ecf1; padding: 10px 20px; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 16px; }
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.filter-group label {
+    font-size: 13px;
+    color: #8c8c8c;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+        .filter-group { display: flex; align-items: center; gap: 8px; }
+        .filter-group label { font-size: 12px; color: #8c8c8c; white-space: nowrap; }
+        /* ===== 合并指标卡 ===== */
+        .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+        .kpi-item { text-align: center; padding: 6px 4px; border-right: 1px solid #f0f0f0; }
+        .kpi-item:last-child { border-right: none; }
+        .kpi-item-label { font-size: 11px; color: #8c8c8c; margin-bottom: 2px; }
+        .kpi-item-value { font-size: 20px; font-weight: 700; line-height: 1.2; }
+        .kpi-item-sub { font-size: 10px; color: #999; margin-top: 2px; }
+        .kpi-item-sub .up { color: #52c41a; }
+        .kpi-item-sub .down { color: #f5222d; }
+        .kpi-item-sub .highlight-text { color: #1890ff; }
+        /* ===== 财务矩阵卡 ===== */
+        .fin-card { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 14px 16px; }
+        .fin-card-label { font-size: 12px; color: #8c8c8c; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .fin-card-value { font-size: 26px; font-weight: 700; line-height: 1.1; }
+        .fin-card-row { display: flex; margin-top: 10px; }
+        .fin-card-item { flex:1; text-align: center; }
+        .fin-card-item + .fin-card-item { border-left: 1px solid #f0f0f0; }
+        .fin-card-item .fval { font-size: 14px; font-weight: 700; }
+        .fin-card-item .flabel { font-size: 10px; color: #8c8c8c; margin-top: 2px; }
+        .fin-bar { width: 100%; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-top: 10px; }
+        .fin-bar-fill { height: 100%; border-radius: 4px; }
+        .fin-bar-fill.warn { background: linear-gradient(90deg, #fa8c16, #ffc069); }
+        .fin-bar-fill.ok { background: linear-gradient(90deg, #1890ff, #40a9ff); }
+        .fin-bar-fill.good { background: linear-gradient(90deg, #52c41a, #95de64); }
+        /* ===== 年度目标进度 ===== */
+        .target-card { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 14px 16px; }
+        .target-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .target-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .target-pct { font-size: 18px; font-weight: 700; }
+        .target-bar { width: 100%; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; margin-bottom: 6px; }
+        .target-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+        .target-fill.normal { background: linear-gradient(90deg, #1890ff, #40a9ff); }
+        .target-fill.warning { background: linear-gradient(90deg, #fa8c16, #ffc069); }
+        .target-fill.success { background: linear-gradient(90deg, #52c41a, #95de64); }
+        .target-info { font-size: 11px; color: #8c8c8c; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
@@ -118,82 +183,157 @@
 <header class="topbar">
 <div class="topbar-left"><h1 class="topbar-title">经营看板</h1><span class="badge badge-blue" style="font-size:12px;">每日更新</span></div>
 <div class="topbar-right">
-<span class="topbar-date" id="displayDate">2026年05月18日</span>
-<select id="dateSelector" onchange="switchDate(this.value)" style="margin-left:4px;background:#ffffff;border:1px solid #d9d9d9;border-radius:6px;padding:4px 10px;font-size:13px;color:#333;outline:none;cursor:pointer;">
-<option selected="" value="2026-05-18">2026-05-18</option>
-<option value="2026-05-17">2026-05-17</option>
-<option value="2026-05-16">2026-05-16</option>
-<option value="2026-05-15">2026-05-15</option>
-<option value="2026-05-14">2026-05-14</option>
-</select>
-<button class="topbar-btn" onclick="location.reload()" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
+<span class="topbar-date">2026年05月18日</span>
+<button class="topbar-btn" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
 <button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
 <button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
 <div class="topbar-avatar" title="李总 (CEO)">李</div>
 </div>
 </header>
-<div class="content-scroll" style="display:flex;flex-direction:column;gap:12px;">
+<div class="content-scroll" style="display:flex;flex-direction:column;gap:10px;">
+<!-- 日期筛选 -->
+<div class="filter-row" style="background:#ffffff;border-bottom:1px solid #e8ecf1;width:100%;">
+<div class="filter-group">
+<label><iconify-icon icon="mdi:calendar" style="color:#8c8c8c;"></iconify-icon> 数据日期</label>
+<span id="datePickerContainer"><input type="month" id="datePicker" value="2026-05" onchange="refreshData()"/></span>
+</div>
+<div class="filter-group">
+<label>时间粒度</label>
+<div style="margin-left:auto;display:flex;gap:4px;">
+<button class="filter-btn" onclick="switchDateType(this,'day')">日</button>
+<button class="filter-btn filter-btn-active" onclick="switchDateType(this,'month')">月</button>
+<button class="filter-btn" onclick="switchDateType(this,'quarter')">季</button>
+<button class="filter-btn" onclick="switchDateType(this,'year')">年</button>
+</div>
+</div>
+</div>
+
+<!-- 经营分析总结报告 -->
 <div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标</div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:chart-line" style="font-size:16px;color:#1890ff;"></iconify-icon>集团总收入</div><div class="bi-card-value text-blue drill-val" onclick="showDrillDown('集团总收入明细','revenue')">¥ 428.5 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">同比 <span class="up">+12.4%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:finance" style="font-size:16px;color:#52c41a;"></iconify-icon>净利润</div><div class="bi-card-value text-green drill-val" onclick="showDrillDown('净利润明细','profit')">¥ 85.3 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">同比 <span class="up">+8.7%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:cash-remove" style="font-size:16px;color:#f5222d;"></iconify-icon>总成本</div><div class="bi-card-value text-red drill-val" onclick="showDrillDown('总成本明细','cost')">¥ 298.2 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">同比 <span class="down">+15.2%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:account-group" style="font-size:16px;color:#eb2f96;"></iconify-icon>总人数</div><div class="bi-card-value text-pink drill-val" onclick="showDrillDown('人数明细','headcount')">2,186<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">较上月 <span class="highlight-text">+86人</span></div></div>
+<div class="module-section-title"><iconify-icon icon="mdi:file-document-edit-outline" style="color:#1890ff;"></iconify-icon>经营分析总结报告</div>
+<div class="summary-card">
+<div class="summary-line">
+<div class="summary-dot green"></div>
+<div><span class="summary-highlight" style="color:#52c41a;">营收情况：</span>集团本月总收入 <span class="summary-highlight">428.5万元</span>，同比增长 <span class="summary-highlight" style="color:#52c41a;">+12.4%</span>，净利润 85.3万元（+8.7%），各项指标保持增长态势。</div>
+</div>
+<div class="summary-line">
+<div class="summary-dot orange"></div>
+<div><span class="summary-highlight" style="color:#fa8c16;">现金流监控：</span>楼宇板块以 <span class="summary-highlight">98.6万元</span> 营收和 <span class="summary-highlight" style="color:#52c41a;">105%</span> 达成率领跑全集团，超额完成本月目标；物业板块营收 46.8万元，同比增长 +6.2% 稳步提升。</div>
+</div>
+<div class="summary-line">
+<div class="summary-dot red"></div>
+<div><span class="summary-highlight" style="color:#f5222d;">关注预警：</span>出租车板块目标达成率仅 <span class="summary-highlight" style="color:#f5222d;">78%</span>，未达预期，需重点关注三地门店运营情况；酒店出租率 <span class="summary-highlight" style="color:#f5222d;">51.62%</span>，仍有较大提升空间。</div>
+</div>
+<div class="summary-line">
+<div class="summary-dot blue"></div>
+<div><span class="summary-highlight" style="color:#1890ff;">成本提示：</span>总成本 298.2万元，同比增长 <span class="summary-highlight" style="color:#f5222d;">+15.2%</span>，成本增速超过收入增速，建议关注成本控制，特别是能耗与人力成本。</div>
+</div>
 </div></div>
+
+<!-- 指标卡片区 -->
+<div style="display:flex;flex-direction:column;gap:8px;">
+
+<!-- 财务情况 -->
 <div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>板块营收指标</div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:office-building" style="font-size:16px;color:#1890ff;"></iconify-icon>物业总营收</div><div class="bi-card-value text-blue drill-val" onclick="showDrillDown('物业总营收明细','property_revenue')">¥ 46.8 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">同比增长 <span class="up">+6.2%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:bed" style="font-size:16px;color:#722ed1;"></iconify-icon>酒店总营收</div><div class="bi-card-value text-purple drill-val" onclick="showDrillDown('酒店总营收明细','hotel_revenue')">¥ 22.5 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">同比增长 <span class="up">+8.7%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:city" style="font-size:16px;color:#52c41a;"></iconify-icon>楼宇总营收</div><div class="bi-card-value text-green drill-val" onclick="showDrillDown('楼宇总营收明细','building_revenue')">¥ 98.6 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">同比增长 <span class="up">+5.1%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:currency-cny" style="font-size:16px;color:#fa8c16;"></iconify-icon>出租总营收</div><div class="bi-card-value text-amber drill-val" onclick="showDrillDown('出租总营收明细','taxi_revenue')">¥ 23.31 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">同比增长 <span class="up">+3.9%</span></div></div>
+<div class="module-section-title"><iconify-icon icon="mdi:finance" style="color:#1890ff;"></iconify-icon>财务情况 <span style="font-size:11px;color:#999;font-weight:400;">单位：万元</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+<!-- 经营收入 -->
+<div class="fin-card">
+<div class="fin-card-label"><iconify-icon icon="mdi:chart-line" style="font-size:14px;color:#1890ff;"></iconify-icon>经营收入</div>
+<div class="fin-card-value text-blue drill-val" onclick="showDrillDown('集团总收入明细','revenue')">428.5</div>
+<div class="fin-bar"><div class="fin-bar-fill warn" style="width:54%;"></div></div>
+<div class="fin-card-row">
+<div class="fin-card-item"><div class="fval" style="color:#fa8c16;">54%</div><div class="flabel">达成率</div></div>
+<div class="fin-card-item"><div class="fval" style="color:#52c41a;">+12.4%</div><div class="flabel">同比</div></div>
+</div>
+</div>
+<!-- 净利润 -->
+<div class="fin-card">
+<div class="fin-card-label"><iconify-icon icon="mdi:cash-plus" style="font-size:14px;color:#52c41a;"></iconify-icon>净利润</div>
+<div class="fin-card-value text-green drill-val" onclick="showDrillDown('净利润明细','profit')">130.3</div>
+<div class="fin-bar"><div class="fin-bar-fill good" style="width:30.4%;"></div></div>
+<div class="fin-card-row">
+<div class="fin-card-item"><div class="fval" style="color:#52c41a;">30.4%</div><div class="flabel">净利润率</div></div>
+<div class="fin-card-item"><div class="fval" style="color:#52c41a;">+12.1%</div><div class="flabel">同比</div></div>
+</div>
+</div>
+<!-- 经营支出 -->
+<div class="fin-card">
+<div class="fin-card-label"><iconify-icon icon="mdi:cash-remove" style="font-size:14px;color:#f5222d;"></iconify-icon>经营支出</div>
+<div class="fin-card-value text-red drill-val" onclick="showDrillDown('总成本明细','cost')">298.2</div>
+<div class="fin-bar"><div class="fin-bar-fill warn" style="width:69.6%;"></div></div>
+<div class="fin-card-row">
+<div class="fin-card-item"><div class="fval" style="color:#f5222d;">198.2</div><div class="flabel">经营支出</div></div>
+<div class="fin-card-item"><div class="fval" style="color:#fa8c16;">100.0</div><div class="flabel">项目支出</div></div>
+</div>
+</div>
+<!-- 人力概况 -->
+<div class="fin-card">
+<div class="fin-card-label"><iconify-icon icon="mdi:account-group" style="font-size:14px;color:#eb2f96;"></iconify-icon>人力概况</div>
+<div class="fin-card-value text-pink drill-val" onclick="showDrillDown('人数明细','headcount')">2,186</div>
+<div class="fin-bar"><div class="fin-bar-fill ok" style="width:32%;"></div></div>
+<div class="fin-card-row">
+<div class="fin-card-item"><div class="fval" style="color:#52c41a;">+86人</div><div class="flabel">较上月</div></div>
+<div class="fin-card-item"><div class="fval" style="color:#52c41a;">+5.2%</div><div class="flabel">同比</div></div>
+</div>
+</div>
 </div></div>
+
+<!-- 经营指标 -->
 <div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>运营效率指标</div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:percent" style="font-size:16px;color:#1890ff;"></iconify-icon>物业应收率</div><div class="bi-card-value text-blue drill-val" onclick="showDrillDown('物业应收率明细','property_rate')">85.3%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">环比上月 <span class="up">+2.1%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:home-city" style="font-size:16px;color:#52c41a;"></iconify-icon>物业出租率</div><div class="bi-card-value text-green drill-val" onclick="showDrillDown('物业楼宇出租明细','building_rent_rate')">92.1%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">环比上月 <span class="up">+0.8%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:domain" style="font-size:16px;color:#722ed1;"></iconify-icon>楼宇出租率</div><div class="bi-card-value text-purple drill-val" onclick="showDrillDown('物业楼宇出租明细','building_rent_rate')">87.3%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">环比上月 <span class="up">+1.2%</span></div></div>
-<div class="bi-card"><div class="bi-card-title"><iconify-icon icon="mdi:hotel" style="font-size:16px;color:#13c2c2;"></iconify-icon>酒店出租率</div><div class="bi-card-value text-cyan drill-val" onclick="showDrillDown('酒店出租率明细','hotel_occupancy')">51.62%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon></div><div class="bi-card-sub">环比上月 <span class="up">+2.3%</span></div></div>
-</div></div>
-<div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>数据可视化分析</div>
-<div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
-<div class="chart-container">
-<div class="chart-title">集团营收趋势 (2026)<div style="display:flex;gap:8px;"><span class="filter-btn filter-btn-active" onclick="switchRevenueView('month')">月度</span><span class="filter-btn" onclick="switchRevenueView('quarter')">季度</span></div></div>
-<div class="w-full" id="revenueChart" style="height:360px;"></div></div>
-<div class="chart-container">
-<div class="chart-title">板块收入占比</div>
-<div class="w-full" id="sectorChart" style="height:360px;"></div></div></div></div>
+<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>经营指标</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:office-building" style="font-size:14px;color:#1890ff;"></iconify-icon>物业总营收</div><div class="bi-card-value text-blue drill-val" style="font-size:18px;">46.8</div><div class="bi-card-sub">同比 <span class="up">+6.2%</span></div></div>
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:bed" style="font-size:14px;color:#722ed1;"></iconify-icon>酒店总营收</div><div class="bi-card-value text-purple drill-val" style="font-size:18px;">22.5</div><div class="bi-card-sub">同比 <span class="up">+8.7%</span></div></div>
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:city" style="font-size:14px;color:#52c41a;"></iconify-icon>楼宇总营收</div><div class="bi-card-value text-green drill-val" style="font-size:18px;">98.6</div><div class="bi-card-sub">同比 <span class="up">+5.1%</span></div></div>
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:currency-cny" style="font-size:14px;color:#fa8c16;"></iconify-icon>出租总营收</div><div class="bi-card-value text-amber drill-val" style="font-size:18px;">23.31</div><div class="bi-card-sub">同比 <span class="up">+3.9%</span></div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px;">
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:percent" style="font-size:14px;color:#1890ff;"></iconify-icon>物业应收率</div><div class="bi-card-value text-blue drill-val" style="font-size:18px;">85.3%</div><div class="bi-card-sub">环比 <span class="up">+2.1%</span></div></div>
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:home-city" style="font-size:14px;color:#52c41a;"></iconify-icon>物业出租率</div><div class="bi-card-value text-green drill-val" style="font-size:18px;">92.1%</div><div class="bi-card-sub">环比 <span class="up">+0.8%</span></div></div>
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:domain" style="font-size:14px;color:#722ed1;"></iconify-icon>楼宇出租率</div><div class="bi-card-value text-purple drill-val" style="font-size:18px;">87.3%</div><div class="bi-card-sub">环比 <span class="up">+1.2%</span></div></div>
+<div class="bi-card" style="padding:10px 12px;"><div class="bi-card-title" style="margin-bottom:6px;"><iconify-icon icon="mdi:hotel" style="font-size:14px;color:#13c2c2;"></iconify-icon>酒店出租率</div><div class="bi-card-value text-cyan drill-val" style="font-size:18px;">51.62%</div><div class="bi-card-sub">环比 <span class="up">+2.3%</span></div></div>
+</div>
+</div>
+
+</div><!-- end cards -->
+
+<!-- 图表区 -->
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+
+<!-- 集团营收趋势 + 板块收入占比 -->
+<div style="display:flex;gap:12px;align-items:stretch;">
+<div class="module-section" style="flex:1;display:flex;flex-direction:column;">
+<div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>集团营收情况趋势图</div>
+<div class="chart-container" style="flex:1;display:flex;flex-direction:column;">
+<div class="chart-title">集团营收趋势 (2026)<div style="display:flex;gap:6px;"><span class="filter-btn filter-btn-active" onclick="switchRevenueView('month')">月度</span><span class="filter-btn" onclick="switchRevenueView('quarter')">季度</span></div></div>
+<div class="w-full" id="revenueChart" style="flex:1;height:280px;"></div></div></div>
+<div class="module-section" style="flex:1;display:flex;flex-direction:column;">
+<div class="module-section-title"><iconify-icon icon="mdi:chart-pie" style="color:#1890ff;"></iconify-icon>板块收入占比</div>
+<div class="chart-container" style="flex:1;display:flex;flex-direction:column;">
+<div class="w-full" id="sectorChart" style="flex:1;height:280px;"></div></div></div>
+</div>
+
+<!-- 板块经营趋势 -->
 <div class="module-section">
 <div class="module-section-title"><iconify-icon icon="mdi:chart-line" style="color:#1890ff;"></iconify-icon>板块经营趋势</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
 <div class="chart-container">
 <div class="chart-title">各酒店当日营收排行</div>
-<div class="w-full" id="hotelTrendChart" style="height:320px;"></div></div>
+<div class="w-full" id="hotelTrendChart" style="height:300px;"></div></div>
 <div class="chart-container">
 <div class="chart-title">物业费月度收缴情况</div>
-<div class="w-full" id="propertyTrendChart" style="height:320px;"></div></div>
+<div class="w-full" id="propertyTrendChart" style="height:300px;"></div></div>
 <div class="chart-container">
 <div class="chart-title">楼宇租金月度趋势</div>
-<div class="w-full" id="leasingTrendChart" style="height:320px;"></div></div>
+<div class="w-full" id="leasingTrendChart" style="height:300px;"></div></div>
 <div class="chart-container">
 <div class="chart-title">出租车各门店日营收趋势</div>
-<div class="w-full" id="taxiTrendChart" style="height:320px;"></div></div>
+<div class="w-full" id="taxiTrendChart" style="height:300px;"></div></div>
 </div></div>
-<div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:table" style="color:#1890ff;"></iconify-icon>经营明细报表</div>
-<div class="table-container">
-<div class="table-header"><h3>关键经营指标明细</h3><div style="display:flex;gap:8px;"><span class="drill-down-clickable" onclick="showDrillDown('全集团经营明细','all_details')" style="font-size:13px;">查看全部明细</span><button style="font-size:13px;color:#1890ff;background:none;border:none;cursor:pointer;">导出报表</button></div></div>
-<table>
-<thead><tr><th>板块名称</th><th>本月收入 (万)</th><th>目标达成率</th><th>毛利润率</th></tr></thead>
-<tbody>
-<tr onclick="showDrillDown('物业板块 - 经营明细','all_details')" style="cursor:pointer;"><td class="drill-down-clickable">物业板块</td><td class="drill-down-clickable">1,428.00</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:92%;"></div></div><span class="drill-down-clickable">92%</span></div></td><td class="drill-down-clickable">32.4%</td></tr>
-<tr onclick="showDrillDown('酒店板块 - 经营明细','all_details')" style="cursor:pointer;"><td class="drill-down-clickable">酒店板块</td><td class="drill-down-clickable">675.00</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:85%;"></div></div><span class="drill-down-clickable">85%</span></div></td><td class="drill-down-clickable">28.1%</td></tr>
-<tr onclick="showDrillDown('楼宇板块 - 经营明细','all_details')" style="cursor:pointer;"><td class="drill-down-clickable">楼宇板块</td><td class="drill-down-clickable">2,958.00</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:105%;"></div></div><span class="drill-down-clickable">105%</span></div></td><td class="drill-down-clickable">38.5%</td></tr>
-<tr onclick="showDrillDown('出租车板块 - 经营明细','all_details')" style="cursor:pointer;"><td class="drill-down-clickable">出租车板块</td><td class="drill-down-clickable">699.30</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:78%;"></div></div><span class="drill-down-clickable">78%</span></div></td><td class="drill-down-clickable">22.2%</td></tr>
-</tbody></table></div></div></div>
+
+</div><!-- end charts -->
+
 </main>
 <div class="modal-overlay" id="drillDownModal">
 <div class="modal-content">
@@ -206,119 +346,41 @@
 <div class="bottom-timestamp">数据更新时间：2026-05-18 09:00</div>
 <script>
 const ECHARTS_THEME_COLORS = ['#1890ff','#722ed1','#52c41a','#fa8c16','#eb2f96','#13c2c2'];
+var currentDateType = 'month';
+function switchDateType(btn, type) {
+    document.querySelectorAll('.filter-row .filter-btn').forEach(function(b){ b.classList.remove('filter-btn-active'); });
+    btn.classList.add('active');
+    currentDateType = type;
+    var c=document.getElementById('datePickerContainer');
+    var tp='',val='';
+    if(type==='day'){tp='date';val='2026-05-18';}
+    else if(type==='month'){tp='month';val='2026-05';}
+    else if(type==='quarter'){tp='month';val='2026-01';}
+    else{c.innerHTML='<select id=\"datePicker\" onchange=\"refreshData()\"><option value=\"2025\">2025年</option><option value=\"2026\" selected>2026年</option></select>';refreshData();return;}
+    c.innerHTML='<input id=\"datePicker\" type=\"'+tp+'\" value=\"'+val+'\" onchange=\"refreshData()\"/>';
+    refreshData();
+}
+function refreshData() {
+    // Placeholder: data refresh based on date type
+    console.log('Date type:', currentDateType);
+}
 window.onload=function(){initRevenueChart();initSectorChart();initHotelTrendChart();initPropertyTrendChart();initLeasingTrendChart();initTaxiTrendChart();};
 var revenueChartInstance=null;
 function initRevenueChart(){revenueChartInstance=echarts.init(document.getElementById('revenueChart'));renderRevenueChart('month');revenueChartInstance.on('click',function(p){var ms=['1月','2月','3月','4月','5月'];if(p.dataIndex<ms.length)showDrillDown(ms[p.dataIndex]+'营收板块明细','month_'+(p.dataIndex+1));});window.addEventListener('resize',()=>revenueChartInstance.resize());}
-function renderRevenueChart(v){revenueChartInstance.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',formatter:function(p){var h=p[0].axisValue+'<br/>营收: ¥'+p[0].value+' 万';h+='<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：税务申报收入表、酒店.xlsx、出租.xlsx等</div>';return h;},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:v==='month'?['1月','2月','3月','4月','5月']:['Q1','Q2'],axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c'}},series:[{name:'营收',type:'line',smooth:true,data:v==='month'?[4285,4560,4890,5120,4980]:[12850,14990],itemStyle:{color:'#1890ff'},lineStyle:{width:3,color:'#1890ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(24,144,255,0.2)'},{offset:1,color:'rgba(24,144,255,0)'}])},symbol:'circle',symbolSize:8}]});}
+function renderRevenueChart(v){revenueChartInstance.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',formatter:function(p){var h=p[0].axisValue+'<br/>营收: ¥'+p[0].value+' 万';return h;},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:v==='month'?['1月','2月','3月','4月','5月']:['Q1','Q2'],axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c'}},series:[{name:'营收',type:'line',smooth:true,data:v==='month'?[4285,4560,4890,5120,4980]:[12850,14990],itemStyle:{color:'#1890ff'},lineStyle:{width:3,color:'#1890ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(24,144,255,0.2)'},{offset:1,color:'rgba(24,144,255,0)'}])},symbol:'circle',symbolSize:8}]});}
 function switchRevenueView(v){var b=document.querySelectorAll('.chart-container .filter-btn');b.forEach(function(x){x.className='filter-btn';});b[v==='month'?0:1].className='filter-btn filter-btn-active';renderRevenueChart(v);}
-function initSectorChart(){var c=echarts.init(document.getElementById('sectorChart'));c.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'item',formatter:function(p){var h=p.name+': '+p.value+' 万 ('+p.percent+'%)';h+='<div style="margin-top:6px;padding-top:4px;border-top:1px dashed #d9d9d9;font-size:11px;color:#999;">📋 来源：各板块经营明细汇总</div>';return h;},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},series:[{type:'pie',radius:['40%','70%'],avoidLabelOverlap:false,itemStyle:{borderRadius:8,borderColor:'#ffffff',borderWidth:2},label:{show:true,position:'outside',formatter:'{b}\n{d}%',fontSize:12,color:'#595959'},labelLine:{length:10,length2:15,lineStyle:{color:'#d9d9d9'}},data:[{value:1428,name:'物业板块',itemStyle:{color:'#1890ff'}},{value:675,name:'酒店板块',itemStyle:{color:'#722ed1'}},{value:2958,name:'楼宇板块',itemStyle:{color:'#52c41a'}},{value:699,name:'出租车板块',itemStyle:{color:'#fa8c16'}}]}]});c.on('click',function(p){var ns=[{key:'sector_property',label:'物业板块'},{key:'sector_hotel',label:'酒店板块'},{key:'sector_building',label:'楼宇板块'},{key:'sector_taxi',label:'出租车板块'}];if(p.dataIndex>=0&&p.dataIndex<ns.length)showDrillDown(ns[p.dataIndex].label+' — 板块收入明细',ns[p.dataIndex].key);});window.addEventListener('resize',()=>c.resize());}
-const drillData={
-revenue:{source:'来源：税务申报收入表、酒店.xlsx、出租.xlsx等',summary:[{label:'当日总营收',value:'¥ 428.5 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 12,850 万',color:'#1a2332'},{label:'目标达成率',value:'95.2%',color:'#52c41a'}],columns:['日期','收入项目','金额 (万)','占比','环比上月'],rows:[['2026-05-18','物业费收入','46.80','10.9%','+3.1%'],['2026-05-18','酒店客房收入','22.50','5.3%','+5.2%'],['2026-05-18','楼宇租金收入','98.60','23.0%','+2.4%'],['2026-05-18','出租车营收','23.31','5.4%','+1.8%'],['2026-05-18','车位费收入','8.20','1.9%','+0.5%'],['2026-05-18','其他收入','13.00','3.0%','-0.2%']]},
-profit:{source:'来源：各板块利润明细汇总',summary:[{label:'当日净利润',value:'¥ 85.3 万',color:'#1890ff'},{label:'净利润率',value:'19.9%',color:'#52c41a'},{label:'同比去年',value:'+8.7%',color:'#52c41a'}],columns:['月份','所属板块','净利润 (万)','利润率','同比'],rows:[['2026-05','物业板块','15.20','32.4%','+6.2%'],['2026-05','酒店板块','6.30','28.1%','+4.5%'],['2026-05','楼宇板块','38.00','38.5%','+5.1%'],['2026-05','出租车板块','5.20','22.2%','+3.9%']]},
-cost:{source:'来源：各板块成本明细汇总',summary:[{label:'当日总成本',value:'¥ 298.2 万',color:'#1890ff'},{label:'成本率',value:'69.6%',color:'#fa8c16'},{label:'同比去年',value:'+15.2%',color:'#f5222d'}],columns:['成本项目','责任部门','金额 (万)','占比','环比'],rows:[['人力成本','集团人力资源部','98.50','33.0%','+3.2%'],['物业运营成本','物业事业部','62.80','21.1%','+2.1%'],['酒店运营成本','酒店事业部','48.20','16.2%','+4.5%'],['楼宇维护成本','楼宇事业部','35.60','11.9%','+1.5%'],['出租车运营成本','出租车事业部','28.10','9.4%','+2.8%']]},
-headcount:{source:'来源：人力统计.xlsx',summary:[{label:'总人数',value:'2,186 人',color:'#1890ff'},{label:'本月新增',value:'+86 人',color:'#52c41a'},{label:'离职率',value:'2.8%',color:'#fa8c16'}],columns:['部门','人数','占比','平均月薪','状态'],rows:[['物业事业部','268','12.3%','¥ 8,200','在职'],['酒店事业部','480','22.0%','¥ 7,800','在职'],['楼宇运营部','32','1.5%','¥ 12,500','在职'],['出租车事业部','1,286','58.8%','¥ 6,500','在职'],['职能总部','120','5.5%','¥ 15,000','在职']]},
-property_revenue:{source:'来源：物业管理-物业费.xlsx、物业管理-车位费.xlsx',summary:[{label:'物业费收入',value:'¥ 46.80 万',color:'#1890ff'},{label:'车位费收入',value:'¥ 8.20 万',color:'#52c41a'},{label:'合计总收入',value:'¥ 55.00 万',color:'#1a2332'}],columns:['月份','收入项目','金额 (元)','收缴状态','备注'],rows:[['1月','物业费','26,900','已收/部分','含欠费800元'],['1月','车位费','4,800','已收','4个车位已收3个'],['2月','物业费','26,900','已收','含补1月欠款8,000'],['2月','车位费','4,800','已收','全部缴清']]},
-hotel_revenue:{source:'来源：酒店.xlsx',summary:[{label:'当日酒店总营收',value:'¥ 22.5 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 675.0 万',color:'#1a2332'},{label:'月完成率',value:'85%',color:'#fa8c16'}],columns:['门店名称','房间数','日出租数','日出租率','日营收 (¥)'],rows:[['上海全季','199','201','101.01%','79,531.40'],['广州丽怡','134','134','100.00%','66,673.00'],['武汉某酒店','140','73','52.14%','18,189.77'],['沌口枫渡','168','60','35.71%','16,899.99'],['天津枫渡','156','43','27.74%','12,937.75'],['沌口H','90','41','45.56%','10,500.00'],['南通H','126','45','35.71%','9,991.34'],['济南枫渡','115','33','28.70%','8,602.46'],['重庆丽怡','100','39','39.00%','8,224.85'],['汉口枫渡','130','32','24.62%','8,150.13']]},
-building_revenue:{source:'来源：楼宇运营已出租信息.xlsx',summary:[{label:'楼宇租金收入',value:'¥ 98.6 万',color:'#1890ff'},{label:'物业费收入',value:'¥ 8.2 万',color:'#52c41a'},{label:'停车费收入',value:'¥ 0.8 万',color:'#fa8c16'}],columns:['月份','租户名称','租赁面积 (㎡)','租金 (元)','实收率'],rows:[['1月','云创科技','500','110,000','100%'],['1月','鼎信金融','350','105,000','95.2%'],['1月','迈思设计','240','72,000','100%'],['1月','寰宇咨询','800','240,000','100%'],['1月','智慧教育','400','80,000','95%'],['2月','云创科技','500','110,000','100%'],['2月','鼎信金融','350','105,000','95.2%'],['2月','迈思设计','240','72,000','100%'],['2月','寰宇咨询','800','240,000','100%'],['2月','智慧教育','400','80,000','95%']]},
-taxi_revenue:{source:'来源：出租.xlsx',summary:[{label:'当日总营收',value:'¥ 23.31 万',color:'#1890ff'},{label:'当日总成本',value:'¥ 18.00 万',color:'#f5222d'},{label:'当日利润',value:'¥ 5.31 万',color:'#52c41a'}],columns:['门店','车辆数','司源','日营收 (万元)','成本 (万元)','利润 (万元)'],rows:[['天津 (天津滨海客运)','1,500','1,746','23.31','18.00','5.31'],['无锡 (无锡交通集团)','98','289','18.50','12.50','6.00'],['新疆 (新疆巴士客运)','132','1,423','22.40','16.80','5.60']]},
-property_rate:{source:'来源：物业管理-物业费.xlsx',summary:[{label:'物业应收率',value:'85.3%',color:'#1890ff'},{label:'应收总额',value:'¥ 54.8 万',color:'#1a2332'},{label:'欠费总额',value:'¥ 8.0 万',color:'#f5222d'}],columns:['月份','单元号','应收 (元)','实收 (元)','欠费 (元)','状态'],rows:[['1月','1号楼-G101','5,000','5,000','0','已收'],['1月','1号楼-G102','3,500','3,500','0','已收'],['1月','1号楼-G103','2,400','2,400','0','已收'],['1月','1号楼-G301','8,000','7,200','800','部分'],['1月','2号楼-B201','4,000','4,000','0','已收'],['1月','2号楼-B301','3,000','0','3,000','未收'],['2月','1号楼-G101','5,000','5,000','0','已收'],['2月','1号楼-G102','3,500','3,500','0','已收'],['2月','1号楼-G103','2,400','2,400','0','已收'],['2月','1号楼-G301','8,000','8,000','0','已收（补1月欠款）'],['2月','2号楼-B201','4,000','4,000','0','已收'],['2月','2号楼-B301','3,000','0','3,000','未收（累计欠费）']]},
-building_rent_rate:{source:'来源：楼宇运营总面积.xlsx、楼宇运营已出租信息.xlsx',summary:[{label:'项目总控制面积',value:'2,640 ㎡',color:'#1890ff'},{label:'1号楼总面积',value:'1,890 ㎡',color:'#52c41a'},{label:'2号楼总面积',value:'400 ㎡',color:'#722ed1'}],columns:['单元号','租赁面积','已出租面积','空置面积','租户名称'],rows:[['1号楼-G101','500㎡','500㎡','0㎡','云创科技'],['1号楼-G102','350㎡','350㎡','0㎡','鼎信金融'],['1号楼-G103','240㎡','240㎡','0㎡','迈思设计'],['1号楼-G301','800㎡','800㎡','0㎡','寰宇咨询'],['2号楼-B201','400㎡','400㎡','0㎡','智慧教育']]},
-hotel_occupancy:{source:'来源：酒店.xlsx',summary:[{label:'当日综合出租率',value:'51.62%',color:'#1890ff'},{label:'月出租率',value:'58.04%',color:'#52c41a'},{label:'在营酒店',value:'10 家',color:'#1a2332'}],columns:['酒店名称','房间总数','日出租数','日出租率','月出租率'],rows:[['上海全季','199','201','101.01%','93.35%'],['广州丽怡','134','134','100.00%','97.47%'],['武汉某酒店','140','73','52.14%','64.29%'],['沌口H','90','41','45.56%','37.78%'],['重庆丽怡','100','39','39.00%','61.61%'],['沌口枫渡','168','60','35.71%','37.57%'],['南通H','126','45','35.71%','34.88%'],['济南枫渡','115','33','28.70%','52.73%'],['天津枫渡','156','43','27.74%','33.69%'],['汉口枫渡','130','32','24.62%','45.73%']]},
-all_details:{source:'来源：酒店.xlsx、物业管理-物业费.xlsx、楼宇运营已出租信息.xlsx、出租.xlsx、物业管理-车位费.xlsx',summary:[{label:'集团总收入',value:'¥ 428.5 万',color:'#1890ff'},{label:'本月累计',value:'¥ 12,850 万',color:'#1a2332'},{label:'目标达成率',value:'95.2%',color:'#52c41a'}],columns:['板块','核心指标','当日值','月累计/月均','目标达成率'],rows:[['物业板块','物业应收率','85.3%','¥ 46.80 万','92%'],['酒店板块','综合出租率','51.62%','58.04%','85%'],['酒店板块','ADR (日均价)','¥ 325.82','¥ 369.01','-'],['楼宇板块','楼宇出租率','87.3%','¥ 98.60 万','105%'],['出租车板块','日营收','¥ 23.31 万','¥ 699.30 万','78%'],['出租车板块','日利润','¥ 5.31 万','¥ 159.30 万','-']]}};
-function genModalTable(cols,rows){var h='<table><thead><tr>';cols.forEach(function(c){h+='<th>'+c+'</th>';});h+='</tr></thead><tbody>';rows.forEach(function(r){h+='<tr>';r.forEach(function(c){h+='<td>'+c+'</td>';});h+='</tr>';});h+='</tbody></table>';return h;}
-function showDrillDown(t,k){document.getElementById('modalTitle').innerText=t;var d=drillData[k];if(!d){alert('暂无明细数据');return;}document.getElementById('modalSource').innerText=d.source||'';var s='';d.summary.forEach(function(i){s+='<div class="modal-summary-item"><div class="label">'+i.label+'</div><div class="value" style="color:'+i.color+'">'+i.value+'</div></div>';});document.getElementById('modalSummary').innerHTML=s;document.getElementById('modalTableContainer').innerHTML=genModalTable(d.columns,d.rows);document.getElementById('drillDownModal').classList.add('show');}
+function initSectorChart(){var c=echarts.init(document.getElementById('sectorChart'));c.setOption({color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'item',formatter:function(p){var h=p.name+': '+p.value+' 万 ('+p.percent+'%)';return h;},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},series:[{type:'pie',radius:['40%','70%'],avoidLabelOverlap:false,itemStyle:{borderRadius:8,borderColor:'#ffffff',borderWidth:2},label:{show:true,position:'outside',formatter:'{b}\n{d}%',fontSize:12,color:'#595959'},labelLine:{length:10,length2:15,lineStyle:{color:'#d9d9d9'}},data:[{value:1428,name:'物业板块',itemStyle:{color:'#1890ff'}},{value:675,name:'酒店板块',itemStyle:{color:'#722ed1'}},{value:2958,name:'楼宇板块',itemStyle:{color:'#52c41a'}},{value:699,name:'出租车板块',itemStyle:{color:'#fa8c16'}}]}]});c.on('click',function(p){var ns=[{key:'sector_property',label:'物业板块'},{key:'sector_hotel',label:'酒店板块'},{key:'sector_building',label:'楼宇板块'},{key:'sector_taxi',label:'出租车板块'}];if(p.dataIndex>=0&&p.dataIndex<ns.length)showDrillDown(ns[p.dataIndex].label+' — 板块收入明细',ns[p.dataIndex].key);});window.addEventListener('resize',()=>c.resize());}
+const drillData={revenue:{summary:[{label:'当日总营收',value:'¥ 428.5 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 12,850 万',color:'#1a2332'},{label:'目标达成率',value:'95.2%',color:'#52c41a'}],columns:['日期','收入项目','金额 (万)','占比','环比上月'],rows:[['2026-05-18','物业费收入','46.80','10.9%','+3.1%'],['2026-05-18','酒店客房收入','22.50','5.3%','+5.2%'],['2026-05-18','楼宇租金收入','98.60','23.0%','+2.4%'],['2026-05-18','出租车营收','23.31','5.4%','+3.9%'],['2026-05-18','车位费收入','8.20','1.9%','+1.2%'],['2026-05-18','其他杂项收入','12.09','2.8%','+0.8%']]},profit:{summary:[{label:'当日净利润',value:'¥ 85.3 万',color:'#1890ff'},{label:'净利润率',value:'19.9%',color:'#52c41a'},{label:'同比去年',value:'+8.7%',color:'#52c41a'}],columns:['月份','所属板块','净利润 (万)','利润率','同比'],rows:[['2026-05','物业板块','15.20','32.4%','+6.2%'],['2026-05','酒店板块','6.30','28.1%','+4.5%'],['2026-05','楼宇板块','38.00','38.5%','+5.1%'],['2026-05','出租车板块','5.20','22.2%','+3.9%']]},cost:{summary:[{label:'当日总成本',value:'¥ 298.2 万',color:'#1890ff'},{label:'成本率',value:'69.6%',color:'#fa8c16'},{label:'同比去年',value:'+15.2%',color:'#f5222d'}],columns:['成本项目','责任部门','金额 (万)','占比','环比'],rows:[['人力成本','集团人力资源部','98.50','33.0%','+3.2%'],['物业运营成本','物业事业部','62.80','21.1%','+2.1%'],['酒店运营成本','酒店事业部','48.20','16.2%','+4.5%'],['楼宇维护成本','楼宇事业部','35.60','11.9%','+1.5%'],['出租车运营成本','出租车事业部','28.10','9.4%','+2.8%']]},headcount:{summary:[{label:'总人数',value:'2,186 人',color:'#1890ff'},{label:'本月新增',value:'+86 人',color:'#52c41a'},{label:'离职率',value:'2.8%',color:'#fa8c16'}],columns:['部门','人数','占比','平均月薪','状态'],rows:[['物业事业部','268','12.3%','¥ 8,200','在职'],['酒店事业部','480','22.0%','¥ 7,800','在职'],['楼宇运营部','32','1.5%','¥ 12,500','在职'],['出租车事业部','1,286','58.8%','¥ 6,500','在职'],['职能总部','120','5.5%','¥ 15,000','在职']]}};
+function showDrillDown(t,k){document.getElementById('modalTitle').innerText=t;var d=drillData[k];if(!d){alert('暂无明细数据');return;}var s='';d.summary.forEach(function(i){s+='<div class="modal-summary-item"><div class="label">'+i.label+'</div><div class="value" style="color:'+i.color+'">'+i.value+'</div></div>';});document.getElementById('modalSummary').innerHTML=s;var h='<table><thead><tr>';d.columns.forEach(function(c){h+='<th>'+c+'</th>';});h+='</tr></thead><tbody>';d.rows.forEach(function(r){h+='<tr>';r.forEach(function(c){h+='<td>'+c+'</td>';});h+='</tr>';});h+='</tbody></table>';document.getElementById('modalTableContainer').innerHTML=h;document.getElementById('drillDownModal').classList.add('show');}
 function hideDrillDown(){document.getElementById('drillDownModal').classList.remove('show');}
-/* 板块经营趋势 - 图表1: 酒店营收排行 */
-function initHotelTrendChart(){var c=echarts.init(document.getElementById('hotelTrendChart'));var hotels=[{n:'上海全季',v:79531.4},{n:'广州丽怡',v:66673},{n:'武汉某酒店',v:18189.77},{n:'沌口枫渡',v:16899.99},{n:'天津枫渡',v:12937.75},{n:'沌口H',v:10500},{n:'南通H',v:9991.34},{n:'济南枫渡',v:8602.46},{n:'重庆丽怡',v:8224.85},{n:'汉口枫渡',v:8150.13}];var names=hotels.map(function(h){return h.n;});var vals=hotels.map(function(h){return h.v;});c.setOption({color:['#1890ff'],backgroundColor:'transparent',tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){return p[0].name+'<br/>营收: ¥'+p[0].value.toLocaleString();}},grid:{left:'3%',right:'10%',bottom:'3%',containLabel:true},xAxis:{type:'value',axisLabel:{color:'#666',formatter:function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;}},splitLine:{lineStyle:{color:'#f0f0f0'}}},yAxis:{type:'category',data:names.reverse(),axisLabel:{color:'#666',fontSize:11},axisLine:{lineStyle:{color:'#e8ecf1'}}},series:[{type:'bar',data:[].concat(vals).reverse(),itemStyle:{color:'#1890ff',borderRadius:[0,4,4,0]},label:{show:true,position:'right',formatter:function(p){return '¥'+p.value.toLocaleString();},color:'#333',fontSize:11}}]});c.on('click',function(p){showDrillDown('各酒店当日营收排行明细','hotel_ranking');});window.addEventListener('resize',function(){c.resize();});}
-/* 板块经营趋势 - 图表2: 物业费月度收缴情况 */
-function initPropertyTrendChart(){var c=echarts.init(document.getElementById('propertyTrendChart'));c.setOption({color:['#1890ff','#52c41a'],backgroundColor:'transparent',tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){var r=p[0].axisValue;for(var i=0;i<p.length;i++){r+='<br/>'+p[i].marker+' '+p[i].seriesName+': ¥'+p[i].value.toLocaleString();}return r;}},legend:{data:['应收','实收'],textStyle:{color:'#666',fontSize:12},bottom:0},grid:{left:'3%',right:'4%',bottom:'20%',containLabel:true},xAxis:{type:'category',data:['1月','2月'],axisLabel:{color:'#666'},axisLine:{lineStyle:{color:'#e8ecf1'}}},yAxis:{type:'value',axisLabel:{color:'#666',formatter:function(v){return v>=1000?(v/1000).toFixed(0)+'k':v;}},splitLine:{lineStyle:{color:'#f0f0f0'}}},series:[{name:'应收',type:'bar',data:[26900,26900],itemStyle:{color:'#1890ff',borderRadius:[4,4,0,0]}},{name:'实收',type:'bar',data:[21900,22900],itemStyle:{color:'#52c41a',borderRadius:[4,4,0,0]}}]});c.on('click',function(p){showDrillDown(p.name+' 物业费收缴明细','property_month');});window.addEventListener('resize',function(){c.resize();});}
-/* 板块经营趋势 - 图表3: 楼宇租金月度趋势 */
-function initLeasingTrendChart(){var c=echarts.init(document.getElementById('leasingTrendChart'));c.setOption({color:['#722ed1','#13c2c2'],backgroundColor:'transparent',tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){var r=p[0].axisValue;for(var i=0;i<p.length;i++){r+='<br/>'+p[i].marker+' '+p[i].seriesName+': ¥'+p[i].value.toLocaleString();}return r;}},legend:{data:['租金收入','物业费收入'],textStyle:{color:'#666',fontSize:12},bottom:0},grid:{left:'3%',right:'4%',bottom:'20%',containLabel:true},xAxis:{type:'category',data:['1月','2月','3月'],axisLabel:{color:'#666'},axisLine:{lineStyle:{color:'#e8ecf1'}}},yAxis:{type:'value',axisLabel:{color:'#666',formatter:function(v){return v>=1000?(v/1000).toFixed(0)+'k':v;}},splitLine:{lineStyle:{color:'#f0f0f0'}}},series:[{name:'租金收入',type:'bar',data:[607000,607000,607000],itemStyle:{color:'#722ed1',borderRadius:[4,4,0,0]}},{name:'物业费收入',type:'bar',data:[82000,82000,82000],itemStyle:{color:'#13c2c2',borderRadius:[4,4,0,0]}}]});c.on('click',function(p){showDrillDown(p.name+' 楼宇租金明细','leasing_month');});window.addEventListener('resize',function(){c.resize();});}
-/* 板块经营趋势 - 图表4: 出租车各门店日营收趋势 */
-function initTaxiTrendChart(){var c=echarts.init(document.getElementById('taxiTrendChart'));var dates=['1/1','1/4','1/7','1/10','1/13','1/16','1/19','1/22','1/25','1/28','1/31'];var tianjin=[23.31,22.8,24.1,23.9,25.2,24.5,26,26.8,25.5,24.8,23.5];var wuxi=[18.5,17.2,19.6,18.8,20.5,19.2,21,21.8,20.8,19.8,20.4];var xinjiang=[22.4,21.5,23.8,22.9,24.5,23.2,25,25.8,24.2,23.5,23.0];c.setOption({color:['#1890ff','#52c41a','#fa8c16'],backgroundColor:'transparent',tooltip:{trigger:'axis',formatter:function(p){var r=p[0].axisValue;for(var i=0;i<p.length;i++){r+='<br/>'+p[i].marker+' '+p[i].seriesName+': ¥'+p[i].value.toFixed(1)+' 万';}return r;}},legend:{data:['天津','无锡','新疆'],textStyle:{color:'#666',fontSize:12},bottom:0},grid:{left:'3%',right:'4%',bottom:'20%',containLabel:true},xAxis:{type:'category',data:dates,axisLabel:{color:'#666',fontSize:11,rotate:0},axisLine:{lineStyle:{color:'#e8ecf1'}}},yAxis:{type:'value',name:'万元',nameTextStyle:{color:'#999',fontSize:11},axisLabel:{color:'#666'},splitLine:{lineStyle:{color:'#f0f0f0'}}},series:[{name:'天津',type:'line',smooth:true,data:tianjin,symbol:'circle',symbolSize:6,lineStyle:{width:2}},{name:'无锡',type:'line',smooth:true,data:wuxi,symbol:'circle',symbolSize:6,lineStyle:{width:2}},{name:'新疆',type:'line',smooth:true,data:xinjiang,symbol:'circle',symbolSize:6,lineStyle:{width:2}}]});c.on('click',function(p){showDrillDown(p.name+'门店 - 出租车营收明细','taxi_detail');});window.addEventListener('resize',function(){c.resize();});}
-/* 额外 drillData: 各图表点击用 */
-drillData.hotel_ranking={source:'来源：酒店.xlsx',summary:[{label:'最高营收',value:'上海全季 ¥79,531',color:'#1890ff'},{label:'最低营收',value:'汉口枫渡 ¥8,150',color:'#f5222d'},{label:'平均值',value:'¥ 23,253',color:'#52c41a'}],columns:['排名','酒店名称','当日营收 (¥)','出租率','ADR (¥)'],rows:[['1','上海全季','79,531.40','101.01%','367.90'],['2','广州丽怡','66,673.00','100.00%','490.86'],['3','武汉某酒店','18,189.77','52.14%','248.79'],['4','沌口枫渡','16,899.99','35.71%','280.18'],['5','天津枫渡','12,937.75','27.74%','300.88'],['6','沌口H','10,500.00','45.56%','241.06'],['7','南通H','9,991.34','35.71%','219.33'],['8','济南枫渡','8,602.46','28.70%','260.68'],['9','重庆丽怡','8,224.85','39.00%','177.49'],['10','汉口枫渡','8,150.13','24.62%','213.16']]};
-drillData.property_month={source:'来源：物业管理-物业费.xlsx',summary:[{label:'1月收缴率',value:'81.4%',color:'#1890ff'},{label:'2月收缴率',value:'85.1%',color:'#52c41a'},{label:'累计欠费',value:'¥ 6,800',color:'#f5222d'}],columns:['月份','应收总额 (元)','实收总额 (元)','欠费总额 (元)','收缴率'],rows:[['1月','26,900','21,900','5,000','81.4%'],['2月','26,900','22,900','3,000','85.1%']]};
-drillData.leasing_month={source:'来源：楼宇运营已出租信息.xlsx',summary:[{label:'平均月租金收入',value:'¥ 60.7 万',color:'#1890ff'},{label:'平均月物业费',value:'¥ 8.2 万',color:'#13c2c2'},{label:'租户数量',value:'5 家',color:'#52c41a'}],columns:['月份','租户','租金 (元)','实收 (元)','物业费 (元)'],rows:[['1月','云创科技','110,000','110,000','20,000'],['1月','鼎信金融','105,000','100,000','14,000'],['1月','迈思设计','72,000','72,000','0'],['1月','寰宇咨询','240,000','240,000','32,000'],['1月','智慧教育','80,000','76,000','16,000'],['2月','云创科技','110,000','110,000','20,000'],['2月','鼎信金融','105,000','100,000','14,000'],['2月','迈思设计','72,000','72,000','0'],['2月','寰宇咨询','240,000','240,000','32,000'],['2月','智慧教育','80,000','76,000','16,000'],['3月','云创科技','110,000','110,000','20,000'],['3月','鼎信金融','105,000','105,000','14,000'],['3月','迈思设计','72,000','72,000','0'],['3月','寰宇咨询','240,000','240,000','32,000'],['3月','智慧教育','80,000','76,000','16,000']]};
-drillData.taxi_detail={source:'来源：出租.xlsx',summary:[{label:'最高日营收',value:'天津 ¥26.8 万',color:'#1890ff'},{label:'最低日营收',value:'无锡 ¥17.2 万',color:'#fa8c16'},{label:'平均日利润',value:'¥ 6.0 万',color:'#52c41a'}],columns:['门店','所属公司','车辆数','司源','日营收 (万元)','利润 (万元)'],rows:[['天津','天津滨海客运','1,500','1,746','23.0~26.8','5.3~6.8'],['无锡','无锡交通集团','98','289','17.2~21.8','5.4~7.6'],['新疆','新疆巴士客运','132','1,423','21.5~25.8','5.3~7.0']]};
-/* 月度营收下钻 */
-var monthDrillData={};
-monthDrillData.month_1={source:'来源：酒店.xlsx、出租.xlsx、楼宇运营已出租信息.xlsx、物业管理-物业费.xlsx',summary:[{label:'1月集团营收',value:'¥ 4,285 万',color:'#1890ff'},{label:'酒店营收',value:'¥ 125.4 万',color:'#722ed1'},{label:'出租车营收',value:'¥ 23.3 万',color:'#fa8c16'}],columns:['板块','具体项目','1月收入 (万)','占比'],rows:[['酒店','上海全季等10家','125.40','2.9%'],['出租车','天津/无锡/新疆','23.31','0.6%'],['楼宇租金','云创科技/鼎信金融等','60.70','1.4%'],['物业管理','物业费+车位费','2.60','0.1%'],['其他','各杂项','15.00','0.4%']]};
-monthDrillData.month_2={source:'来源：酒店.xlsx、出租.xlsx、楼宇运营已出租信息.xlsx、物业管理-物业费.xlsx',summary:[{label:'2月集团营收',value:'¥ 4,560 万',color:'#1890ff'},{label:'酒店营收',value:'¥ 132.4 万',color:'#722ed1'},{label:'出租车营收',value:'¥ 18.5 万',color:'#fa8c16'}],columns:['板块','具体项目','2月收入 (万)','占比'],rows:[['酒店','上海全季等10家','132.40','2.9%'],['出租车','天津/无锡/新疆','18.50','0.4%'],['楼宇租金','云创科技/鼎信金融等','60.70','1.3%'],['物业管理','物业费+车位费','2.60','0.1%'],['其他','各杂项','14.00','0.3%']]};
-monthDrillData.month_3={source:'来源：酒店.xlsx、出租.xlsx、楼宇运营已出租信息.xlsx、物业管理-物业费.xlsx',summary:[{label:'3月集团营收',value:'¥ 4,890 万',color:'#1890ff'},{label:'酒店营收',value:'¥ 52.5 万',color:'#722ed1'},{label:'出租车营收',value:'¥ 22.4 万',color:'#fa8c16'}],columns:['板块','具体项目','3月收入 (万)','占比'],rows:[['酒店','上海全季等10家','52.50','1.1%'],['出租车','天津/无锡/新疆','22.40','0.5%'],['楼宇租金','云创科技/鼎信金融等','60.70','1.2%'],['物业管理','物业费+车位费','2.60','0.1%'],['其他','各杂项','16.00','0.3%']]};
-monthDrillData.month_4={source:'来源：各板块经营累计数据',summary:[{label:'预估月营收',value:'¥ 5,120 万',color:'#1890ff'},{label:'酒店营收',value:'~¥ 180 万',color:'#722ed1'},{label:'出租车营收',value:'~¥ 25 万',color:'#fa8c16'}],columns:['板块','具体项目','4月收入 (万)','占比'],rows:[['酒店','各门店累计','~180.00','3.5%'],['出租车','各门店累计','~25.00','0.5%'],['楼宇租金','各租户累计','60.70','1.2%'],['物业管理','物业费+车位费','2.60','0.1%']]};
-monthDrillData.month_5={source:'来源：各板块经营累计数据',summary:[{label:'5月预估营收',value:'¥ 4,980 万',color:'#1890ff'},{label:'酒店营收',value:'~¥ 150 万',color:'#722ed1'},{label:'出租车营收',value:'~¥ 23 万',color:'#fa8c16'}],columns:['板块','具体项目','5月收入 (万)','占比'],rows:[['酒店','各门店累计','~150.00','3.0%'],['出租车','各门店累计','~23.00','0.5%'],['楼宇租金','各租户累计','60.70','1.2%'],['物业管理','物业费+车位费','2.60','0.1%']]};
-for(var mk in monthDrillData){drillData[mk]=monthDrillData[mk];}
-/* 板块收入下钻 */
-drillData.sector_property={source:'来源：物业管理-物业费.xlsx、物业管理-车位费.xlsx',summary:[{label:'物业费收入',value:'¥ 46.80 万',color:'#1890ff'},{label:'车位费收入',value:'¥ 8.20 万',color:'#52c41a'},{label:'合计',value:'¥ 55.00 万',color:'#1a2332'}],columns:['收入项目','月金额 (万)','占比','同比增长'],rows:[['物业费收入','46.80','85.1%','+6.2%'],['车位费收入','8.20','14.9%','+3.5%']]};
-drillData.sector_hotel={source:'来源：酒店.xlsx',summary:[{label:'当日酒店总营收',value:'¥ 22.5 万',color:'#1890ff'},{label:'本月累计',value:'¥ 675.0 万',color:'#1a2332'},{label:'月完成率',value:'85%',color:'#fa8c16'}],columns:['酒店名称','日营收 (¥)','ADR (¥)','出租率','RevPAR (¥)'],rows:[['上海全季','79,531.40','367.90','101.01%','371.62'],['广州丽怡','66,673.00','490.86','100.00%','490.86'],['武汉某酒店','18,189.77','248.79','52.14%','129.72'],['沌口枫渡','16,899.99','280.18','35.71%','100.05'],['天津枫渡','12,937.75','300.88','27.74%','83.46'],['沌口H','10,500.00','241.06','45.56%','109.83'],['南通H','9,991.34','219.33','35.71%','78.32'],['济南枫渡','8,602.46','260.68','28.70%','74.82'],['重庆丽怡','8,224.85','177.49','39.00%','69.22'],['汉口枫渡','8,150.13','213.16','24.62%','52.48']]};
-drillData.sector_building={source:'来源：楼宇运营已出租信息.xlsx',summary:[{label:'楼宇租金收入',value:'¥ 98.6 万',color:'#1890ff'},{label:'物业费收入',value:'¥ 8.2 万',color:'#13c2c2'},{label:'停车费收入',value:'¥ 0.8 万',color:'#fa8c16'}],columns:['租户','单元','面积','月租金 (元)','实收率'],rows:[['云创科技','1号楼-G101','500㎡','110,000','100%'],['鼎信金融','1号楼-G102','350㎡','105,000','95.2%'],['迈思设计','1号楼-G103','240㎡','72,000','100%'],['寰宇咨询','1号楼-G301','800㎡','240,000','100%'],['智慧教育','2号楼-B201','400㎡','80,000','95%']]};
-drillData.sector_taxi={source:'来源：出租.xlsx',summary:[{label:'当日总营收',value:'¥ 23.31 万',color:'#1890ff'},{label:'总成本',value:'¥ 18.00 万',color:'#f5222d'},{label:'当日利润',value:'¥ 5.31 万',color:'#52c41a'}],columns:['门店','车辆数','司源','日营收 (万)','成本 (万)','利润 (万)'],rows:[['天津 (天津滨海客运)','1,500','1,746','23.31','18.00','5.31'],['无锡 (无锡交通集团)','98','289','18.50','12.50','6.00'],['新疆 (新疆巴士客运)','132','1,423','22.40','16.80','5.60']]};
-
-/* ===== 日期切换功能 ===== */
-var dateData_dashboard = {
-'2026-05-18':{dateLabel:'2026年05月18日',groupIncome:428.5,groupIncomeYoY:'+12.4%',netProfit:85.3,netProfitYoY:'+8.7%',totalCost:298.2,totalCostYoY:'+15.2%',headcount:2186,headcountChange:'+86人',propertyRevenue:46.8,propertyRevYoY:'+6.2%',hotelRevenue:22.5,hotelRevYoY:'+8.7%',buildingRevenue:98.6,buildingRevYoY:'+5.1%',taxiRevenue:23.31,taxiRevYoY:'+3.9%',propertyRate:85.3,propertyRateChange:'+2.1%',propertyRentRate:92.1,propertyRentChange:'+0.8%',buildingRentRate:87.3,buildingRentChange:'+1.2%',hotelOccRate:51.62,hotelOccChange:'+2.3%',tableData:[['物业板块','1,428.00','92%','32.4%'],['酒店板块','675.00','85%','28.1%'],['楼宇板块','2,958.00','105%','38.5%'],['出租车板块','699.30','78%','22.2%']],revenueChartMonth:[4285,4560,4890,5120,4980],sectorData:[{v:1428,n:'物业板块'},{v:675,n:'酒店板块'},{v:2958,n:'楼宇板块'},{v:699,n:'出租车板块'}],revenueDetail:{summary:[{label:'当日总营收',value:'¥ 428.5 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 12,850 万',color:'#1a2332'},{label:'目标达成率',value:'95.2%',color:'#52c41a'}],rows:[['2026-05-18','物业费收入','46.80','10.9%','+3.1%'],['2026-05-18','酒店客房收入','22.50','5.3%','+5.2%'],['2026-05-18','楼宇租金收入','98.60','23.0%','+2.4%'],['2026-05-18','出租车营收','23.31','5.4%','+1.8%'],['2026-05-18','车位费收入','8.20','1.9%','+0.5%'],['2026-05-18','其他收入','13.00','3.0%','-0.2%']]},profitDetail:{summary:[{label:'当日净利润',value:'¥ 85.3 万',color:'#1890ff'},{label:'净利润率',value:'19.9%',color:'#52c41a'},{label:'同比去年',value:'+8.7%',color:'#52c41a'}],rows:[['2026-05','物业板块','15.20','32.4%','+6.2%'],['2026-05','酒店板块','6.30','28.1%','+4.5%'],['2026-05','楼宇板块','38.00','38.5%','+5.1%'],['2026-05','出租车板块','5.20','22.2%','+3.9%']]},costDetail:{summary:[{label:'当日总成本',value:'¥ 298.2 万',color:'#1890ff'},{label:'成本率',value:'69.6%',color:'#fa8c16'},{label:'同比去年',value:'+15.2%',color:'#f5222d'}],rows:[['人力成本','集团人力资源部','98.50','33.0%','+3.2%'],['物业运营成本','物业事业部','62.80','21.1%','+2.1%'],['酒店运营成本','酒店事业部','48.20','16.2%','+4.5%'],['楼宇维护成本','楼宇事业部','35.60','11.9%','+1.5%'],['出租车运营成本','出租车事业部','28.10','9.4%','+2.8%']]},timestamp:'数据更新时间：2026-05-18 09:00'},
-'2026-05-17':{dateLabel:'2026年05月17日',groupIncome:410.2,groupIncomeYoY:'+10.8%',netProfit:80.5,netProfitYoY:'+7.2%',totalCost:285.7,totalCostYoY:'+14.1%',headcount:2178,headcountChange:'+82人',propertyRevenue:44.2,propertyRevYoY:'+5.5%',hotelRevenue:21.0,hotelRevYoY:'+7.8%',buildingRevenue:95.1,buildingRevYoY:'+4.5%',taxiRevenue:22.40,taxiRevYoY:'+3.2%',propertyRate:83.8,propertyRateChange:'+1.8%',propertyRentRate:91.5,propertyRentChange:'+0.6%',buildingRentRate:86.5,buildingRentChange:'+0.9%',hotelOccRate:49.85,hotelOccChange:'+2.0%',tableData:[['物业板块','1,386.00','89%','31.8%'],['酒店板块','650.00','82%','27.5%'],['楼宇板块','2,885.00','102%','37.9%'],['出租车板块','672.00','75%','21.5%']],revenueChartMonth:[4120,4390,4710,4980,4850],sectorData:[{v:1386,n:'物业板块'},{v:650,n:'酒店板块'},{v:2885,n:'楼宇板块'},{v:672,n:'出租车板块'}],revenueDetail:{summary:[{label:'当日总营收',value:'¥ 410.2 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 12,420 万',color:'#1a2332'},{label:'目标达成率',value:'92.0%',color:'#fa8c16'}],rows:[['2026-05-17','物业费收入','44.20','10.8%','+2.8%'],['2026-05-17','酒店客房收入','21.00','5.1%','+4.8%'],['2026-05-17','楼宇租金收入','95.10','23.2%','+2.1%'],['2026-05-17','出租车营收','22.40','5.5%','+1.5%'],['2026-05-17','车位费收入','7.80','1.9%','+0.3%'],['2026-05-17','其他收入','12.50','3.0%','-0.5%']]},profitDetail:{summary:[{label:'当日净利润',value:'¥ 80.5 万',color:'#1890ff'},{label:'净利润率',value:'19.6%',color:'#52c41a'},{label:'同比去年',value:'+7.2%',color:'#52c41a'}],rows:[['2026-05','物业板块','14.10','31.9%','+5.8%'],['2026-05','酒店板块','5.80','27.6%','+4.0%'],['2026-05','楼宇板块','35.80','37.6%','+4.8%'],['2026-05','出租车板块','5.00','21.8%','+3.5%']]},costDetail:{summary:[{label:'当日总成本',value:'¥ 285.7 万',color:'#1890ff'},{label:'成本率',value:'69.7%',color:'#fa8c16'},{label:'同比去年',value:'+14.1%',color:'#f5222d'}],rows:[['人力成本','集团人力资源部','95.20','33.3%','+3.0%'],['物业运营成本','物业事业部','60.50','21.2%','+1.9%'],['酒店运营成本','酒店事业部','46.10','16.1%','+4.2%'],['楼宇维护成本','楼宇事业部','34.20','12.0%','+1.3%'],['出租车运营成本','出租车事业部','26.80','9.4%','+2.5%']]},timestamp:'数据更新时间：2026-05-17 09:00'},
-'2026-05-16':{dateLabel:'2026年05月16日',groupIncome:398.6,groupIncomeYoY:'+9.5%',netProfit:76.8,netProfitYoY:'+6.5%',totalCost:278.4,totalCostYoY:'+12.8%',headcount:2170,headcountChange:'+78人',propertyRevenue:42.5,propertyRevYoY:'+4.8%',hotelRevenue:19.8,hotelRevYoY:'+6.9%',buildingRevenue:92.3,buildingRevYoY:'+3.8%',taxiRevenue:21.50,taxiRevYoY:'+2.5%',propertyRate:82.1,propertyRateChange:'+1.5%',propertyRentRate:90.8,propertyRentChange:'+0.4%',buildingRentRate:85.6,buildingRentChange:'+0.7%',hotelOccRate:48.12,hotelOccChange:'+1.7%',tableData:[['物业板块','1,352.00','87%','31.2%'],['酒店板块','628.00','79%','26.8%'],['楼宇板块','2,810.00','99%','37.2%'],['出租车板块','645.00','72%','20.8%']],revenueChartMonth:[3980,4250,4580,4850,4720],sectorData:[{v:1352,n:'物业板块'},{v:628,n:'酒店板块'},{v:2810,n:'楼宇板块'},{v:645,n:'出租车板块'}],revenueDetail:{summary:[{label:'当日总营收',value:'¥ 398.6 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 12,010 万',color:'#1a2332'},{label:'目标达成率',value:'88.9%',color:'#fa8c16'}],rows:[['2026-05-16','物业费收入','42.50','10.7%','+2.5%'],['2026-05-16','酒店客房收入','19.80','5.0%','+4.2%'],['2026-05-16','楼宇租金收入','92.30','23.2%','+1.8%'],['2026-05-16','出租车营收','21.50','5.4%','+1.2%'],['2026-05-16','车位费收入','7.50','1.9%','+0.1%'],['2026-05-16','其他收入','12.00','3.0%','-0.8%']]},profitDetail:{summary:[{label:'当日净利润',value:'¥ 76.8 万',color:'#1890ff'},{label:'净利润率',value:'19.3%',color:'#52c41a'},{label:'同比去年',value:'+6.5%',color:'#52c41a'}],rows:[['2026-05','物业板块','13.50','31.8%','+5.2%'],['2026-05','酒店板块','5.30','26.8%','+3.5%'],['2026-05','楼宇板块','34.20','37.0%','+4.2%'],['2026-05','出租车板块','4.80','21.5%','+3.0%']]},costDetail:{summary:[{label:'当日总成本',value:'¥ 278.4 万',color:'#1890ff'},{label:'成本率',value:'69.8%',color:'#fa8c16'},{label:'同比去年',value:'+12.8%',color:'#f5222d'}],rows:[['人力成本','集团人力资源部','92.80','33.3%','+2.8%'],['物业运营成本','物业事业部','58.90','21.2%','+1.6%'],['酒店运营成本','酒店事业部','44.80','16.1%','+3.8%'],['楼宇维护成本','楼宇事业部','33.50','12.0%','+1.1%'],['出租车运营成本','出租车事业部','25.60','9.2%','+2.2%']]},timestamp:'数据更新时间：2026-05-16 09:00'},
-'2026-05-15':{dateLabel:'2026年05月15日',groupIncome:385.2,groupIncomeYoY:'+8.2%',netProfit:72.1,netProfitYoY:'+5.8%',totalCost:270.5,totalCostYoY:'+11.5%',headcount:2162,headcountChange:'+74人',propertyRevenue:40.8,propertyRevYoY:'+4.1%',hotelRevenue:18.5,hotelRevYoY:'+6.2%',buildingRevenue:89.5,buildingRevYoY:'+3.1%',taxiRevenue:20.50,taxiRevYoY:'+1.8%',propertyRate:80.5,propertyRateChange:'+1.2%',propertyRentRate:90.1,propertyRentChange:'+0.2%',buildingRentRate:84.7,buildingRentChange:'+0.5%',hotelOccRate:46.58,hotelOccChange:'+1.4%',tableData:[['物业板块','1,318.00','85%','30.5%'],['酒店板块','605.00','76%','26.1%'],['楼宇板块','2,735.00','96%','36.5%'],['出租车板块','615.00','69%','20.1%']],revenueChartMonth:[3850,4120,4450,4720,4580],sectorData:[{v:1318,n:'物业板块'},{v:605,n:'酒店板块'},{v:2735,n:'楼宇板块'},{v:615,n:'出租车板块'}],revenueDetail:{summary:[{label:'当日总营收',value:'¥ 385.2 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 11,610 万',color:'#1a2332'},{label:'目标达成率',value:'86.0%',color:'#fa8c16'}],rows:[['2026-05-15','物业费收入','40.80','10.6%','+2.2%'],['2026-05-15','酒店客房收入','18.50','4.8%','+3.8%'],['2026-05-15','楼宇租金收入','89.50','23.2%','+1.5%'],['2026-05-15','出租车营收','20.50','5.3%','+0.9%'],['2026-05-15','车位费收入','7.20','1.9%','-0.1%'],['2026-05-15','其他收入','11.50','3.0%','-1.0%']]},profitDetail:{summary:[{label:'当日净利润',value:'¥ 72.1 万',color:'#1890ff'},{label:'净利润率',value:'18.7%',color:'#52c41a'},{label:'同比去年',value:'+5.8%',color:'#52c41a'}],rows:[['2026-05','物业板块','12.80','31.4%','+4.8%'],['2026-05','酒店板块','4.80','25.9%','+3.0%'],['2026-05','楼宇板块','32.50','36.3%','+3.8%'],['2026-05','出租车板块','4.50','21.0%','+2.5%']]},costDetail:{summary:[{label:'当日总成本',value:'¥ 270.5 万',color:'#1890ff'},{label:'成本率',value:'70.2%',color:'#fa8c16'},{label:'同比去年',value:'+11.5%',color:'#f5222d'}],rows:[['人力成本','集团人力资源部','90.50','33.5%','+2.5%'],['物业运营成本','物业事业部','57.20','21.1%','+1.4%'],['酒店运营成本','酒店事业部','43.50','16.1%','+3.5%'],['楼宇维护成本','楼宇事业部','32.80','12.1%','+0.9%'],['出租车运营成本','出租车事业部','24.50','9.1%','+1.9%']]},timestamp:'数据更新时间：2026-05-15 09:00'},
-'2026-05-14':{dateLabel:'2026年05月14日',groupIncome:372.8,groupIncomeYoY:'+7.0%',netProfit:68.5,netProfitYoY:'+5.0%',totalCost:262.8,totalCostYoY:'+10.2%',headcount:2155,headcountChange:'+70人',propertyRevenue:39.2,propertyRevYoY:'+3.5%',hotelRevenue:17.2,hotelRevYoY:'+5.5%',buildingRevenue:86.8,buildingRevYoY:'+2.5%',taxiRevenue:19.60,taxiRevYoY:'+1.2%',propertyRate:79.2,propertyRateChange:'+0.9%',propertyRentRate:89.5,propertyRentChange:'+0.1%',buildingRentRate:83.8,buildingRentChange:'+0.3%',hotelOccRate:45.02,hotelOccChange:'+1.1%',tableData:[['物业板块','1,285.00','83%','29.8%'],['酒店板块','582.00','73%','25.5%'],['楼宇板块','2,660.00','94%','35.8%'],['出租车板块','588.00','66%','19.5%']],revenueChartMonth:[3720,3980,4320,4580,4450],sectorData:[{v:1285,n:'物业板块'},{v:582,n:'酒店板块'},{v:2660,n:'楼宇板块'},{v:588,n:'出租车板块'}],revenueDetail:{summary:[{label:'当日总营收',value:'¥ 372.8 万',color:'#1890ff'},{label:'本月累计营收',value:'¥ 11,220 万',color:'#1a2332'},{label:'目标达成率',value:'83.1%',color:'#fa8c16'}],rows:[['2026-05-14','物业费收入','39.20','10.5%','+1.9%'],['2026-05-14','酒店客房收入','17.20','4.6%','+3.2%'],['2026-05-14','楼宇租金收入','86.80','23.3%','+1.2%'],['2026-05-14','出租车营收','19.60','5.3%','+0.6%'],['2026-05-14','车位费收入','6.90','1.9%','-0.3%'],['2026-05-14','其他收入','11.00','3.0%','-1.2%']]},profitDetail:{summary:[{label:'当日净利润',value:'¥ 68.5 万',color:'#1890ff'},{label:'净利润率',value:'18.4%',color:'#52c41a'},{label:'同比去年',value:'+5.0%',color:'#52c41a'}],rows:[['2026-05','物业板块','12.10','30.9%','+4.2%'],['2026-05','酒店板块','4.30','25.0%','+2.5%'],['2026-05','楼宇板块','31.00','35.7%','+3.2%'],['2026-05','出租车板块','4.20','20.5%','+2.0%']]},costDetail:{summary:[{label:'当日总成本',value:'¥ 262.8 万',color:'#1890ff'},{label:'成本率',value:'70.5%',color:'#fa8c16'},{label:'同比去年',value:'+10.2%',color:'#f5222d'}],rows:[['人力成本','集团人力资源部','88.20','33.6%','+2.2%'],['物业运营成本','物业事业部','55.50','21.1%','+1.2%'],['酒店运营成本','酒店事业部','42.10','16.0%','+3.2%'],['楼宇维护成本','楼宇事业部','32.00','12.2%','+0.7%'],['出租车运营成本','出租车事业部','23.80','9.1%','+1.6%']]},timestamp:'数据更新时间：2026-05-14 09:00'}
-};
-
-function switchDate(dateKey) {
-	var dd = dateData_dashboard[dateKey];
-	if (!dd) return;
-	document.getElementById('displayDate').textContent = dd.dateLabel;
-	var cards = document.querySelectorAll('.bi-card');
-	if (cards.length >= 12) {
-		var g = function(idx, html, subHtml) {
-			var v = cards[idx].querySelector('.bi-card-value');
-			if (v) v.innerHTML = html;
-			var s = cards[idx].querySelector('.bi-card-sub');
-			if (s) s.innerHTML = subHtml;
-		};
-		g(0,'¥ '+dd.groupIncome.toFixed(1)+' 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','同比 <span class="up">'+dd.groupIncomeYoY+'</span>');
-		g(1,'¥ '+dd.netProfit.toFixed(1)+' 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','同比 <span class="up">'+dd.netProfitYoY+'</span>');
-		g(2,'¥ '+dd.totalCost.toFixed(1)+' 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','同比 <span class="down">'+dd.totalCostYoY+'</span>');
-		g(3,dd.headcount+'<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','较上月 <span class="highlight-text">'+dd.headcountChange+'</span>');
-		g(4,'¥ '+dd.propertyRevenue.toFixed(1)+' 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','同比增长 <span class="up">'+dd.propertyRevYoY+'</span>');
-		g(5,'¥ '+dd.hotelRevenue.toFixed(1)+' 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','同比增长 <span class="up">'+dd.hotelRevYoY+'</span>');
-		g(6,'¥ '+dd.buildingRevenue.toFixed(1)+' 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','同比增长 <span class="up">'+dd.buildingRevYoY+'</span>');
-		g(7,'¥ '+dd.taxiRevenue.toFixed(2)+' 万<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','同比增长 <span class="up">'+dd.taxiRevYoY+'</span>');
-		g(8,dd.propertyRate+'%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','环比上月 <span class="up">'+dd.propertyRateChange+'</span>');
-		g(9,dd.propertyRentRate+'%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','环比上月 <span class="up">'+dd.propertyRentChange+'</span>');
-		g(10,dd.buildingRentRate+'%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','环比上月 <span class="up">'+dd.buildingRentChange+'</span>');
-		g(11,dd.hotelOccRate+'%<iconify-icon class="drill-icon" icon="mdi:arrow-top-right-thin"></iconify-icon>','环比上月 <span class="up">'+dd.hotelOccChange+'</span>');
-	}
-	if (revenueChartInstance) revenueChartInstance.setOption({series:[{data:dd.revenueChartMonth}]});
-	var sc = echarts.getInstanceByDom(document.getElementById('sectorChart'));
-	if (sc) {
-		var colors = ['#1890ff','#722ed1','#52c41a','#fa8c16'];
-		sc.setOption({series:[{data:dd.sectorData.map(function(item,i){return{value:item.v,name:item.n,itemStyle:{color:colors[i]}};})}]});
-	}
-	var rows = document.querySelectorAll('.table-container tbody tr');
-	for (var i = 0; i < Math.min(4, dd.tableData.length); i++) {
-		if (rows[i]) {
-			var c = rows[i].querySelectorAll('td');
-			if (c.length >= 4) {
-				var nm = c[0].querySelector('.drill-down-clickable') || c[0];
-				nm.textContent = dd.tableData[i][0];
-				var rv = c[1].querySelector('.drill-down-clickable') || c[1];
-				rv.textContent = dd.tableData[i][1];
-				var pf = c[2].querySelector('.progress-fill');
-				if (pf) pf.style.width = dd.tableData[i][2];
-				var ps = c[2].querySelector('.drill-down-clickable');
-				if (ps) ps.textContent = dd.tableData[i][2];
-				var ml = c[3].querySelector('.drill-down-clickable') || c[3];
-				ml.textContent = dd.tableData[i][3];
-			}
-		}
-	}
-	if (dd.revenueDetail) { drillData.revenue.summary = dd.revenueDetail.summary; drillData.revenue.rows = dd.revenueDetail.rows; }
-	if (dd.profitDetail) { drillData.profit.summary = dd.profitDetail.summary; drillData.profit.rows = dd.profitDetail.rows; }
-	if (dd.costDetail) { drillData.cost.summary = dd.costDetail.summary; drillData.cost.rows = dd.costDetail.rows; }
-	var ts = document.querySelector('.bottom-timestamp');
-	if (ts && dd.timestamp) ts.textContent = dd.timestamp;
-}
+	/* 板块经营趋势 - 图表1: 酒店经营趋势（各酒店当日营收排行） */
+	function initHotelTrendChart(){var c=echarts.init(document.getElementById('hotelTrendChart'));var hotels=[{n:'上海全季',v:79531.4},{n:'广州丽怡',v:66673},{n:'武汉某酒店',v:18189.77},{n:'沌口枫渡',v:16899.99},{n:'天津枫渡',v:12937.75},{n:'沌口H',v:10500},{n:'南通H',v:9991.34},{n:'济南枫渡',v:8602.46},{n:'重庆丽怡',v:8224.85},{n:'汉口枫渡',v:8150.13}];var names=hotels.map(function(h){return h.n;});var vals=hotels.map(function(h){return h.v;});c.setOption({color:['#1890ff'],backgroundColor:'transparent',tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){return p[0].name+'<br/>营收: ¥'+p[0].value.toLocaleString();}},grid:{left:'3%',right:'10%',bottom:'3%',containLabel:true},xAxis:{type:'value',axisLabel:{color:'#666',formatter:function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;}},splitLine:{lineStyle:{color:'#f0f0f0'}}},yAxis:{type:'category',data:names.reverse(),axisLabel:{color:'#666',fontSize:11},axisLine:{lineStyle:{color:'#e8ecf1'}}},series:[{type:'bar',data:[].concat(vals).reverse(),itemStyle:{color:'#1890ff',borderRadius:[0,4,4,0]},label:{show:true,position:'right',formatter:function(p){return '¥'+p.value.toLocaleString();},color:'#333',fontSize:11}}]});c.on('click',function(p){var idx=names.length-1-p.dataIndex;showDrillDown(hotels[idx].n+' 营收明细','hotel_'+idx);});window.addEventListener('resize',function(){c.resize();});}
+	/* 板块经营趋势 - 图表2: 物业管理趋势（物业费月度收缴情况） */
+	function initPropertyTrendChart(){var c=echarts.init(document.getElementById('propertyTrendChart'));c.setOption({color:['#1890ff','#52c41a'],backgroundColor:'transparent',tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){var r=p[0].axisValue;for(var i=0;i<p.length;i++){r+='<br/>'+p[i].marker+' '+p[i].seriesName+': ¥'+p[i].value.toLocaleString();}return r;}},legend:{data:['应收','实收'],textStyle:{color:'#666',fontSize:12},bottom:0},grid:{left:'3%',right:'4%',bottom:'20%',containLabel:true},xAxis:{type:'category',data:['1月','2月'],axisLabel:{color:'#666'},axisLine:{lineStyle:{color:'#e8ecf1'}}},yAxis:{type:'value',axisLabel:{color:'#666',formatter:function(v){return v>=1000?(v/1000).toFixed(0)+'k':v;}},splitLine:{lineStyle:{color:'#f0f0f0'}}},series:[{name:'应收',type:'bar',data:[25900,23900],itemStyle:{color:'#1890ff',borderRadius:[4,4,0,0]}},{name:'实收',type:'bar',data:[22100,23000],itemStyle:{color:'#52c41a',borderRadius:[4,4,0,0]}}]});c.on('click',function(p){showDrillDown(p.name+' 物业费明细','property_'+p.name);});window.addEventListener('resize',function(){c.resize();});}
+	/* 板块经营趋势 - 图表3: 商办租赁趋势（楼宇租金月度趋势） */
+	function initLeasingTrendChart(){var c=echarts.init(document.getElementById('leasingTrendChart'));c.setOption({color:['#722ed1','#13c2c2'],backgroundColor:'transparent',tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){var r=p[0].axisValue;for(var i=0;i<p.length;i++){r+='<br/>'+p[i].marker+' '+p[i].seriesName+': ¥'+p[i].value.toLocaleString();}return r;}},legend:{data:['租金收入','物业费收入'],textStyle:{color:'#666',fontSize:12},bottom:0},grid:{left:'3%',right:'4%',bottom:'20%',containLabel:true},xAxis:{type:'category',data:['1月','2月','3月'],axisLabel:{color:'#666'},axisLine:{lineStyle:{color:'#e8ecf1'}}},yAxis:{type:'value',axisLabel:{color:'#666',formatter:function(v){return v>=1000?(v/1000).toFixed(0)+'k':v;}},splitLine:{lineStyle:{color:'#f0f0f0'}}},series:[{name:'租金收入',type:'bar',data:[607000,607000,607000],itemStyle:{color:'#722ed1',borderRadius:[4,4,0,0]}},{name:'物业费收入',type:'bar',data:[82000,82000,82000],itemStyle:{color:'#13c2c2',borderRadius:[4,4,0,0]}}]});c.on('click',function(p){showDrillDown(p.name+' 楼宇明细','leasing_'+p.name);});window.addEventListener('resize',function(){c.resize();});}
+	/* 板块经营趋势 - 图表4: 出租车趋势（各门店日营收趋势） */
+	function initTaxiTrendChart(){var c=echarts.init(document.getElementById('taxiTrendChart'));var dates=['1/1','1/4','1/7','1/10','1/13','1/16','1/19','1/22','1/25','1/28','1/31'];var tianjin=[23.31,22.8,24.1,23.9,25.2,24.5,26,26.8,25.5,24.8,23.5];var wuxi=[18.5,17.2,19.6,18.8,20.5,19.2,21,21.8,20.8,19.8,20.4];var xinjiang=[22.4,21.5,23.8,22.9,24.5,23.2,25,25.8,24.2,23.5,23.0];c.setOption({color:['#1890ff','#52c41a','#fa8c16'],backgroundColor:'transparent',tooltip:{trigger:'axis',formatter:function(p){var r=p[0].axisValue;for(var i=0;i<p.length;i++){r+='<br/>'+p[i].marker+' '+p[i].seriesName+': ¥'+p[i].value.toFixed(1)+' 万';}return r;}},legend:{data:['天津','无锡','新疆'],textStyle:{color:'#666',fontSize:12},bottom:0},grid:{left:'3%',right:'4%',bottom:'20%',containLabel:true},xAxis:{type:'category',data:dates,axisLabel:{color:'#666',fontSize:11,rotate:0},axisLine:{lineStyle:{color:'#e8ecf1'}}},yAxis:{type:'value',name:'万元',nameTextStyle:{color:'#999',fontSize:11},axisLabel:{color:'#666'},splitLine:{lineStyle:{color:'#f0f0f0'}}},series:[{name:'天津',type:'line',smooth:true,data:tianjin,symbol:'circle',symbolSize:6,lineStyle:{width:2}},{name:'无锡',type:'line',smooth:true,data:wuxi,symbol:'circle',symbolSize:6,lineStyle:{width:2}},{name:'新疆',type:'line',smooth:true,data:xinjiang,symbol:'circle',symbolSize:6,lineStyle:{width:2}}]});c.on('click',function(p){showDrillDown(p.name+' 日营收明细','taxi_'+p.name);});window.addEventListener('resize',function(){c.resize();});}
 </script>
 </body>
 </html>

@@ -5,9 +5,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>经营看板 - 酒店管理</title>
-<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
-<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
-<script src="https://modao.cc/agent-py/static/source/js/echarts.min.js"></script>
+<script src="tailwindcss.js"></script>
+<script src="iconify-icon.min.js"></script>
+<script src="echarts.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -131,35 +131,7 @@ body {
     font-weight: 700;
     color: #1a2332;
 }
-.topbar-right { display: flex; align-items: center; gap: 16px; }
-.topbar-btn {
-    width: 36px; height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    color: #8c8c8c;
-    cursor: pointer;
-    transition: all 0.15s;
-    border: none;
-    background: #f5f5f5;
-}
-.topbar-btn:hover { background: #e6f7ff; color: #1890ff; }
-.topbar-btn iconify-icon { font-size: 20px; }
 .topbar-date { font-size: 13px; color: #8c8c8c; }
-.topbar-avatar {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: linear-gradient(135deg, #1890ff, #096dd9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-}
 
 /* ===== 主内容区 ===== */
 .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; margin-left: 220px; }
@@ -199,25 +171,6 @@ select option { background: #fff; color: #333; }
 .filter-btn:hover { border-color: #1890ff; color: #1890ff; }
 .filter-btn-active { background: #1890ff; border-color: #1890ff; color: #fff; }
 /* ===== 渠道筛选按钮 ===== */
-.filter-btn {
-    padding: 5px 14px;
-    border-radius: 4px;
-    font-size: 12px;
-    border: 1px solid #d9d9d9;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: #f5f5f5;
-    color: #595959;
-}
-.filter-btn:hover {
-    border-color: #1890ff;
-    color: #1890ff;
-}
-.filter-btn-active {
-    background: #1890ff;
-    border-color: #1890ff;
-    color: #fff;
-}
 
 /* ===== 白色BI卡片 ===== */
 .bi-card {
@@ -538,14 +491,10 @@ tbody tr:hover { background: #e6f7ff; }
 <!-- 顶部导航栏 -->
 <header class="topbar">
 <div class="topbar-left">
-<h1 class="topbar-title">酒店管理看板</h1><span class="badge badge-blue" style="font-size:12px;margin-left:8px;">每日更新</span>
+<h1 class="topbar-title">酒店管理看板<span style="font-size:12px;color:#8c8c8c;font-weight:400;margin-left:8px;">每日更新</span></h1>
 </div>
 <div class="topbar-right">
-<button class="topbar-btn" onclick="location.reload()" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
-<button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
-<button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
 <div class="topbar-date">2026年05月18日</div>
-<div class="topbar-avatar" title="李总 (CEO)">李</div>
 </div>
 </header>
 <div class="filter-row" style="background:#ffffff;border-bottom:1px solid #e8ecf1;width:100%;">
@@ -596,14 +545,14 @@ tbody tr:hover { background: #e6f7ff; }
 <div class="module-section">
 <div class="module-section-title"><iconify-icon icon="mdi:store-check" style="color:#1890ff;"></iconify-icon>门店盈亏总览</div>
 <div class="summary-card" style="background:#ffffff;border:1px solid #e2e5e9;padding:14px 16px;">
-<div class="summary-line"><div class="summary-dot green"></div><div><span class="summary-highlight" style="color:#52c41a;">盈利门店（4家）：</span>上海全季（+12.6万）、广州丽怡（+8.3万）、重庆丽怡（+5.1万）、沌口枫渡（+3.8万），合计盈利 <span class="summary-highlight" style="color:#52c41a;">29.8万</span></div></div>
-<div class="summary-line"><div class="summary-dot red"></div><div><span class="summary-highlight" style="color:#f5222d;">亏损门店（6家）：</span>武汉某酒店（-7.2万）、沌口H（-4.5万）、南通H（-2.8万）、济南枫渡（-1.6万）、汉口枫渡（-1.4万）、天津枫渡（-0.9万），合计亏损 <span class="summary-highlight" style="color:#f5222d;">18.4万</span></div></div>
-<div class="summary-line"><div class="summary-dot blue"></div><div><span class="summary-highlight" style="color:#1890ff;">整体表现：</span>10家门店中4盈6亏，当日净利 <span class="summary-highlight" style="color:#52c41a;">+11.4万</span>，需重点关注亏损门店运营情况。</div></div>
+<div class="summary-line"><div class="summary-dot green"></div><div><span class="summary-highlight" style="color:#52c41a;">盈利门店（6家）：</span>上海全季（+12.5万）、广州丽怡（+8.0万）、沌口枫渡（+3.5万）、南通H（+2.2万）、济南枫渡（+1.8万）、天津枫渡（+1.5万），合计盈利 <span class="summary-highlight" style="color:#52c41a;">29.5万</span></div></div>
+<div class="summary-line"><div class="summary-dot red"></div><div><span class="summary-highlight" style="color:#f5222d;">亏损门店（4家）：</span>武汉某酒店（-5.0万）、沌口H（-3.2万）、重庆丽怡（-2.5万）、汉口枫渡（-1.8万），合计亏损 <span class="summary-highlight" style="color:#f5222d;">12.5万</span></div></div>
+<div class="summary-line"><div class="summary-dot blue"></div><div><span class="summary-highlight" style="color:#1890ff;">整体表现：</span>10家门店中6盈4亏，当日净利 <span class="summary-highlight" style="color:#52c41a;">+17.0万</span>，整体运营状况良好。</div></div>
 </div>
 </div>
 <!-- 核心经营指标 -->
 <div class="module-section">
-<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标 <span style="font-size:11px;color:#999;font-weight:400;">📋 数据来源：酒店.xlsx</span></div>
+<div class="module-section-title"><iconify-icon icon="mdi:chart-box-outline" style="color:#1890ff;"></iconify-icon>核心经营指标 <span style="font-size:11px;color:#999;font-weight:400;">数据来源：酒店PMS系统</span></div>
     <!-- 日指标 -->
 <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:8px;">
 <div class="bi-card">
@@ -706,16 +655,16 @@ tbody tr:hover { background: #e6f7ff; }
 const ECHARTS_THEME_COLORS = ['#1890ff', '#722ed1', '#52c41a', '#fa8c16', '#eb2f96', '#13c2c2', '#38bdf8', '#818cf8', '#4f46e5', '#a78bfa'];
 
 const hotelsData = [
-{name:'上海全季', rooms:199, rented:201, monthlyRented:2822, occ:101.01, monthlyOcc:93.35, adr:367.9, monthlyAdr:411.3, revparDay:371.62, revparMonth:383.95, revDay:79531.4, revMonth:1159323.6, totalRevMonth:1254104.3, target:1899405, completion:66.02, totalRevDay:79531.4, breakEven:61270.3, profit:18261.1, otaPct:18.6, otaPrice:474, otaRooms:37, walkPct:0, walkPrice:0, walkRooms:0, corpPct:16.1, corpPrice:545, corpRooms:32, memPct:27.1, memPrice:431, memRooms:54, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:5, monthGood:75, badReviews:0, monthBad:1},
-{name:'广州丽怡', rooms:134, rented:134, monthlyRented:2351, occ:100, monthlyOcc:97.47, adr:490.86, monthlyAdr:560.33, revparDay:490.86, revparMonth:546.15, revDay:65754, revMonth:1306862, totalRevMonth:1324075, target:1969174.53, completion:67.24, totalRevDay:66673, breakEven:46498.52, profit:20174.48, otaPct:24.63, otaPrice:472.45, otaRooms:33, walkPct:70.9, walkPrice:488.63, walkRooms:95, corpPct:0, corpPrice:0, corpRooms:0, memPct:3.73, memPrice:428.6, memRooms:5, hourPct:0.75, hourPrice:158, hourRooms:1, freePct:0, freePrice:0, freeRooms:0, goodReviews:0, monthGood:44, badReviews:0, monthBad:3},
-{name:'武汉某酒店', rooms:140, rented:73, monthlyRented:1620, occ:52.14, monthlyOcc:64.29, adr:248.79, monthlyAdr:322.64, revparDay:129.72, revparMonth:207.43, revDay:18161.77, revMonth:522671.4, totalRevMonth:524932.4, target:1088267.17, completion:48.25, totalRevDay:18189.77, breakEven:25676.8, profit:-7487.03, otaPct:20, otaPrice:294.9, otaRooms:28, walkPct:0, walkPrice:0, walkRooms:0, corpPct:28.57, corpPrice:257.3, corpRooms:40, memPct:1.43, memPrice:399.5, memRooms:2, hourPct:2.14, hourPrice:100.67, hourRooms:3, freePct:0, freePrice:0, freeRooms:0, goodReviews:1, monthGood:77, badReviews:0, monthBad:1},
-{name:'沌口H', rooms:90, rented:41, monthlyRented:684, occ:45.56, monthlyOcc:37.78, adr:241.06, monthlyAdr:321.53, revparDay:109.83, revparMonth:121.47, revDay:9883.46, revMonth:219994.59, totalRevMonth:224000, target:500000, completion:44.80, totalRevDay:10500, breakEven:9800, profit:700, otaPct:18.89, otaPrice:218.26, otaRooms:17, walkPct:6.67, walkPrice:180, walkRooms:6, corpPct:20, corpPrice:282.95, corpRooms:18, memPct:0, memPrice:0, memRooms:0, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:2, monthGood:109, badReviews:0, monthBad:0},
-{name:'重庆丽怡', rooms:100, rented:39, monthlyRented:1109, occ:39, monthlyOcc:61.61, adr:177.49, monthlyAdr:190.33, revparDay:69.22, revparMonth:117.26, revDay:7234.29, revMonth:219994.59, totalRevMonth:223257.8, target:380778.67, completion:58.65, totalRevDay:8224.85, breakEven:10916.32, profit:-2691.47, otaPct:48.71, otaPrice:203.49, otaRooms:19, walkPct:0, walkPrice:0, walkRooms:0, corpPct:46.15, corpPrice:170.7, corpRooms:18, memPct:2.56, memPrice:201.88, memRooms:1, hourPct:2.56, hourPrice:83.01, hourRooms:1, freePct:0, freePrice:0, freeRooms:0, goodReviews:2, monthGood:40, badReviews:0, monthBad:0},
-{name:'沌口枫渡', rooms:168, rented:60, monthlyRented:1136, occ:35.71, monthlyOcc:37.57, adr:280.18, monthlyAdr:388.61, revparDay:100.05, revparMonth:146, revDay:16810.99, revMonth:441456.71, totalRevMonth:556798.71, target:1166164.69, completion:47.75, totalRevDay:16899.99, breakEven:27216.26, profit:-10316.27, otaPct:6.55, otaPrice:328.09, otaRooms:11, walkPct:0, walkPrice:0, walkRooms:0, corpPct:23.81, corpPrice:272.87, corpRooms:40, memPct:4.76, memPrice:270.88, memRooms:8, hourPct:0.6, hourPrice:120, hourRooms:1, freePct:0, freePrice:0, freeRooms:0, goodReviews:8, monthGood:128, badReviews:0, monthBad:1},
-{name:'南通H', rooms:126, rented:45, monthlyRented:1362, occ:35.71, monthlyOcc:34.88, adr:219.33, monthlyAdr:271.78, revparDay:78.32, revparMonth:94.8, revDay:9869.84, revMonth:370300.56, totalRevMonth:396030.27, target:1222259.15, completion:32.40, totalRevDay:9991.34, breakEven:22027.28, profit:-12035.94, otaPct:71.11, otaPrice:208.78, otaRooms:32, walkPct:17.78, walkPrice:279.88, walkRooms:8, corpPct:2.22, corpPrice:200, corpRooms:1, memPct:0, memPrice:0, memRooms:0, hourPct:6.67, hourPrice:250, hourRooms:3, freePct:0, freePrice:0, freeRooms:0, goodReviews:4, monthGood:110, badReviews:1, monthBad:1},
-{name:'济南枫渡', rooms:115, rented:33, monthlyRented:1092, occ:28.7, monthlyOcc:52.73, adr:260.68, monthlyAdr:285.78, revparDay:74.82, revparMonth:150.69, revDay:6982.46, revMonth:262389.64, totalRevMonth:311928.64, target:622215, completion:50.13, totalRevDay:8602.46, breakEven:15129.25, profit:-6526.79, otaPct:0, otaPrice:0, otaRooms:0, walkPct:0, walkPrice:0, walkRooms:0, corpPct:93.94, corpPrice:209.08, corpRooms:31, memPct:6.06, memPrice:250.5, memRooms:2, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:3, monthGood:22, badReviews:0, monthBad:0},
-{name:'天津枫渡', rooms:156, rented:43, monthlyRented:940, occ:27.74, monthlyOcc:33.69, adr:300.88, monthlyAdr:371.43, revparDay:83.46, revparMonth:125.13, revDay:12937.75, revMonth:349144.35, totalRevMonth:352317.35, target:721793.59, completion:48.81, totalRevDay:12937.75, breakEven:19151.37, profit:-6213.62, otaPct:4.53, otaPrice:260, otaRooms:7, walkPct:0, walkPrice:0, walkRooms:0, corpPct:23.23, corpPrice:274.65, corpRooms:36, memPct:0, memPrice:0, memRooms:0, hourPct:0, hourPrice:0, hourRooms:0, freePct:14.74, freePrice:0, freeRooms:23, goodReviews:0, monthGood:23, badReviews:0, monthBad:0},
-{name:'汉口枫渡', rooms:130, rented:32, monthlyRented:1070, occ:24.62, monthlyOcc:45.73, adr:213.16, monthlyAdr:357.73, revparDay:52.48, revparMonth:163.59, revDay:6821.13, revMonth:382773.19, totalRevMonth:426719.19, target:917001.47, completion:46.53, totalRevDay:8150.13, breakEven:22122.32, profit:-13972.19, otaPct:50, otaPrice:210.34, otaRooms:16, walkPct:9.37, walkPrice:219.2, walkRooms:3, corpPct:9.37, corpPrice:216.13, corpRooms:3, memPct:18.75, memPrice:228, memRooms:6, hourPct:12.5, hourPrice:85, hourRooms:4, freePct:0, freePrice:0, freeRooms:0, goodReviews:0, monthGood:47, badReviews:0, monthBad:0}
+{name:'上海全季', rooms:200, rented:160, monthlyRented:4600, occ:80.00, monthlyOcc:74.19, adr:400.00, monthlyAdr:420.00, revparDay:320.00, revparMonth:311.61, revDay:64000, revMonth:1932000, totalRevMonth:1980000, target:2600000, completion:76.15, totalRevDay:64000, breakEven:50000, profit:14000, otaPct:25, otaPrice:450, otaRooms:40, walkPct:30, walkPrice:380, walkRooms:48, corpPct:25, corpPrice:470, corpRooms:40, memPct:20, memPrice:350, memRooms:32, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:8, monthGood:130, badReviews:0, monthBad:1},
+{name:'广州丽怡', rooms:150, rented:120, monthlyRented:3500, occ:80.00, monthlyOcc:75.27, adr:350.00, monthlyAdr:380.00, revparDay:280.00, revparMonth:285.95, revDay:42000, revMonth:1330000, totalRevMonth:1360000, target:1800000, completion:75.56, totalRevDay:42000, breakEven:33000, profit:9000, otaPct:30, otaPrice:380, otaRooms:36, walkPct:25, walkPrice:340, walkRooms:30, corpPct:25, corpPrice:400, corpRooms:30, memPct:20, memPrice:310, memRooms:24, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:6, monthGood:100, badReviews:0, monthBad:2},
+{name:'武汉某酒店', rooms:130, rented:65, monthlyRented:2000, occ:50.00, monthlyOcc:49.63, adr:200.00, monthlyAdr:230.00, revparDay:100.00, revparMonth:114.14, revDay:13000, revMonth:460000, totalRevMonth:475000, target:1100000, completion:43.18, totalRevDay:13000, breakEven:18000, profit:-5000, otaPct:40, otaPrice:220, otaRooms:26, walkPct:15, walkPrice:180, walkRooms:10, corpPct:30, corpPrice:240, corpRooms:20, memPct:15, memPrice:170, memRooms:10, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:3, monthGood:50, badReviews:1, monthBad:4},
+{name:'沌口H', rooms:100, rented:50, monthlyRented:1500, occ:50.00, monthlyOcc:48.39, adr:180.00, monthlyAdr:200.00, revparDay:90.00, revparMonth:96.77, revDay:9000, revMonth:300000, totalRevMonth:310000, target:800000, completion:38.75, totalRevDay:9000, breakEven:12000, profit:-3000, otaPct:35, otaPrice:200, otaRooms:18, walkPct:20, walkPrice:170, walkRooms:10, corpPct:25, corpPrice:210, corpRooms:13, memPct:20, memPrice:160, memRooms:10, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:2, monthGood:40, badReviews:0, monthBad:3},
+{name:'重庆丽怡', rooms:110, rented:55, monthlyRented:1700, occ:50.00, monthlyOcc:49.85, adr:190.00, monthlyAdr:220.00, revparDay:95.00, revparMonth:109.68, revDay:10450, revMonth:374000, totalRevMonth:385000, target:900000, completion:42.78, totalRevDay:10450, breakEven:13000, profit:-2550, otaPct:45, otaPrice:210, otaRooms:25, walkPct:10, walkPrice:170, walkRooms:6, corpPct:25, corpPrice:220, corpRooms:14, memPct:20, memPrice:160, memRooms:11, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:2, monthGood:35, badReviews:1, monthBad:5},
+{name:'沌口枫渡', rooms:160, rented:100, monthlyRented:3100, occ:62.50, monthlyOcc:62.50, adr:300.00, monthlyAdr:330.00, revparDay:187.50, revparMonth:206.25, revDay:30000, revMonth:1023000, totalRevMonth:1050000, target:1600000, completion:65.63, totalRevDay:30000, breakEven:26000, profit:4000, otaPct:30, otaPrice:340, otaRooms:30, walkPct:20, walkPrice:280, walkRooms:20, corpPct:30, corpPrice:350, corpRooms:30, memPct:20, memPrice:260, memRooms:20, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:5, monthGood:85, badReviews:0, monthBad:2},
+{name:'南通H', rooms:120, rented:70, monthlyRented:2200, occ:58.33, monthlyOcc:59.14, adr:260.00, monthlyAdr:290.00, revparDay:151.67, revparMonth:171.49, revDay:18200, revMonth:638000, totalRevMonth:655000, target:1000000, completion:65.50, totalRevDay:18200, breakEven:15800, profit:2400, otaPct:35, otaPrice:280, otaRooms:25, walkPct:25, walkPrice:250, walkRooms:18, corpPct:20, corpPrice:300, corpRooms:14, memPct:20, memPrice:230, memRooms:14, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:4, monthGood:70, badReviews:0, monthBad:1},
+{name:'济南枫渡', rooms:110, rented:65, monthlyRented:2000, occ:59.09, monthlyOcc:58.65, adr:250.00, monthlyAdr:270.00, revparDay:147.73, revparMonth:158.35, revDay:16250, revMonth:540000, totalRevMonth:555000, target:850000, completion:65.29, totalRevDay:16250, breakEven:14000, profit:2250, otaPct:30, otaPrice:270, otaRooms:20, walkPct:25, walkPrice:240, walkRooms:16, corpPct:25, corpPrice:290, corpRooms:16, memPct:20, memPrice:220, memRooms:13, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:3, monthGood:55, badReviews:0, monthBad:2},
+{name:'天津枫渡', rooms:140, rented:80, monthlyRented:2500, occ:57.14, monthlyOcc:57.60, adr:280.00, monthlyAdr:310.00, revparDay:160.00, revparMonth:178.57, revDay:22400, revMonth:775000, totalRevMonth:795000, target:1200000, completion:66.25, totalRevDay:22400, breakEven:20500, profit:1900, otaPct:25, otaPrice:310, otaRooms:20, walkPct:30, walkPrice:270, walkRooms:24, corpPct:25, corpPrice:320, corpRooms:20, memPct:20, memPrice:240, memRooms:16, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:4, monthGood:65, badReviews:0, monthBad:1},
+{name:'汉口枫渡', rooms:120, rented:50, monthlyRented:1600, occ:41.67, monthlyOcc:43.01, adr:200.00, monthlyAdr:220.00, revparDay:83.33, revparMonth:94.62, revDay:10000, revMonth:352000, totalRevMonth:365000, target:900000, completion:40.56, totalRevDay:10000, breakEven:12000, profit:-2000, otaPct:50, otaPrice:210, otaRooms:25, walkPct:15, walkPrice:190, walkRooms:8, corpPct:20, corpPrice:230, corpRooms:10, memPct:15, memPrice:170, memRooms:8, hourPct:0, hourPrice:0, hourRooms:0, freePct:0, freePrice:0, freeRooms:0, goodReviews:1, monthGood:30, badReviews:0, monthBad:3}
 ];
 
 let currentChannel = '全部';
@@ -1002,17 +951,17 @@ tooltip: {
 grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
 xAxis: {
   type: 'category',
-  data: ['1月', '2月', '3月', '4月', '5月'],
-  axisLine: { lineStyle: { color: '#e8ecf1' } },
-  axisLabel: { color: '#8c8c8c' }
+data: ['1月', '2月', '3月', '4月', '5月'],
+axisLine: { lineStyle: { color: '#e8ecf1' } },
+axisLabel: { color: '#8c8c8c' }
 },
 yAxis: {
-  type: 'value',
-  splitLine: { lineStyle: { color: '#f0f0f0' } },
-  axisLabel: { 
-    color: '#8c8c8c', 
-    formatter: function(v) { return (v/10000).toFixed(0) + '万'; }
-  }
+type: 'value',
+splitLine: { lineStyle: { color: '#f0f0f0' } },
+axisLabel: { 
+color: '#8c8c8c', 
+formatter: function(v) { return (v/10000).toFixed(0) + '万'; }
+}
 },
 series: [{
   name: '月营收',
@@ -1058,7 +1007,7 @@ return p.axisValue + '<br/>出租率: ' + p.value + '%';
 grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
 xAxis: {
 type: 'category',
-data: ['1月', '2月', '3月', '4月', '5月'],
+data: ['2026.01', '2026.02', '2026.03', '2026.04', '2026.05'],
 axisLine: { lineStyle: { color: '#e8ecf1' } },
 axisLabel: { color: '#8c8c8c' }
 },
@@ -1136,14 +1085,14 @@ function showDrillDown(title, key) {
 var sourceEl = document.getElementById('modalSource');
 if (sourceEl) {
 var sourceMap = {
-'occupancy_rate': '酒店.xlsx',
-'adr': '酒店.xlsx',
-'daily_revenue': '酒店.xlsx',
-'daily_profit': '酒店.xlsx',
-'revpar': '酒店.xlsx',
-'monthly_revenue': '酒店.xlsx'
+'occupancy_rate': '酒店PMS系统',
+'adr': '酒店PMS系统',
+'daily_revenue': '酒店PMS系统',
+'daily_profit': '酒店PMS系统',
+'revpar': '酒店PMS系统',
+'monthly_revenue': '酒店PMS系统'
 };
-sourceEl.innerHTML = '📋 来源：' + (sourceMap[key] || '系统明细表');
+sourceEl.innerHTML = '来源：' + (sourceMap[key] || '系统明细表');
 }
 document.getElementById('modalTitle').innerText = title;
 const data = drillData[key];

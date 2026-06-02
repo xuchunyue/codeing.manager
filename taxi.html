@@ -5,9 +5,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>经营看板 - 出租车</title>
-<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
-<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
-<script src="https://modao.cc/agent-py/static/source/js/echarts.min.js"></script>
+<script src="tailwindcss.js"></script>
+<script src="iconify-icon.min.js"></script>
+<script src="echarts.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #f0f2f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; height: 100vh; overflow: hidden; }
@@ -24,12 +24,7 @@ body { background: #f0f2f5; color: #333; font-family: -apple-system, BlinkMacSys
 .topbar { height: 64px; background: #ffffff; border-bottom: 1px solid #e8ecf1; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; margin-left: 220px; }
 .topbar-left { display: flex; align-items: center; gap: 12px; }
 .topbar-title { font-size: 22px; font-weight: 700; color: #1a2332; }
-.topbar-right { display: flex; align-items: center; gap: 16px; }
-.topbar-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: #8c8c8c; cursor: pointer; transition: all 0.15s; border: none; background: #f5f5f5; }
-.topbar-btn:hover { background: #e6f7ff; color: #1890ff; }
-.topbar-btn iconify-icon { font-size: 20px; }
 .topbar-date { font-size: 13px; color: #8c8c8c; }
-.topbar-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #1890ff, #096dd9); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
 .content-scroll { flex: 1; overflow-y: auto; padding: 16px 16px 40px; height: 100%; margin-left: 220px; }
 select, input[type="date"], input[type="month"] { background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #333; outline: none; cursor: pointer; transition: border-color 0.2s; }
 select:focus, input[type="date"]:focus, input[type="month"]:focus { border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.15); }
@@ -87,7 +82,7 @@ tbody tr:hover { background: #e6f7ff; }
 .modal-summary-item .label { font-size: 13px; color: #8c8c8c; }
 .modal-summary-item .value { font-size: 22px; font-weight: 700; margin-top: 6px; color: #1a2332; }
 .module-section { margin-bottom: 12px; }
-.module-section-title { font-size: 16px; font-weight: 600; color: #1a2332; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #1890ff; padding-left: 10px; }
+.module-section-title { font-size: 16px; font-weight: 600; color: #1a2332; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
@@ -118,18 +113,13 @@ tbody tr:hover { background: #e6f7ff; }
 </nav>
 </aside>
 
-<div class="topbar">
+
 <header class="topbar">
-<div class="topbar-left"><h1 class="topbar-title">出租车看板</h1><span class="badge badge-green" style="font-size:12px;margin-left:6px;">每日更新</span></div>
+<div class="topbar-left"><h1 class="topbar-title">出租车看板<span style="font-size:12px;color:#8c8c8c;font-weight:400;margin-left:8px;">每日更新</span></h1></div>
 <div class="topbar-right">
-<span class="topbar-date">2026年05月18日</span>
-<button class="topbar-btn" title="刷新"><iconify-icon icon="mdi:refresh"></iconify-icon></button>
-<button class="topbar-btn" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></button>
-<button class="topbar-btn" title="设置"><iconify-icon icon="mdi:cog-outline"></iconify-icon></button>
-<div class="topbar-avatar" title="李总 (CEO)">李</div>
+<span class="topbar-date">2026年05月18日 <span style="color:#fa8c16;font-size:11px;">（营收、利润每月更新）</span></span>
 </div>
 </header>
-</div>
 <div class="main-area">
 
 <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#ffffff;border-bottom:1px solid #e8ecf1;padding:10px 20px;margin-bottom:12px;width:100%;">
@@ -149,7 +139,7 @@ tbody tr:hover { background: #e6f7ff; }
 <div class="filter-group">
 <label>时间粒度</label>
 <div style="margin-left:auto;display:flex;gap:4px;">
-<button class="filter-btn" onclick="switchDateType(this,'day')">日</button>
+
 <button class="filter-btn filter-btn-active" onclick="switchDateType(this,'month')">月</button>
 <button class="filter-btn" onclick="switchDateType(this,'quarter')">季</button>
 <button class="filter-btn" onclick="switchDateType(this,'year')">年</button>
@@ -162,22 +152,18 @@ tbody tr:hover { background: #e6f7ff; }
 <div class="bi-card">
 <div class="bi-card-title"><iconify-icon icon="mdi:account-tie" style="font-size:16px;color:#1890ff;"></iconify-icon>在运司机总数</div>
 <div class="bi-card-value text-blue" id="totalDrivers">3,458 人</div>
-<div class="bi-card-sub">覆盖天津、无锡、新疆三地</div>
 </div>
 <div class="bi-card">
 <div class="bi-card-title"><iconify-icon icon="mdi:car-multiple" style="font-size:16px;color:#52c41a;"></iconify-icon>运营车辆总数</div>
 <div class="bi-card-value text-green" id="totalVehicles">1,730 辆</div>
-<div class="bi-card-sub">含固定班线及临时调拨</div>
 </div>
 <div class="bi-card">
 <div class="bi-card-title"><iconify-icon icon="mdi:chart-line" style="font-size:16px;color:#eb2f96;"></iconify-icon>月营收总额</div>
 <div class="bi-card-value text-pink" id="monthlyRevenue">¥ 718.7 万</div>
-<div class="bi-card-sub">1月累计</div>
 </div>
 <div class="bi-card">
 <div class="bi-card-title"><iconify-icon icon="mdi:currency-cny" style="font-size:16px;color:#722ed1;"></iconify-icon>车均营收</div>
 <div class="bi-card-value text-purple" id="avgRevenuePerCar">¥ 4,155</div>
-<div class="bi-card-sub">月均每车贡献</div>
 </div>
 </div>
 </div>
@@ -185,26 +171,26 @@ tbody tr:hover { background: #e6f7ff; }
 <div class="module-section-title"><iconify-icon icon="mdi:chart-timeline-variant" style="color:#1890ff;"></iconify-icon>数据可视化分析</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
 <div class="chart-container">
-<div class="chart-title">各门店司机数对比 <span style="font-size:12px;color:#8c8c8c;font-weight:400;">(天津 / 无锡 / 新疆)</span></div>
-<div class="w-full" id="driverChart" style="height:320px;"></div>
+<div class="chart-title">各门店司机数与车辆数</div>
+<div class="w-full" id="combinedChart" style="height:320px;"></div>
 </div>
 <div class="chart-container">
-<div class="chart-title">营收占比 <span style="font-size:12px;color:#8c8c8c;font-weight:400;">(各门店营收占比)</span></div>
+<div class="chart-title">营收占比</div>
 <div class="w-full" id="pieChart" style="height:320px;"></div>
 </div>
 <div class="chart-container">
-<div class="chart-title">月度营收与成本趋势 <span style="font-size:12px;color:#8c8c8c;font-weight:400;">(1-2月)</span></div>
-<div class="w-full" id="trendChart" style="height:320px;"></div>
+<div class="chart-title">月度营收趋势</div>
+<div class="w-full" id="revenueTrendChart" style="height:320px;"></div>
 </div>
 </div>
 </div>
 <div class="module-section">
 <div class="module-section-title"><iconify-icon icon="mdi:table" style="color:#1890ff;"></iconify-icon>明细数据清单</div>
 <div class="table-container">
-<div class="table-header"><h3>出租车运营明细表</h3><span style="font-size:12px;color:#bfbfbf;">点击数字可下钻查看原始明细</span></div>
+<div class="table-header"><h3>出租车运营明细表</h3><span style="font-size:12px;color:#bfbfbf;">点击数字可下钻查看明细</span></div>
 <div style="overflow-x:auto;">
 <table>
-<thead><tr><th>日期</th><th>门店</th><th>所属公司</th><th>车辆数</th><th>司机数</th><th>营收(万)</th><th>成本(万)</th><th>利润(万)</th></tr></thead>
+<thead><tr><th>门店</th><th>所属公司</th><th>车辆数</th><th>司机数</th><th>营收(万)</th><th>成本(万)</th><th>利润(万)</th></tr></thead>
 <tbody id="tableBody">
 </tbody>
 </table>
@@ -266,7 +252,7 @@ const rawData = [
 {date:'2026-02-04',store:'无锡',company:'无锡交通集团',vehicles:98,drivers:289,revenue:18.2,cost:12.2,profit:6.0},
 {date:'2026-02-05',store:'新疆',company:'新疆巴士客运',vehicles:132,drivers:1423,revenue:21.8,cost:16.3,profit:5.5}
 ];
-/* 📋 数据来源：出租.xlsx */
+/* 数据来源：出租.xlsx */
 const allData = rawData;
 
 function calcStats(data){
@@ -314,7 +300,7 @@ var html='';
 data.forEach(function(d){
 var pc=d.profit>=0?'profit-up':'profit-down';
 var sc=d.store==='天津'?'badge-tj':d.store==='无锡'?'badge-wx':'badge-xj';
-html+='<tr><td>'+d.date+'</td><td><span class="badge-store '+sc+'">'+d.store+'</span></td><td>'+d.company+'</td><td class="drill-down-clickable">'+d.vehicles.toLocaleString()+'</td><td class="drill-down-clickable">'+d.drivers.toLocaleString()+'</td><td class="drill-down-clickable">'+d.revenue.toFixed(2)+'</td><td>'+d.cost.toFixed(2)+'</td><td class="'+pc+'">'+(d.profit>=0?'+':'')+d.profit.toFixed(2)+'</td></tr>';
+html+='<tr><td><span class="badge-store '+sc+'">'+d.store+'</span></td><td>'+d.company+'</td><td class="drill-down-clickable">'+d.vehicles.toLocaleString()+'</td><td class="drill-down-clickable">'+d.drivers.toLocaleString()+'</td><td class="drill-down-clickable">'+d.revenue.toFixed(2)+'</td><td>'+d.cost.toFixed(2)+'</td><td class="'+pc+'">'+(d.profit>=0?'+':'')+d.profit.toFixed(2)+'</td></tr>';
 });
 tbody.innerHTML=html;
 }
@@ -351,7 +337,7 @@ document.getElementById('avgRevenuePerCar').innerHTML='¥ '+s.avgPerCar.toLocale
 
 function getDriverOption(data){
 var sum=getStoreSummary(data);
-return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',formatter:function(params){var p=params[0];return p.axisValue+'<br/>司机数: '+p.value+' 人';},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:sum.map(s=>s.store),axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c'}},series:[{type:'bar',data:sum.map(s=>s.drivers),itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#1890ff'},{offset:1,color:'#096dd9'}]),borderRadius:[4,4,0,0]}}]};
+return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',formatter:function(params){var p=params[0];return p.axisValue+'<br/>司机数: '+p.value+' 人';},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:sum.map(s=>s.store),axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c'}},series:[{type:'bar',data:sum.map(s=>s.drivers),itemStyle:{color:'#1890ff',borderRadius:[4,4,0,0]}}]};
 }
 
 function getPieOption(data){
@@ -360,58 +346,65 @@ var colors=['#1890ff','#722ed1','#52c41a'];
 return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'item',formatter:function(p){return p.name+': ¥'+p.value+'万 ('+p.percent+'%)';},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},series:[{type:'pie',radius:['40%','70%'],avoidLabelOverlap:false,itemStyle:{borderRadius:8,borderColor:'#ffffff',borderWidth:3},label:{show:true,position:'outside',formatter:'{b}\n¥{c}万 ({d}%)',fontSize:11,color:'#595959'},labelLine:{length:10,length2:15,lineStyle:{color:'#d9d9d9'}},data:sum.map(function(s,i){return{value:Math.round(s.revenue*100)/100,name:s.store,itemStyle:{color:colors[i]}};})}]};
 }
 
-function getTrendOption(data){
-var jan=data.filter(d=>d.date.startsWith('2026-01'));
-var feb=data.filter(d=>d.date.startsWith('2026-02'));
-var jr=Math.round(jan.reduce((s,d)=>s+d.revenue,0)*100)/100;
-var jc=Math.round(jan.reduce((s,d)=>s+d.cost,0)*100)/100;
-var fr=Math.round(feb.reduce((s,d)=>s+d.revenue,0)*100)/100;
-var fc=Math.round(feb.reduce((s,d)=>s+d.cost,0)*100)/100;
-return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',tooltip:{trigger:'axis',formatter:function(params){var s='<b>'+params[0].axisValue+'</b><br/>';params.forEach(function(v){s+=v.marker+' '+v.seriesName+': ¥'+v.value.toFixed(2)+' 万<br/>';});return s;},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},legend:{data:['营收(万)','成本(万)'],textStyle:{color:'#8c8c8c'}},grid:{left:'3%',right:'5%',bottom:'3%',containLabel:true},xAxis:{type:'category',data:['1月','2月'],axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},yAxis:[{type:'value',name:'营收 (万)',nameTextStyle:{color:'#8c8c8c',fontSize:12},splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#1890ff'}},{type:'value',name:'成本 (万)',nameTextStyle:{color:'#8c8c8c',fontSize:12},splitLine:{show:false},axisLabel:{color:'#f5222d'}}],series:[{name:'营收(万)',type:'line',smooth:true,data:[jr,fr],symbol:'circle',symbolSize:8,lineStyle:{width:3,color:'#1890ff'},itemStyle:{color:'#1890ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(24,144,255,0.2)'},{offset:1,color:'rgba(24,144,255,0.01)'}])},yAxisIndex:0},{name:'成本(万)',type:'line',smooth:true,data:[jc,fc],symbol:'diamond',symbolSize:8,lineStyle:{width:3,color:'#722ed1'},itemStyle:{color:'#722ed1'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(114,46,209,0.15)'},{offset:1,color:'rgba(114,46,209,0.01)'}])},yAxisIndex:1}]};
+function getVehiclePerStore(data){
+var stores=['天津','无锡','新疆'];
+var counts=stores.map(function(s){
+var d=data.filter(function(r){return r.store===s;});
+return d.length>0?d[0].vehicles:0;
+});
+return{color:ECHARTS_THEME_COLORS,backgroundColor:'#ffffff',
+tooltip:{trigger:'axis',formatter:function(p){return '<b>'+p[0].name+'</b><br/>车辆数: <b>'+p[0].value.toLocaleString()+' 辆</b>';},backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},
+grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},
+xAxis:{type:'category',data:stores,axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c',fontSize:13}},
+yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c',formatter:'{value} 辆'}},
+series:[{type:'bar',barWidth:'40%',data:counts.map(function(v,i){return{value:v,itemStyle:{color:ECHARTS_THEME_COLORS[i%6],borderRadius:[4,4,0,0]}};}),label:{show:true,position:'top',formatter:'{c} 辆',color:'#333',fontSize:12,fontWeight:'bold'}}]
+};
 }
 
 function updateCharts(data){
 var dc=echarts.getInstanceByDom(document.getElementById('driverChart'));if(dc)dc.setOption(getDriverOption(data),true);
 var pc=echarts.getInstanceByDom(document.getElementById('pieChart'));if(pc)pc.setOption(getPieOption(data),true);
-var tc=echarts.getInstanceByDom(document.getElementById('trendChart'));if(tc)tc.setOption(getTrendOption(data),true);
+var tc=echarts.getInstanceByDom(document.getElementById('trendChart'));if(tc)tc.setOption(getVehiclePerStore(data),true);
 }
 
 function initCharts(){
-var driverChart=echarts.init(document.getElementById('driverChart'));
-driverChart.setOption(getDriverOption(allData));
-driverChart.on('click',function(p){
+var combinedChart=echarts.init(document.getElementById('combinedChart'));
+combinedChart.setOption(getCombinedOption(allData));
+combinedChart.on('click',function(p){
+var si=p.dataIndex;
 var stores=['天津','无锡','新疆'];
-var sd=allData.filter(d=>d.store===stores[p.dataIndex]);
+var sd=allData.filter(d=>d.store===stores[si]);
 var totalD=sd.length>0?sd[0].drivers:0;
 var totalV=sd.length>0?sd[0].vehicles:0;
 var totalR=Math.round(sd.reduce((s,d)=>s+d.revenue,0)*100)/100;
-showCustomDrill(stores[p.dataIndex]+' — 司机明细',[{label:'门店',value:stores[p.dataIndex],color:'#1890ff'},{label:'司机数',value:totalD.toLocaleString()+' 人',color:'#1a2332'},{label:'车辆数',value:totalV.toLocaleString()+' 辆',color:'#52c41a'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'}],[['日期','营收(万)','成本(万)','利润(万)'],...sd.map(d=>[d.date,d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
+showCustomDrill(stores[si]+' - 司机与车辆明细',[{label:'门店',value:stores[si],color:'#1890ff'},{label:'司机数',value:totalD.toLocaleString()+' 人',color:'#1a2332'},{label:'车辆数',value:totalV.toLocaleString()+' 辆',color:'#52c41a'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'}],[['门店','所属公司','车辆数','司机数','营收(万)','成本(万)','利润(万)'],...sd.map(d=>[d.store,d.company,d.vehicles.toLocaleString(),d.drivers.toLocaleString(),d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
 });
-window.addEventListener('resize',function(){driverChart.resize();});
+window.addEventListener('resize',function(){combinedChart.resize();});
+
 var pieChart=echarts.init(document.getElementById('pieChart'));
 pieChart.setOption(getPieOption(allData));
 pieChart.on('click',function(p){
 var sd=allData.filter(d=>d.store===p.name);
 var totalR=Math.round(sd.reduce((s,d)=>s+d.revenue,0)*100)/100;
-showCustomDrill(p.name+' — 营收明细',[{label:'门店',value:p.name,color:'#1890ff'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'},{label:'总成本',value:'¥ '+Math.round(sd.reduce((s,d)=>s+d.cost,0)*100)/100+' 万',color:'#f5222d'},{label:'总利润',value:'¥ '+Math.round(sd.reduce((s,d)=>s+d.profit,0)*100)/100+' 万',color:'#52c41a'}],[['日期','营收(万)','成本(万)','利润(万)'],...sd.map(d=>[d.date,d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
+showCustomDrill(p.name+' - 营收明细',[{label:'门店',value:p.name,color:'#1890ff'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'},{label:'总成本',value:'¥ '+Math.round(sd.reduce((s,d)=>s+d.cost,0)*100)/100+' 万',color:'#f5222d'},{label:'总利润',value:'¥ '+Math.round(sd.reduce((s,d)=>s+d.profit,0)*100)/100+' 万',color:'#52c41a'}],[['门店','所属公司','车辆数','司机数','营收(万)','成本(万)','利润(万)'],...sd.map(d=>[d.store,d.company,d.vehicles.toLocaleString(),d.drivers.toLocaleString(),d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
 });
 window.addEventListener('resize',function(){pieChart.resize();});
-var trendChart=echarts.init(document.getElementById('trendChart'));
-trendChart.setOption(getTrendOption(allData));
-trendChart.on('click',function(p){
-var months=['1月','2月'];
-var idx=p.dataIndex;
-var monthNum=idx===0?'01':'02';
-var md=allData.filter(d=>d.date.startsWith('2026-'+monthNum));
+
+var revTrendChart=echarts.init(document.getElementById('revenueTrendChart'));
+revTrendChart.setOption(getRevenueTrendOption(allData));
+revTrendChart.on('click',function(p){
+var mnths=['2026-01','2026-02'];
+var md=allData.filter(function(d){return d.date.startsWith(mnths[p.dataIndex]);});
 var totalR=Math.round(md.reduce((s,d)=>s+d.revenue,0)*100)/100;
-var totalC=Math.round(md.reduce((s,d)=>s+d.cost,0)*100)/100;
-showCustomDrill(months[idx]+'营收与成本明细',[{label:'月份',value:months[idx],color:'#1890ff'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'},{label:'总成本',value:'¥ '+totalC.toFixed(1)+' 万',color:'#f5222d'}],[['日期','门店','营收(万)','成本(万)','利润(万)'],...md.map(d=>[d.date,d.store,d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
+var totalP=Math.round(md.reduce((s,d)=>s+d.profit,0)*100)/100;
+showCustomDrill(mnths[p.dataIndex]+' - 月度营收明细',[{label:'月份',value:mnths[p.dataIndex],color:'#1890ff'},{label:'总营收',value:'¥ '+totalR.toFixed(1)+' 万',color:'#fa8c16'},{label:'总利润',value:'¥ '+totalP.toFixed(1)+' 万',color:'#52c41a'}],[['门店','所属公司','车辆数','司机数','营收(万)','成本(万)','利润(万)'],...md.map(d=>[d.store,d.company,d.vehicles.toLocaleString(),d.drivers.toLocaleString(),d.revenue.toFixed(2),d.cost.toFixed(2),(d.profit>=0?'+':'')+d.profit.toFixed(2)])]);
 });
-window.addEventListener('resize',function(){trendChart.resize();});
+window.addEventListener('resize',function(){revTrendChart.resize();});
 }
 
-function showCustomDrill(title,summaryItems,tableData){
+function showCustomDrill(title,summaryItems,tableData,sourceFile){
 document.getElementById('modalTitle').innerText=title;
+if(sourceFile)document.getElementById('modalSource').innerHTML='<iconify-icon icon="mdi:file-excel" style="vertical-align:middle;color:#52c41a;"></iconify-icon> 来源系统：出租车管理系统 | 来源表：'+sourceFile;
 var s='';
 summaryItems.forEach(function(i){s+='<div class="modal-summary-item"><div class="label">'+i.label+'</div><div class="value" style="color:'+i.color+'">'+i.value+'</div></div>';});
 document.getElementById('modalSummary').innerHTML=s;
@@ -425,6 +418,33 @@ document.getElementById('drillDownModal').classList.add('show');
 }
 
 function hideDrillDown(){document.getElementById('drillDownModal').classList.remove('show');}
+
+
+function getCombinedOption(data){
+var stores=['天津','无锡','新疆'];
+var drivers=stores.map(function(s){var d=data.filter(function(x){return x.store===s;});return d.length>0?d[0].drivers:0;});
+var vehicles=stores.map(function(s){var d=data.filter(function(x){return x.store===s;});return d.length>0?d[0].vehicles:0;});
+return {color:['#1890ff','#52c41a'],backgroundColor:'#ffffff',
+tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'}},
+legend:{data:['司机数','车辆数'],textStyle:{color:'#8c8c8c',fontSize:12},top:0},
+grid:{left:'3%',right:'4%',bottom:'3%',top:'18%',containLabel:true},
+xAxis:{type:'category',data:stores,axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},
+yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c'}},
+series:[{name:'司机数',type:'bar',data:drivers,itemStyle:{color:'#1890ff',borderRadius:[4,4,0,0]},barGap:'30%',label:{show:true,position:'top',color:'#333',fontSize:11}},
+{name:'车辆数',type:'bar',data:vehicles,itemStyle:{color:'#52c41a',borderRadius:[4,4,0,0]},label:{show:true,position:'top',color:'#333',fontSize:11}}]};}
+
+function getRevenueTrendOption(data){
+var months=['2026-01','2026-02'];
+var revs=months.map(function(m){var md=data.filter(function(d){return d.date.startsWith(m);});return Math.round(md.reduce(function(s,d){return s+d.revenue;},0)*100)/100;});
+var profits=months.map(function(m){var md=data.filter(function(d){return d.date.startsWith(m);});return Math.round(md.reduce(function(s,d){return s+d.profit;},0)*100)/100;});
+return {color:['#1890ff','#52c41a'],backgroundColor:'#ffffff',
+tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#e8ecf1',textStyle:{color:'#333'},formatter:function(p){var r='<b>'+p[0].axisValue+'</b>';p.forEach(function(v){r+='<br/>'+v.marker+v.seriesName+': ¥'+v.value.toFixed(1)+' 万';});return r;}},
+legend:{data:['营收','利润'],textStyle:{color:'#8c8c8c',fontSize:12},top:0},
+grid:{left:'3%',right:'4%',bottom:'3%',top:'18%',containLabel:true},
+xAxis:{type:'category',data:['1月','2月'],axisLine:{lineStyle:{color:'#e8ecf1'}},axisLabel:{color:'#8c8c8c'}},
+yAxis:{type:'value',name:'万元',nameTextStyle:{color:'#999',fontSize:11},splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#8c8c8c'}},
+series:[{name:'营收',type:'line',smooth:true,data:revs,symbol:'circle',symbolSize:8,lineStyle:{width:3},itemStyle:{color:'#1890ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(24,144,255,0.2)'},{offset:1,color:'rgba(24,144,255,0)'}])}},
+{name:'利润',type:'line',smooth:true,data:profits,symbol:'circle',symbolSize:8,lineStyle:{width:3},itemStyle:{color:'#52c41a'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(82,196,26,0.2)'},{offset:1,color:'rgba(82,196,26,0)'}])}}]};}
 
 window.onload=function(){initCharts();};
 </script>
